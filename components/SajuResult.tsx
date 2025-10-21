@@ -105,6 +105,55 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
+        onclone: (clonedDoc) => {
+          // Replace all oklab/lab colors with safe RGB values
+          const clonedElement = clonedDoc.getElementById('saju-result');
+          if (!clonedElement) return;
+
+          const allElements = clonedElement.querySelectorAll('*');
+          allElements.forEach((el) => {
+            const htmlEl = el as HTMLElement;
+            const computed = window.getComputedStyle(el);
+
+            // Replace background colors
+            if (computed.backgroundColor && (computed.backgroundColor.includes('lab') || computed.backgroundColor.includes('oklab'))) {
+              const currentBg = computed.backgroundColor;
+              // Try to extract a safe fallback or use white
+              if (currentBg.includes('255')) {
+                htmlEl.style.backgroundColor = '#ffffff';
+              } else if (currentBg.includes('0, 0, 0')) {
+                htmlEl.style.backgroundColor = '#000000';
+              } else {
+                htmlEl.style.backgroundColor = '#f9fafb'; // Default to gray-50
+              }
+            }
+
+            // Replace text colors
+            if (computed.color && (computed.color.includes('lab') || computed.color.includes('oklab'))) {
+              const currentColor = computed.color;
+              if (currentColor.includes('255')) {
+                htmlEl.style.color = '#ffffff';
+              } else if (currentColor.includes('0, 0, 0')) {
+                htmlEl.style.color = '#000000';
+              } else {
+                htmlEl.style.color = '#111827'; // Default to gray-900
+              }
+            }
+
+            // Replace border colors
+            if (computed.borderColor && (computed.borderColor.includes('lab') || computed.borderColor.includes('oklab'))) {
+              htmlEl.style.borderColor = '#e5e7eb'; // gray-200
+            }
+
+            // Replace gradient backgrounds if they contain lab colors
+            if (computed.backgroundImage && computed.backgroundImage !== 'none') {
+              if (computed.backgroundImage.includes('lab') || computed.backgroundImage.includes('oklab')) {
+                htmlEl.style.backgroundImage = 'none';
+                htmlEl.style.backgroundColor = '#f9fafb';
+              }
+            }
+          });
+        }
       });
 
       // 버튼 다시 보이기
