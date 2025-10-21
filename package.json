@@ -11,8 +11,6 @@
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "html2canvas": "^1.4.1",
-    "html2pdf.js": "^0.12.1",
-    "jspdf": "^3.0.3",
     "lunar-javascript": "^1.7.6",
     "next": "15.5.6",
     "postcss": "^8.4.49",

@@ -78,15 +78,15 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
     }
   };
 
-  // PDF 다운로드 - html2pdf.js 사용
+  // 이미지 다운로드 - 화면 그대로 저장
   const handleDownloadPDF = async () => {
     setIsSaving(true);
     try {
-      const html2pdf = (await import('html2pdf.js')).default;
+      const html2canvas = (await import('html2canvas')).default;
 
       const element = document.getElementById('saju-result');
       if (!element) {
-        console.error('PDF 대상 요소를 찾을 수 없습니다.');
+        console.error('저장 대상 요소를 찾을 수 없습니다.');
         setIsSaving(false);
         return;
       }
@@ -95,57 +95,50 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       const buttons = element.querySelectorAll('button');
       buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
 
-      // PDF 파일명에 날짜 추가
-      const today = new Date().toISOString().split('T')[0];
-      const filename = `${name}_사주풀이_${today}.pdf`;
+      // 약간의 지연 후 캡처 (DOM 안정화)
+      await new Promise(resolve => setTimeout(resolve, 200));
 
-      // html2pdf 옵션 설정 (고품질 + 자동 페이지 분할)
-      const opt = {
-        margin: [10, 10, 10, 10] as [number, number, number, number],
-        filename: filename,
-        image: { type: 'png' as const, quality: 1.0 },
-        html2canvas: {
-          scale: 3,
-          useCORS: true,
-          logging: false,
-          backgroundColor: '#ffffff',
-          scrollY: 0,
-          scrollX: 0,
-          windowWidth: element.scrollWidth,
-          windowHeight: element.scrollHeight
-        },
-        jsPDF: {
-          unit: 'mm' as const,
-          format: 'a4' as const,
-          orientation: 'portrait' as const,
-          compress: true
-        },
-        pagebreak: {
-          mode: ['avoid-all', 'css', 'legacy'],
-          before: '.pdf-page-break-before',
-          after: '.pdf-page-break-after',
-          avoid: ['.pdf-avoid-break', 'button']
-        } as {
-          mode: string[];
-          before: string;
-          after: string;
-          avoid: string[];
-        }
-      };
-
-      // PDF 생성 및 다운로드
-      await html2pdf().set(opt).from(element).save();
+      // 고품질 캡처
+      const canvas = await html2canvas(element, {
+        scale: 3, // 고해상도
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
+        scrollY: -window.scrollY,
+        scrollX: -window.scrollX,
+      });
 
       // 버튼 다시 보이기
       buttons.forEach(btn => (btn as HTMLElement).style.display = '');
+
+      // PNG 이미지로 변환 및 다운로드
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          alert('이미지 생성에 실패했습니다.');
+          setIsSaving(false);
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const today = new Date().toISOString().split('T')[0];
+        link.download = `${name}_사주풀이_${today}.png`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+        setIsSaving(false);
+      }, 'image/png', 1.0);
+
     } catch (error) {
-      console.error('PDF 생성 오류:', error);
+      console.error('이미지 생성 오류:', error);
       if (error instanceof Error) {
-        alert(`PDF 생성 실패: ${error.message}\n\n브라우저를 새로고침 후 다시 시도해주세요.`);
+        alert(`이미지 생성 실패: ${error.message}\n\n브라우저를 새로고침 후 다시 시도해주세요.`);
       } else {
-        alert('PDF 생성 중 오류가 발생했습니다.\n브라우저를 새로고침 후 다시 시도해주세요.');
+        alert('이미지 생성 중 오류가 발생했습니다.\n브라우저를 새로고침 후 다시 시도해주세요.');
       }
-    } finally {
       setIsSaving(false);
     }
   };
@@ -185,9 +178,9 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
                 onClick={handleDownloadPDF}
                 disabled={isSaving}
                 className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition disabled:opacity-50"
-                title="PDF 다운로드"
+                title="이미지로 다운로드"
               >
-                📄 {isSaving ? '생성중...' : 'PDF'}
+                📸 {isSaving ? '생성중...' : '이미지'}
               </button>
               <button
                 onClick={() => handleShare('facebook')}
