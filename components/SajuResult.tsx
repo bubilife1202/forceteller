@@ -78,11 +78,11 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
     }
   };
 
-  // 이미지 다운로드 - 화면 그대로 저장
+  // 이미지 다운로드 - 화면 그대로 저장 (고품질)
   const handleDownloadPDF = async () => {
     setIsSaving(true);
     try {
-      const html2canvas = (await import('html2canvas')).default;
+      const domtoimage = await import('dom-to-image-more');
 
       const element = document.getElementById('saju-result');
       if (!element) {
@@ -96,42 +96,33 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
 
       // 약간의 지연 후 캡처 (DOM 안정화)
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      // 고품질 캡처
-      const canvas = await html2canvas(element, {
-        scale: 3, // 고해상도
-        useCORS: true,
-        allowTaint: false,
-        logging: false,
-        backgroundColor: '#ffffff',
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight,
-        scrollY: -window.scrollY,
-        scrollX: -window.scrollX,
+      // 고품질 PNG 생성 (dom-to-image는 색상을 완벽하게 재현)
+      const dataUrl = await domtoimage.toPng(element, {
+        quality: 1.0,
+        bgcolor: '#ffffff',
+        width: element.offsetWidth * 3,
+        height: element.offsetHeight * 3,
+        style: {
+          transform: 'scale(3)',
+          transformOrigin: 'top left',
+          width: element.offsetWidth + 'px',
+          height: element.offsetHeight + 'px'
+        }
       });
 
       // 버튼 다시 보이기
       buttons.forEach(btn => (btn as HTMLElement).style.display = '');
 
-      // PNG 이미지로 변환 및 다운로드
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          alert('이미지 생성에 실패했습니다.');
-          setIsSaving(false);
-          return;
-        }
+      // 다운로드
+      const link = document.createElement('a');
+      const today = new Date().toISOString().split('T')[0];
+      link.download = `${name}_사주풀이_${today}.png`;
+      link.href = dataUrl;
+      link.click();
 
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        const today = new Date().toISOString().split('T')[0];
-        link.download = `${name}_사주풀이_${today}.png`;
-        link.href = url;
-        link.click();
-        URL.revokeObjectURL(url);
-        setIsSaving(false);
-      }, 'image/png', 1.0);
-
+      setIsSaving(false);
     } catch (error) {
       console.error('이미지 생성 오류:', error);
       if (error instanceof Error) {
