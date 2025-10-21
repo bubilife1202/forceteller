@@ -37,7 +37,101 @@ export const ELEMENTS = {
   수: { ko: '수', cn: '水', en: 'water', color: '#3b82f6' },
 } as const;
 
-// 십성 (十星) - Ten Gods
+// 십성 (十星) - Ten Gods (상세 정보)
+export const TEN_GODS_DETAIL = {
+  비견: {
+    ko: '비견', cn: '比肩', en: 'Peer',
+    category: '비겁',
+    desc: '나와 같은 오행',
+    meaning: '형제·자매·동료·경쟁자',
+    positive: '자립심, 독립심, 경쟁력, 추진력이 강함',
+    negative: '고집이 세고 독단적, 타협 어려움',
+    career: '독립 사업, 자유업, 경쟁 분야'
+  },
+  겁재: {
+    ko: '겁재', cn: '劫財', en: 'Rob Wealth',
+    category: '비겁',
+    desc: '나와 같은 오행(음양 반대)',
+    meaning: '경쟁자·동업자·형제',
+    positive: '강한 추진력, 결단력, 행동력',
+    negative: '재물 손실, 배우자 문제, 투기성',
+    career: '도전적 사업, 경쟁 분야'
+  },
+  식신: {
+    ko: '식신', cn: '食神', en: 'Eating God',
+    category: '식상',
+    desc: '내가 생하는 오행',
+    meaning: '표현·재능·자녀·의식주',
+    positive: '온화함, 인내심, 평화주의, 예술적 재능',
+    negative: '우유부단, 게으름, 낙천적',
+    career: '예술, 요식업, 서비스업, 교육'
+  },
+  상관: {
+    ko: '상관', cn: '傷官', en: 'Hurting Officer',
+    category: '식상',
+    desc: '내가 생하는 오행(음양 반대)',
+    meaning: '재능·표현·반항·비판',
+    positive: '창의력, 예술성, 뛰어난 말솜씨',
+    negative: '비판적, 반항적, 상관 문제',
+    career: '예술가, 작가, 비평가, 연예인'
+  },
+  편재: {
+    ko: '편재', cn: '偏財', en: 'Indirect Wealth',
+    category: '재성',
+    desc: '내가 극하는 오행',
+    meaning: '유동재산·사업·아버지',
+    positive: '사교성, 재치, 사업 수완',
+    negative: '낭비, 투기, 여색 문제',
+    career: '사업가, 영업, 금융, 유통'
+  },
+  정재: {
+    ko: '정재', cn: '正財', en: 'Direct Wealth',
+    category: '재성',
+    desc: '내가 극하는 오행(음양 반대)',
+    meaning: '고정재산·아내·성실',
+    positive: '성실, 근면, 절약, 안정 추구',
+    negative: '인색, 융통성 부족',
+    career: '회계, 재무, 공무원, 안정된 직장'
+  },
+  편관: {
+    ko: '편관', cn: '偏官', en: 'Indirect Officer',
+    category: '관성',
+    desc: '나를 극하는 오행',
+    meaning: '권력·무력·압박·칠살',
+    positive: '강한 추진력, 결단력, 리더십',
+    negative: '강압적, 폭력적, 건강 문제',
+    career: '군인, 경찰, 정치가, 운동선수'
+  },
+  정관: {
+    ko: '정관', cn: '正官', en: 'Direct Officer',
+    category: '관성',
+    desc: '나를 극하는 오행(음양 반대)',
+    meaning: '직장·명예·남편·법',
+    positive: '책임감, 명예욕, 성실함, 법 준수',
+    negative: '형식적, 보수적, 경직됨',
+    career: '공무원, 법조인, 대기업, 관리직'
+  },
+  편인: {
+    ko: '편인', cn: '偏印', en: 'Indirect Resource',
+    category: '인성',
+    desc: '나를 생하는 오행',
+    meaning: '편모·학문·고독·효성',
+    positive: '학구적, 독창적, 종교·철학 관심',
+    negative: '고독, 외로움, 편식',
+    career: '연구직, 종교인, 철학자, 학자'
+  },
+  정인: {
+    ko: '정인', cn: '正印', en: 'Direct Resource',
+    category: '인성',
+    desc: '나를 생하는 오행(음양 반대)',
+    meaning: '어머니·학문·명예·지혜',
+    positive: '학구적, 인내심, 책임감, 명예',
+    negative: '우유부단, 의존적, 현실 부적응',
+    career: '교수, 교사, 연구원, 행정직'
+  },
+} as const;
+
+// 구 십성 (하위 호환)
 export const TEN_GODS = {
   비견: { ko: '비견', cn: '比肩', en: 'Peer', desc: '나와 같은 오행' },
   겁재: { ko: '겁재', cn: '劫財', en: 'Rob Wealth', desc: '나와 같은 오행(음양 반대)' },
@@ -140,6 +234,148 @@ export const HAPCHUNG = {
     신자진: { branches: ['신', '자', '진'], result: '수', name: '신자진 수국' },
     해묘미: { branches: ['해', '묘', '미'], result: '목', name: '해묘미 목국' },
   },
+} as const;
+
+// 일간별 성격 분석
+export const DAY_STEM_PERSONALITY = {
+  갑: {
+    element: '목', yinyang: '양',
+    image: '큰 나무, 숲',
+    personality: '정직하고 곧은 성격. 리더십이 강하고 진취적이며 독립심이 강합니다. 외유내강형으로 겉은 부드러우나 속은 강합니다.',
+    strength: '추진력, 결단력, 정의감, 리더십',
+    weakness: '고집, 융통성 부족, 권위적',
+    suitable: '경영자, 리더, 공직자, 교육자'
+  },
+  을: {
+    element: '목', yinyang: '음',
+    image: '작은 풀, 덩굴',
+    personality: '부드럽고 유연한 성격. 적응력이 뛰어나고 인내심이 강합니다. 예술적 감각이 있고 섬세합니다.',
+    strength: '적응력, 친화력, 섬세함, 예술성',
+    weakness: '우유부단, 의존성, 질투심',
+    suitable: '예술가, 디자이너, 상담사, 서비스업'
+  },
+  병: {
+    element: '화', yinyang: '양',
+    image: '태양, 큰 불',
+    personality: '밝고 활발한 성격. 열정적이고 사교적이며 낙천적입니다. 타인에게 긍정적 에너지를 줍니다.',
+    strength: '열정, 사교성, 명랑함, 창의력',
+    weakness: '경솔함, 지속성 부족, 허영',
+    suitable: '연예인, 영업, 홍보, 교육, 방송'
+  },
+  정: {
+    element: '화', yinyang: '음',
+    image: '촛불, 작은 불',
+    personality: '섬세하고 감성적인 성격. 예의가 바르고 조용하지만 내면의 열정이 있습니다. 완벽주의 경향이 있습니다.',
+    strength: '섬세함, 예의, 집중력, 완벽주의',
+    weakness: '예민함, 소심함, 집착',
+    suitable: '예술가, 작가, 연구원, 전문직'
+  },
+  무: {
+    element: '토', yinyang: '양',
+    image: '산, 바위',
+    personality: '신뢰감 있고 포용력이 큰 성격. 책임감이 강하고 성실합니다. 중재자 역할을 잘합니다.',
+    strength: '포용력, 신뢰감, 책임감, 안정성',
+    weakness: '고지식함, 완고함, 느림',
+    suitable: '공무원, 관리자, 부동산, 건설'
+  },
+  기: {
+    element: '토', yinyang: '음',
+    image: '밭, 정원',
+    personality: '세심하고 배려심 많은 성격. 실용적이고 현실적입니다. 사람을 잘 챙기고 키웁니다.',
+    strength: '배려심, 실용성, 근면함, 육성능력',
+    weakness: '소심함, 걱정 많음, 욕심',
+    suitable: '교육자, 간호사, 농업, 요식업'
+  },
+  경: {
+    element: '금', yinyang: '양',
+    image: '쇠, 철',
+    personality: '강직하고 의리가 있는 성격. 정의감이 강하고 원칙적입니다. 결단력이 뛰어납니다.',
+    strength: '정의감, 의리, 결단력, 추진력',
+    weakness: '융통성 부족, 강압적, 비타협적',
+    suitable: '군인, 경찰, 법조인, 기술자'
+  },
+  신: {
+    element: '금', yinyang: '음',
+    image: '보석, 귀금속',
+    personality: '세련되고 예리한 성격. 미적 감각이 뛰어나고 완벽을 추구합니다. 비판적 사고가 강합니다.',
+    strength: '심미안, 예리함, 완벽추구, 분석력',
+    weakness: '비판적, 냉소적, 예민함',
+    suitable: '디자이너, 보석상, 비평가, 전문직'
+  },
+  임: {
+    element: '수', yinyang: '양',
+    image: '큰 바다, 강',
+    personality: '지혜롭고 포용력 있는 성격. 통찰력이 뛰어나고 융통성이 있습니다. 변화에 유연합니다.',
+    strength: '지혜, 포용력, 융통성, 통찰력',
+    weakness: '우유부단, 변덕, 게으름',
+    suitable: '학자, 컨설턴트, 무역, 해운'
+  },
+  계: {
+    element: '수', yinyang: '음',
+    image: '이슬, 빗방울',
+    personality: '섬세하고 감수성이 풍부한 성격. 직관력이 뛰어나고 신비로운 면이 있습니다. 조용하지만 깊이가 있습니다.',
+    strength: '직관력, 감수성, 섬세함, 신비감',
+    weakness: '소심함, 의존성, 우울함',
+    suitable: '예술가, 종교인, 상담사, 점술가'
+  },
+} as const;
+
+// 오행 균형 분석
+export const ELEMENT_BALANCE = {
+  excess: {
+    목: {
+      personality: '성격이 급하고 신경질적일 수 있습니다. 창의적이나 완성도가 떨어질 수 있습니다.',
+      health: '간, 담, 눈, 신경계 주의. 스트레스 관리 필요.',
+      advice: '금(金) 기운으로 조절 필요. 침착함과 인내심 기르기.'
+    },
+    화: {
+      personality: '성격이 급하고 조급할 수 있습니다. 열정적이나 지속력이 부족할 수 있습니다.',
+      health: '심장, 혈압, 눈, 소화기 주의. 과열 주의.',
+      advice: '수(水) 기운으로 조절 필요. 차분함과 여유 갖기.'
+    },
+    토: {
+      personality: '고집이 세고 완고할 수 있습니다. 안정을 추구하나 변화를 두려워할 수 있습니다.',
+      health: '위, 비장, 소화기, 비만 주의.',
+      advice: '목(木) 기운으로 조절 필요. 유연성과 변화 수용하기.'
+    },
+    금: {
+      personality: '냉정하고 비판적일 수 있습니다. 원칙적이나 융통성이 부족할 수 있습니다.',
+      health: '폐, 호흡기, 대장, 피부 주의.',
+      advice: '화(火) 기운으로 조절 필요. 따뜻함과 감성 표현하기.'
+    },
+    수: {
+      personality: '우유부단하고 방황할 수 있습니다. 지혜롭지만 실행력이 부족할 수 있습니다.',
+      health: '신장, 방광, 생식기, 허리 주의. 냉증 주의.',
+      advice: '토(土) 기운으로 조절 필요. 실행력과 결단력 기르기.'
+    }
+  },
+  deficiency: {
+    목: {
+      personality: '창의력과 추진력이 부족할 수 있습니다. 소극적이고 우유부단할 수 있습니다.',
+      health: '간 기능 저하, 눈 건강 주의.',
+      advice: '목(木) 기운 보충 필요. 새로운 시도와 도전 필요.'
+    },
+    화: {
+      personality: '열정과 활력이 부족할 수 있습니다. 우울하고 소극적일 수 있습니다.',
+      health: '심장 기능, 혈액순환 주의.',
+      advice: '화(火) 기운 보충 필요. 밝고 긍정적인 마인드 필요.'
+    },
+    토: {
+      personality: '신뢰감과 안정감이 부족할 수 있습니다. 불안하고 초조할 수 있습니다.',
+      health: '소화기능 약함, 비장 주의.',
+      advice: '토(土) 기운 보충 필요. 안정과 신뢰 구축 필요.'
+    },
+    금: {
+      personality: '의지와 결단력이 부족할 수 있습니다. 원칙 없이 흔들릴 수 있습니다.',
+      health: '호흡기 약함, 면역력 주의.',
+      advice: '금(金) 기운 보충 필요. 원칙과 절제 필요.'
+    },
+    수: {
+      personality: '지혜와 융통성이 부족할 수 있습니다. 경직되고 딱딱할 수 있습니다.',
+      health: '신장 기능, 생식기 주의.',
+      advice: '수(水) 기운 보충 필요. 유연함과 지혜 필요.'
+    }
+  }
 } as const;
 
 // 절기 데이터

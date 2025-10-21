@@ -1,7 +1,7 @@
 'use client';
 
 import { SajuResult as SajuResultType } from '@/lib/saju-calculator';
-import { ELEMENTS } from '@/lib/saju-constants';
+import { ELEMENTS, TEN_GODS_DETAIL, ELEMENT_BALANCE, TWELVE_CYCLES_DETAIL } from '@/lib/saju-constants';
 import ElementsChart from './ElementsChart';
 import { useState } from 'react';
 
@@ -18,13 +18,16 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
 
   // 툴팁 정보
   const tooltips: Record<string, string> = {
-    '사주팔자': '년(年)·월(月)·일(日)·시(時) 네 기둥으로 태어난 시간의 우주 에너지를 나타냅니다. 천간(하늘)과 지지(땅)로 구성되며, 십성(十星)은 각 기둥이 나(일간)와 어떤 관계인지 보여줍니다.',
-    '오행분석': '목(木)·화(火)·토(土)·금(金)·수(水) 다섯 기운의 균형을 분석합니다. 부족하거나 과한 오행이 있으면 그에 따른 성격과 운명의 특징이 나타납니다.',
-    '신강신약': '일간(나)의 세력이 강한지 약한지 판단합니다. 신강이면 재성·관성이 좋고, 신약이면 인성·비겁이 도움이 됩니다.',
-    '12운성': '일간이 각 기둥에서 어떤 생명 주기 단계에 있는지 나타냅니다. 장생(시작), 목욕(성장), 관대(성숙) 등 12단계로 구분됩니다.',
-    '대운': '10년마다 바뀌는 큰 운의 흐름입니다. 각 대운마다 영향을 주는 천간·지지가 달라 인생의 전환기를 예측할 수 있습니다.',
-    '신살': '특별한 길흉의 별입니다. 천을귀인(귀인의 도움), 역마살(이동·변화), 도화살(인기·이성) 등이 있습니다.',
-    '합충': '천간이나 지지 간의 조화와 충돌을 분석합니다. 합(合)은 조화를, 충(沖)은 변화·충돌을 의미합니다.',
+    '종합평가': '사주의 전체적인 특징을 한눈에 볼 수 있는 요약입니다.',
+    '일간성격': '일간(태어난 날의 천간)은 나 자신을 나타내며, 기본 성격과 적성을 보여줍니다.',
+    '사주팔자': '년·월·일·시 네 기둥으로 태어난 시간의 우주 에너지를 나타냅니다.',
+    '십성분석': '십성은 나와 다른 간지의 관계를 나타내며, 인생의 여러 측면을 보여줍니다.',
+    '오행분석': '목·화·토·금·수 다섯 기운의 균형을 분석합니다.',
+    '신강신약': '일간의 세력이 강한지 약한지 판단합니다.',
+    '12운성': '일간이 각 기둥에서 어떤 생명 주기 단계에 있는지 나타냅니다.',
+    '대운': '10년마다 바뀌는 큰 운의 흐름입니다.',
+    '신살': '특별한 길흉의 별입니다.',
+    '합충': '천간이나 지지 간의 조화와 충돌을 분석합니다.',
   };
 
   const Tooltip = ({ title }: { title: string }) => (
@@ -132,7 +135,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
   };
 
   return (
-    <div id="saju-result" className="w-full max-w-6xl mx-auto space-y-8 animate-fade-in">
+    <div id="saju-result" className="w-full max-w-7xl mx-auto space-y-8 animate-fade-in">
       {/* 헤더 - 사용자 정보 */}
       <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white rounded-3xl shadow-2xl p-8 md:p-12 overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
@@ -141,13 +144,16 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         <div className="relative z-10">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-3">{name}님의 사주</h2>
-              <div className="flex items-center gap-4 text-lg">
+              <h2 className="text-4xl md:text-5xl font-bold mb-3">{name}님의 사주 풀이</h2>
+              <div className="flex items-center gap-4 text-lg flex-wrap">
                 <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
                   {gender === 'male' ? '남자 👨' : '여자 👩'}
                 </span>
                 <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
-                  {result.day.stem.ko}{result.day.stem.cn}일간
+                  {result.day.stem.ko}{result.day.stem.cn} 일간
+                </span>
+                <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+                  {result.day.stem.element} {result.day.stem.yinyang === '+' ? '양' : '음'}
                 </span>
               </div>
             </div>
@@ -180,6 +186,149 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
               >
                 다시 입력하기
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 종합 평가 */}
+      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 rounded-3xl shadow-xl p-8 border-2 border-amber-200 dark:border-amber-900">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1 h-8 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
+          <h3 className="text-3xl font-bold text-gray-800 dark:text-white">⭐ 종합 평가</h3>
+          <Tooltip title="종합평가" />
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 mb-6">
+          <div className="bg-white dark:bg-gray-700 p-6 rounded-2xl shadow-lg">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">일간 특성</div>
+            <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+              {result.dayPersonality.image}
+            </div>
+            <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              {result.dayPersonality.personality.split('. ')[0]}.
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-700 p-6 rounded-2xl shadow-lg">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">신강/신약</div>
+            <div className={`text-2xl font-bold mb-2 ${
+              result.strength === 'strong' ? 'text-red-600 dark:text-red-400' :
+              result.strength === 'weak' ? 'text-blue-600 dark:text-blue-400' :
+              'text-gray-600 dark:text-gray-400'
+            }`}>
+              {result.strength === 'strong' ? '신강 🔥' : result.strength === 'weak' ? '신약 💧' : '중화 ⚖️'}
+            </div>
+            <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              {result.strength === 'strong' && '일간이 강한 사주. 재성·관성이 용신'}
+              {result.strength === 'weak' && '일간이 약한 사주. 인성·비겁이 용신'}
+              {result.strength === 'neutral' && '균형 잡힌 중화 사주'}
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-700 p-6 rounded-2xl shadow-lg">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">용신 추천</div>
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+              {result.yongsin.split('(')[0]}
+            </div>
+            <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              필요한 기운을 보충하면 운이 좋아집니다
+            </div>
+          </div>
+        </div>
+
+        <div className="p-5 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-xl">
+          <div className="flex items-start gap-3">
+            <div className="text-3xl">💡</div>
+            <div>
+              <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2">핵심 포인트</h4>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <strong>{result.day.stem.ko}{result.day.stem.cn} 일간</strong>은 {result.dayPersonality.image}처럼 {result.dayPersonality.strength.split(',')[0]}의 장점이 있습니다.
+                십성 구성은 비겁 {result.tenGodsCount.비겁}, 식상 {result.tenGodsCount.식상}, 재성 {result.tenGodsCount.재성},
+                관성 {result.tenGodsCount.관성}, 인성 {result.tenGodsCount.인성}개로 이루어져 있으며,
+                {result.elementBalance.excess.length > 0 && ` ${result.elementBalance.excess.join('·')} 기운이 강하고`}
+                {result.elementBalance.deficiency.length > 0 && ` ${result.elementBalance.deficiency.join('·')} 기운이 부족합니다.`}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 일간 성격 분석 */}
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1 h-8 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></div>
+          <h3 className="text-3xl font-bold text-gray-800 dark:text-white">일간 성격 분석</h3>
+          <Tooltip title="일간성격" />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="p-5 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-xl">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="text-4xl font-bold" style={{ color: ELEMENTS[result.day.stem.element as keyof typeof ELEMENTS].color }}>
+                  {result.day.stem.ko}{result.day.stem.cn}
+                </div>
+                <div className="text-gray-600 dark:text-gray-400">
+                  {result.day.stem.element} {result.day.stem.yinyang === '+' ? '양' : '음'}
+                </div>
+              </div>
+              <div className="text-2xl font-semibold text-pink-700 dark:text-pink-300 mb-3">
+                {result.dayPersonality.image}
+              </div>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                {result.dayPersonality.personality}
+              </p>
+            </div>
+
+            <div className="p-5 bg-green-50 dark:bg-green-900/20 rounded-xl">
+              <h4 className="font-bold text-green-700 dark:text-green-300 mb-2 flex items-center gap-2">
+                <span>✨</span> 장점
+              </h4>
+              <p className="text-gray-700 dark:text-gray-300">{result.dayPersonality.strength}</p>
+            </div>
+
+            <div className="p-5 bg-orange-50 dark:bg-orange-900/20 rounded-xl">
+              <h4 className="font-bold text-orange-700 dark:text-orange-300 mb-2 flex items-center gap-2">
+                <span>⚠️</span> 주의할 점
+              </h4>
+              <p className="text-gray-700 dark:text-gray-300">{result.dayPersonality.weakness}</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="p-5 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+              <h4 className="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+                <span>💼</span> 적합한 직업
+              </h4>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">{result.dayPersonality.suitable}</p>
+              <div className="space-y-2">
+                {result.dayPersonality.suitable.split(',').map((job, idx) => (
+                  <div key={idx} className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-sm mr-2 mb-2">
+                    {job.trim()}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-5 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl">
+              <h4 className="font-bold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+                <span>🎯</span> 성공 전략
+              </h4>
+              <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+                <li className="flex items-start gap-2">
+                  <span className="text-purple-500 mt-1">•</span>
+                  <span>장점인 {result.dayPersonality.strength.split(',')[0]}을(를) 최대한 활용하세요</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-purple-500 mt-1">•</span>
+                  <span>{result.dayPersonality.weakness.split(',')[0]}을(를) 보완하도록 노력하세요</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-purple-500 mt-1">•</span>
+                  <span>용신인 {result.yongsin.split('(')[0]} 기운을 보충하세요</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

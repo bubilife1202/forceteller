@@ -1,4 +1,4 @@
-import { HEAVENLY_STEMS, EARTHLY_BRANCHES } from './saju-constants';
+import { HEAVENLY_STEMS, EARTHLY_BRANCHES, DAY_STEM_PERSONALITY, ELEMENT_BALANCE, TEN_GODS_DETAIL } from './saju-constants';
 import {
   calculateDaeun,
   getTwelveCycle,
@@ -49,6 +49,20 @@ export interface SajuResult {
   daeun: DaeunPillar[];
   shinsals: Shinsal[];
   hapchung: HapchungResult[];
+  // 추가 상세 분석
+  dayPersonality: typeof DAY_STEM_PERSONALITY[keyof typeof DAY_STEM_PERSONALITY];
+  elementBalance: {
+    excess: string[]; // 과다한 오행
+    deficiency: string[]; // 부족한 오행
+  };
+  yongsin: string; // 용신 (필요한 오행)
+  tenGodsCount: {
+    비겁: number;
+    식상: number;
+    재성: number;
+    관성: number;
+    인성: number;
+  };
 }
 
 // 년주(年柱) 계산
@@ -262,6 +276,18 @@ export function calculateSaju(dateInfo: DateInfo, gender: 'male' | 'female' = 'm
   // 합충 분석
   const hapchung = analyzeHapchung(pillars);
 
+  // 일간 성격 분석
+  const dayPersonality = DAY_STEM_PERSONALITY[dayPillar.stem.ko as keyof typeof DAY_STEM_PERSONALITY];
+
+  // 오행 균형 분석
+  const elementBalance = analyzeElementBalance(elements);
+
+  // 용신 계산
+  const yongsin = calculateYongsin(strength, elements);
+
+  // 십성 개수 세기
+  const tenGodsCount = countTenGods(tenGods);
+
   return {
     year: yearPillar,
     month: monthPillar,
@@ -274,5 +300,64 @@ export function calculateSaju(dateInfo: DateInfo, gender: 'male' | 'female' = 'm
     daeun,
     shinsals,
     hapchung,
+    dayPersonality,
+    elementBalance,
+    yongsin,
+    tenGodsCount,
   };
+}
+
+// 오행 균형 분석 (과다/부족)
+function analyzeElementBalance(elements: { 목: number; 화: number; 토: number; 금: number; 수: number }) {
+  const avg = 20; // 평균 20%
+  const excess: string[] = [];
+  const deficiency: string[] = [];
+
+  Object.entries(elements).forEach(([element, value]) => {
+    if (value > 30) excess.push(element); // 30% 이상이면 과다
+    if (value < 10) deficiency.push(element); // 10% 이하면 부족
+  });
+
+  return { excess, deficiency };
+}
+
+// 용신 계산 (간단 버전)
+function calculateYongsin(
+  strength: 'strong' | 'weak' | 'neutral',
+  elements: { 목: number; 화: number; 토: number; 금: number; 수: number }
+): string {
+  if (strength === 'strong') {
+    // 신강이면 재성(재물), 관성(명예), 식상(표현)이 용신
+    // 부족한 오행을 찾아서 추천
+    const sorted = Object.entries(elements).sort((a, b) => a[1] - b[1]);
+    return `${sorted[0][0]}(재성/관성/식상 중 부족한 기운 보충)`;
+  } else if (strength === 'weak') {
+    // 신약이면 인성(학문), 비겁(형제)이 용신
+    return '인성·비겁 (나를 돕는 기운 필요)';
+  } else {
+    return '균형 유지 (중화된 사주)';
+  }
+}
+
+// 십성 개수 세기
+function countTenGods(tenGods: { year: string; month: string; day: string; hour: string }) {
+  const count = {
+    비겁: 0,
+    식상: 0,
+    재성: 0,
+    관성: 0,
+    인성: 0,
+  };
+
+  Object.values(tenGods).forEach(god => {
+    const detail = TEN_GODS_DETAIL[god as keyof typeof TEN_GODS_DETAIL];
+    if (detail) {
+      const category = detail.category as keyof typeof count;
+      if (count[category] !== undefined) {
+        count[category]++;
+      }
+    }
+  });
+
+  return count;
 }
