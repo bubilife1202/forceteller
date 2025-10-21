@@ -2,6 +2,8 @@
 
 import { SajuResult as SajuResultType } from '@/lib/saju-calculator';
 import { ELEMENTS } from '@/lib/saju-constants';
+import ElementsChart from './ElementsChart';
+import { useState } from 'react';
 
 interface SajuResultProps {
   result: SajuResultType;
@@ -11,8 +13,75 @@ interface SajuResultProps {
 }
 
 export default function SajuResult({ result, name, gender, onReset }: SajuResultProps) {
+  const [isSaving, setIsSaving] = useState(false);
+
+  // 저장하기
+  const handleSave = () => {
+    const data = {
+      name,
+      gender,
+      result,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem(`saju_${Date.now()}`, JSON.stringify(data));
+    alert('결과가 저장되었습니다!');
+  };
+
+  // SNS 공유
+  const handleShare = async (platform: 'kakao' | 'facebook' | 'twitter') => {
+    const text = `${name}님의 사주 - ${result.day.stem.ko}${result.day.stem.cn} 일간`;
+    const url = window.location.href;
+
+    if (platform === 'kakao') {
+      alert('카카오톡 공유는 SDK 설정이 필요합니다.');
+    } else if (platform === 'facebook') {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+    } else if (platform === 'twitter') {
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+    }
+  };
+
+  // PDF 다운로드
+  const handleDownloadPDF = async () => {
+    setIsSaving(true);
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const jsPDF = (await import('jspdf')).default;
+
+      const element = document.getElementById('saju-result');
+      if (!element) return;
+
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`${name}_사주풀이.pdf`);
+    } catch (error) {
+      console.error('PDF 생성 오류:', error);
+      alert('PDF 생성 중 오류가 발생했습니다.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-8 animate-fade-in">
+    <div id="saju-result" className="w-full max-w-6xl mx-auto space-y-8 animate-fade-in">
       {/* 헤더 - 사용자 정보 */}
       <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white rounded-3xl shadow-2xl p-8 md:p-12 overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
@@ -31,12 +100,36 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
                 </span>
               </div>
             </div>
-            <button
-              onClick={onReset}
-              className="px-6 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:bg-opacity-90 transition"
-            >
-              다시 입력하기
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition"
+                title="결과 저장"
+              >
+                💾 저장
+              </button>
+              <button
+                onClick={handleDownloadPDF}
+                disabled={isSaving}
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition disabled:opacity-50"
+                title="PDF 다운로드"
+              >
+                📄 {isSaving ? '생성중...' : 'PDF'}
+              </button>
+              <button
+                onClick={() => handleShare('facebook')}
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition"
+                title="공유하기"
+              >
+                🔗 공유
+              </button>
+              <button
+                onClick={onReset}
+                className="px-6 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:bg-opacity-90 transition"
+              >
+                다시 입력하기
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -163,14 +256,20 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* 오행 분석 */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1 h-8 bg-gradient-to-b from-green-500 to-blue-500 rounded-full"></div>
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white">오행 분석</h3>
+      {/* 오행 분석 (전체 폭) */}
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-1 h-8 bg-gradient-to-b from-green-500 to-blue-500 rounded-full"></div>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white">오행 분석</h3>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* 레이더 차트 */}
+          <div>
+            <ElementsChart elements={result.elements} />
           </div>
 
+          {/* 바 차트 */}
           <div className="space-y-6">
             {Object.entries(result.elements).map(([element, value]) => (
               <div key={element} className="space-y-2 animate-slide-in">
@@ -198,6 +297,9 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-8">
 
         {/* 신강/신약 판단 */}
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">

@@ -12,6 +12,7 @@ export interface FormData {
   minute: number;
   city: string;
   timeUnknown: boolean;
+  isLunar: boolean;
 }
 
 interface SajuFormProps {
@@ -45,6 +46,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
     minute: 0,
     city: '',
     timeUnknown: false,
+    isLunar: false,
   });
 
   const [showHourGuide, setShowHourGuide] = useState(false);
@@ -132,9 +134,35 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
 
             {/* 생년월일 입력 */}
             <div className="animate-slide-in" style={{ animationDelay: '0.2s' }}>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
-                생년월일 <span className="text-xs text-gray-500">(양력)</span>
-              </label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                  생년월일
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, isLunar: false })}
+                    className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                      !formData.isLunar
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    양력
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, isLunar: true })}
+                    className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                      formData.isLunar
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    음력
+                  </button>
+                </div>
+              </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <input
