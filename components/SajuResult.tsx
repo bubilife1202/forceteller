@@ -14,6 +14,40 @@ interface SajuResultProps {
 
 export default function SajuResult({ result, name, gender, onReset }: SajuResultProps) {
   const [isSaving, setIsSaving] = useState(false);
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
+
+  // 툴팁 정보
+  const tooltips: Record<string, string> = {
+    '사주팔자': '년(年)·월(月)·일(日)·시(時) 네 기둥으로 태어난 시간의 우주 에너지를 나타냅니다. 천간(하늘)과 지지(땅)로 구성되며, 십성(十星)은 각 기둥이 나(일간)와 어떤 관계인지 보여줍니다.',
+    '오행분석': '목(木)·화(火)·토(土)·금(金)·수(水) 다섯 기운의 균형을 분석합니다. 부족하거나 과한 오행이 있으면 그에 따른 성격과 운명의 특징이 나타납니다.',
+    '신강신약': '일간(나)의 세력이 강한지 약한지 판단합니다. 신강이면 재성·관성이 좋고, 신약이면 인성·비겁이 도움이 됩니다.',
+    '12운성': '일간이 각 기둥에서 어떤 생명 주기 단계에 있는지 나타냅니다. 장생(시작), 목욕(성장), 관대(성숙) 등 12단계로 구분됩니다.',
+    '대운': '10년마다 바뀌는 큰 운의 흐름입니다. 각 대운마다 영향을 주는 천간·지지가 달라 인생의 전환기를 예측할 수 있습니다.',
+    '신살': '특별한 길흉의 별입니다. 천을귀인(귀인의 도움), 역마살(이동·변화), 도화살(인기·이성) 등이 있습니다.',
+    '합충': '천간이나 지지 간의 조화와 충돌을 분석합니다. 합(合)은 조화를, 충(沖)은 변화·충돌을 의미합니다.',
+  };
+
+  const Tooltip = ({ title }: { title: string }) => (
+    <div className="relative inline-block">
+      <button
+        className="ml-2 w-5 h-5 rounded-full bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition"
+        onMouseEnter={() => setShowTooltip(title)}
+        onMouseLeave={() => setShowTooltip(null)}
+        onClick={(e) => {
+          e.preventDefault();
+          setShowTooltip(showTooltip === title ? null : title);
+        }}
+      >
+        ?
+      </button>
+      {showTooltip === title && (
+        <div className="absolute left-0 top-8 z-50 w-72 p-4 bg-gray-900 text-white text-sm rounded-xl shadow-2xl">
+          <div className="absolute -top-2 left-4 w-4 h-4 bg-gray-900 transform rotate-45"></div>
+          {tooltips[title]}
+        </div>
+      )}
+    </div>
+  );
 
   // 저장하기
   const handleSave = () => {
@@ -46,12 +80,28 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
     setIsSaving(true);
     try {
       const html2canvas = (await import('html2canvas')).default;
-      const jsPDF = (await import('jspdf')).default;
+      const { jsPDF } = await import('jspdf');
 
       const element = document.getElementById('saju-result');
-      if (!element) return;
+      if (!element) {
+        alert('PDF로 저장할 내용을 찾을 수 없습니다.');
+        return;
+      }
 
-      const canvas = await html2canvas(element, { scale: 2 });
+      // 버튼 숨기기
+      const buttons = element.querySelectorAll('button');
+      buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      // 버튼 다시 보이기
+      buttons.forEach(btn => (btn as HTMLElement).style.display = '');
+
       const imgData = canvas.toDataURL('image/png');
 
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -72,9 +122,10 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       }
 
       pdf.save(`${name}_사주풀이.pdf`);
+      alert('PDF 다운로드가 완료되었습니다!');
     } catch (error) {
       console.error('PDF 생성 오류:', error);
-      alert('PDF 생성 중 오류가 발생했습니다.');
+      alert('PDF 생성 중 오류가 발생했습니다: ' + (error as Error).message);
     } finally {
       setIsSaving(false);
     }
@@ -139,6 +190,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         <div className="flex items-center gap-3 mb-8">
           <div className="w-1 h-8 bg-gradient-to-b from-indigo-600 to-purple-600 rounded-full"></div>
           <h3 className="text-3xl font-bold text-gray-800 dark:text-white">사주 팔자</h3>
+          <Tooltip title="사주팔자" />
         </div>
 
         <div className="overflow-x-auto">
@@ -261,6 +313,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         <div className="flex items-center gap-3 mb-8">
           <div className="w-1 h-8 bg-gradient-to-b from-green-500 to-blue-500 rounded-full"></div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white">오행 분석</h3>
+          <Tooltip title="오행분석" />
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -306,6 +359,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
           <div className="flex items-center gap-3 mb-8">
             <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-red-500 rounded-full"></div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white">신강/신약 분석</h3>
+            <Tooltip title="신강신약" />
           </div>
 
           <div className="flex flex-col items-center justify-center h-full space-y-6">
@@ -349,6 +403,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white">12운성</h3>
+          <Tooltip title="12운성" />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -376,6 +431,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white">대운 (大運)</h3>
+          <Tooltip title="대운" />
         </div>
 
         <div className="overflow-x-auto">
@@ -402,6 +458,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-8 bg-gradient-to-b from-yellow-500 to-orange-500 rounded-full"></div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white">신살</h3>
+            <Tooltip title="신살" />
           </div>
 
           {result.shinsals.length > 0 ? (
@@ -435,6 +492,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-8 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white">합충형파해</h3>
+            <Tooltip title="합충" />
           </div>
 
           {result.hapchung.length > 0 ? (
