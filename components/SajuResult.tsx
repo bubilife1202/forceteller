@@ -708,9 +708,13 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       </div>
 
       {/* 하단 안내 */}
-      <div className="text-center text-sm text-gray-500 space-y-2 pt-8">
+      <div className="text-center text-sm text-gray-500 dark:text-gray-400 space-y-2 pt-8">
         <p>이 사주 풀이는 전통적인 명리학 계산 방식을 기반으로 합니다</p>
         <p>더 정확한 해석을 원하시면 전문가와 상담하시기 바랍니다</p>
+        <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-6">
+          <p className="font-semibold text-indigo-600 dark:text-indigo-400">포스텔러 만세력 v2.3.0</p>
+          <p className="text-xs mt-1 text-gray-400">Build: {new Date().toISOString().split('T')[0]} | PDF Download & Share Features Enabled</p>
+        </div>
       </div>
     </div>
   );
