@@ -66,7 +66,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
     }
   };
 
-  // 이미지 다운로드 - 브라우저 full capture처럼 깔끔하게
+  // 이미지 다운로드 - 전체 화면 완벽하게 캡처
   const handleDownloadPDF = async () => {
     setIsSaving(true);
     try {
@@ -86,14 +86,26 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       // DOM 안정화 대기
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // 고품질 PNG 생성 (픽셀 단위로 정확하게 캡처)
+      // 요소의 실제 크기 가져오기 (잘림 방지)
+      const rect = element.getBoundingClientRect();
+      const scrollWidth = element.scrollWidth;
+      const scrollHeight = element.scrollHeight;
+
+      // 고품질 PNG 생성 (전체 너비/높이 캡처)
       const dataUrl = await htmlToImage.toPng(element, {
         quality: 1.0,
         pixelRatio: 3, // 3배 해상도
         backgroundColor: '#ffffff',
-        cacheBust: true, // 캐시 무시로 최신 상태 보장
+        cacheBust: true,
         skipAutoScale: false,
         preferredFontFormat: 'woff2',
+        // 전체 너비와 높이를 명시적으로 지정 (잘림 방지)
+        width: scrollWidth,
+        height: scrollHeight,
+        style: {
+          margin: '0',
+          padding: '0',
+        }
       });
 
       // 버튼 다시 보이기
