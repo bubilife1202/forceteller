@@ -64,10 +64,9 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="mt-16 text-center">
-          <div className="inline-block px-6 py-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-lg">
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">포스텔러 만세력 v2.2</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              © 2024 Forceteller. All rights reserved.
+          <div className="inline-block px-6 py-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-lg">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              © 2025 Forceteller. All rights reserved.
             </p>
           </div>
         </footer>
