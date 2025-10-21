@@ -122,3 +122,21 @@ select:focus {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
+
+/* PDF 페이지 분할 스타일 */
+@media print {
+  .pdf-avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .pdf-page-break-before {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .pdf-page-break-after {
+    page-break-after: always;
+    break-after: page;
+  }
+}

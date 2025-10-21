@@ -99,18 +99,38 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       const today = new Date().toISOString().split('T')[0];
       const filename = `${name}_사주풀이_${today}.pdf`;
 
-      // html2pdf 옵션 설정
+      // html2pdf 옵션 설정 (고품질 + 자동 페이지 분할)
       const opt = {
-        margin: 10,
+        margin: [10, 10, 10, 10] as [number, number, number, number],
         filename: filename,
-        image: { type: 'jpeg' as const, quality: 0.98 },
+        image: { type: 'png' as const, quality: 1.0 },
         html2canvas: {
-          scale: 2,
+          scale: 3,
           useCORS: true,
           logging: false,
-          backgroundColor: '#ffffff'
+          backgroundColor: '#ffffff',
+          scrollY: 0,
+          scrollX: 0,
+          windowWidth: element.scrollWidth,
+          windowHeight: element.scrollHeight
         },
-        jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
+        jsPDF: {
+          unit: 'mm' as const,
+          format: 'a4' as const,
+          orientation: 'portrait' as const,
+          compress: true
+        },
+        pagebreak: {
+          mode: ['avoid-all', 'css', 'legacy'],
+          before: '.pdf-page-break-before',
+          after: '.pdf-page-break-after',
+          avoid: ['.pdf-avoid-break', 'button']
+        } as {
+          mode: string[];
+          before: string;
+          after: string;
+          avoid: string[];
+        }
       };
 
       // PDF 생성 및 다운로드
@@ -188,7 +208,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       </div>
 
       {/* 종합 평가 */}
-      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 rounded-3xl shadow-xl p-8 border-2 border-amber-200 dark:border-amber-900">
+      <div className="pdf-avoid-break bg-gradient-to-br from-amber-50 via-orange-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 rounded-3xl shadow-xl p-8 border-2 border-amber-200 dark:border-amber-900">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-8 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
           <h3 className="text-3xl font-bold text-gray-800 dark:text-white">⭐ 종합 평가</h3>
@@ -251,7 +271,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       </div>
 
       {/* 일간 성격 분석 */}
-      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+      <div className="pdf-avoid-break bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-8 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></div>
           <h3 className="text-3xl font-bold text-gray-800 dark:text-white">일간 성격 분석</h3>
@@ -331,7 +351,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       </div>
 
       {/* 사주 팔자 */}
-      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 md:p-10 card-hover">
+      <div className="pdf-page-break-before pdf-avoid-break bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 md:p-10 card-hover">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-1 h-8 bg-gradient-to-b from-indigo-600 to-purple-600 rounded-full"></div>
           <h3 className="text-3xl font-bold text-gray-800 dark:text-white">사주 팔자</h3>
@@ -454,7 +474,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       </div>
 
       {/* 오행 분석 (전체 폭) */}
-      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+      <div className="pdf-avoid-break bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-1 h-8 bg-gradient-to-b from-green-500 to-blue-500 rounded-full"></div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white">오행 분석</h3>
@@ -500,7 +520,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       <div className="grid md:grid-cols-2 gap-8">
 
         {/* 신강/신약 판단 */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+        <div className="pdf-avoid-break bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-red-500 rounded-full"></div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white">신강/신약 분석</h3>
@@ -544,7 +564,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       </div>
 
       {/* 12운성 */}
-      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+      <div className="pdf-avoid-break bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white">12운성</h3>
@@ -572,7 +592,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       </div>
 
       {/* 대운 */}
-      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+      <div className="pdf-avoid-break bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white">대운 (大運)</h3>
@@ -599,7 +619,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       {/* 신살 & 합충 */}
       <div className="grid md:grid-cols-2 gap-8">
         {/* 신살 */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+        <div className="pdf-avoid-break bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-8 bg-gradient-to-b from-yellow-500 to-orange-500 rounded-full"></div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white">신살</h3>
@@ -633,7 +653,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         </div>
 
         {/* 합충 */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+        <div className="pdf-avoid-break bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-8 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></div>
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white">합충형파해</h3>
