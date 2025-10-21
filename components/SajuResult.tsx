@@ -52,18 +52,6 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
     </div>
   );
 
-  // 저장하기
-  const handleSave = () => {
-    const data = {
-      name,
-      gender,
-      result,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem(`saju_${Date.now()}`, JSON.stringify(data));
-    alert('결과가 저장되었습니다!');
-  };
-
   // SNS 공유
   const handleShare = async (platform: 'kakao' | 'facebook' | 'twitter') => {
     const text = `${name}님의 사주 - ${result.day.stem.ko}${result.day.stem.cn} 일간`;
@@ -162,13 +150,6 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition"
-                title="결과 저장"
-              >
-                💾 저장
-              </button>
               <button
                 onClick={handleDownloadPDF}
                 disabled={isSaving}
