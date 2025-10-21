@@ -10,6 +10,55 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  /* PDF 호환성을 위해 RGB 색상 명시 */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-600: #4f46e5;
+  --color-indigo-700: #4338ca;
+
+  --color-purple-50: #faf5ff;
+  --color-purple-100: #f3e8ff;
+  --color-purple-600: #9333ea;
+  --color-purple-700: #7e22ce;
+
+  --color-pink-50: #fdf2f8;
+  --color-pink-600: #db2777;
+  --color-pink-700: #be185d;
+
+  --color-blue-50: #eff6ff;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+
+  --color-green-50: #f0fdf4;
+  --color-green-600: #16a34a;
+  --color-green-700: #15803d;
+
+  --color-red-50: #fef2f2;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+
+  --color-orange-50: #fff7ed;
+  --color-orange-600: #ea580c;
+  --color-orange-700: #c2410c;
+
+  --color-amber-50: #fffbeb;
+  --color-amber-200: #fde68a;
+  --color-amber-500: #f59e0b;
+
+  --color-rose-50: #fff1f2;
+  --color-rose-600: #e11d48;
 }
 
 @media (prefers-color-scheme: dark) {

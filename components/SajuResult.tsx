@@ -1,7 +1,7 @@
 'use client';
 
 import { SajuResult as SajuResultType } from '@/lib/saju-calculator';
-import { ELEMENTS, TEN_GODS_DETAIL, ELEMENT_BALANCE, TWELVE_CYCLES_DETAIL } from '@/lib/saju-constants';
+import { ELEMENTS } from '@/lib/saju-constants';
 import ElementsChart from './ElementsChart';
 import { useState } from 'react';
 
@@ -99,7 +99,47 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
+        // lab 색상 문제 해결
+        onclone: (clonedDoc) => {
+          try {
+            const clonedElement = clonedDoc.getElementById('saju-result');
+            if (clonedElement) {
+              // lab 색상을 사용하는 Tailwind 클래스들을 안전한 색상으로 대체
+              const allElements = clonedElement.querySelectorAll('*');
+              allElements.forEach((el) => {
+                const htmlEl = el as HTMLElement;
+
+                // inline style로 안전한 색상 강제 적용
+                try {
+                  const style = htmlEl.style;
+
+                  // 배경색이 있으면 그대로, 없으면 패스
+                  if (style.backgroundColor) {
+                    const bgColor = style.backgroundColor;
+                    if (bgColor.includes('lab') || bgColor.includes('oklab')) {
+                      style.backgroundColor = 'white';
+                    }
+                  }
+
+                  // 텍스트 색상
+                  if (style.color) {
+                    const color = style.color;
+                    if (color.includes('lab') || color.includes('oklab')) {
+                      style.color = 'black';
+                    }
+                  }
+                } catch {
+                  // 개별 요소 에러는 무시하고 계속
+                }
+              });
+            }
+          } catch (err) {
+            console.warn('onclone 처리 중 경고:', err);
+          }
+        }
       });
 
       // 버튼 다시 보이기
@@ -128,7 +168,7 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       alert('PDF 다운로드가 완료되었습니다!');
     } catch (error) {
       console.error('PDF 생성 오류:', error);
-      alert('PDF 생성 중 오류가 발생했습니다: ' + (error as Error).message);
+      alert('PDF 생성 중 오류가 발생했습니다. 다시 시도해 주세요.');
     } finally {
       setIsSaving(false);
     }

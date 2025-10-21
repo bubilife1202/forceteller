@@ -1,4 +1,4 @@
-import { HEAVENLY_STEMS, EARTHLY_BRANCHES, DAY_STEM_PERSONALITY, ELEMENT_BALANCE, TEN_GODS_DETAIL } from './saju-constants';
+import { HEAVENLY_STEMS, EARTHLY_BRANCHES, DAY_STEM_PERSONALITY, TEN_GODS_DETAIL } from './saju-constants';
 import {
   calculateDaeun,
   getTwelveCycle,
@@ -308,8 +308,8 @@ export function calculateSaju(dateInfo: DateInfo, gender: 'male' | 'female' = 'm
 }
 
 // 오행 균형 분석 (과다/부족)
+// 평균 20%를 기준으로 30% 이상은 과다, 10% 이하는 부족으로 판단
 function analyzeElementBalance(elements: { 목: number; 화: number; 토: number; 금: number; 수: number }) {
-  const avg = 20; // 평균 20%
   const excess: string[] = [];
   const deficiency: string[] = [];
 
