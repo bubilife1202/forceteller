@@ -106,53 +106,122 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         logging: false,
         backgroundColor: '#ffffff',
         onclone: (clonedDoc) => {
-          // Replace all oklab/lab colors with safe RGB values
-          const clonedElement = clonedDoc.getElementById('saju-result');
-          if (!clonedElement) return;
-
-          const allElements = clonedElement.querySelectorAll('*');
-          allElements.forEach((el) => {
-            const htmlEl = el as HTMLElement;
-            const computed = window.getComputedStyle(el);
-
-            // Replace background colors
-            if (computed.backgroundColor && (computed.backgroundColor.includes('lab') || computed.backgroundColor.includes('oklab'))) {
-              const currentBg = computed.backgroundColor;
-              // Try to extract a safe fallback or use white
-              if (currentBg.includes('255')) {
-                htmlEl.style.backgroundColor = '#ffffff';
-              } else if (currentBg.includes('0, 0, 0')) {
-                htmlEl.style.backgroundColor = '#000000';
-              } else {
-                htmlEl.style.backgroundColor = '#f9fafb'; // Default to gray-50
-              }
+          // Inject CSS to override all oklab/lab colors with safe RGB values
+          const style = clonedDoc.createElement('style');
+          style.textContent = `
+            * {
+              /* Force all colors to use RGB instead of oklab/lab */
+              color: rgb(17, 24, 39) !important;
             }
 
-            // Replace text colors
-            if (computed.color && (computed.color.includes('lab') || computed.color.includes('oklab'))) {
-              const currentColor = computed.color;
-              if (currentColor.includes('255')) {
-                htmlEl.style.color = '#ffffff';
-              } else if (currentColor.includes('0, 0, 0')) {
-                htmlEl.style.color = '#000000';
-              } else {
-                htmlEl.style.color = '#111827'; // Default to gray-900
-              }
+            /* Override common Tailwind color utilities with RGB */
+            .text-white { color: rgb(255, 255, 255) !important; }
+            .text-black { color: rgb(0, 0, 0) !important; }
+            .text-gray-50 { color: rgb(249, 250, 251) !important; }
+            .text-gray-100 { color: rgb(243, 244, 246) !important; }
+            .text-gray-200 { color: rgb(229, 231, 235) !important; }
+            .text-gray-300 { color: rgb(209, 213, 219) !important; }
+            .text-gray-400 { color: rgb(156, 163, 175) !important; }
+            .text-gray-500 { color: rgb(107, 114, 128) !important; }
+            .text-gray-600 { color: rgb(75, 85, 99) !important; }
+            .text-gray-700 { color: rgb(55, 65, 81) !important; }
+            .text-gray-800 { color: rgb(31, 41, 55) !important; }
+            .text-gray-900 { color: rgb(17, 24, 39) !important; }
+            .text-indigo-300 { color: rgb(165, 180, 252) !important; }
+            .text-indigo-400 { color: rgb(129, 140, 248) !important; }
+            .text-indigo-500 { color: rgb(99, 102, 241) !important; }
+            .text-indigo-600 { color: rgb(79, 70, 229) !important; }
+            .text-indigo-700 { color: rgb(67, 56, 202) !important; }
+            .text-purple-300 { color: rgb(216, 180, 254) !important; }
+            .text-purple-400 { color: rgb(192, 132, 252) !important; }
+            .text-purple-500 { color: rgb(168, 85, 247) !important; }
+            .text-purple-600 { color: rgb(147, 51, 234) !important; }
+            .text-purple-700 { color: rgb(126, 34, 206) !important; }
+            .text-pink-300 { color: rgb(249, 168, 212) !important; }
+            .text-pink-600 { color: rgb(219, 39, 119) !important; }
+            .text-pink-700 { color: rgb(190, 24, 93) !important; }
+            .text-red-300 { color: rgb(252, 165, 165) !important; }
+            .text-red-400 { color: rgb(248, 113, 113) !important; }
+            .text-red-600 { color: rgb(220, 38, 38) !important; }
+            .text-red-700 { color: rgb(185, 28, 28) !important; }
+            .text-orange-300 { color: rgb(253, 186, 116) !important; }
+            .text-orange-700 { color: rgb(194, 65, 12) !important; }
+            .text-blue-300 { color: rgb(147, 197, 253) !important; }
+            .text-blue-400 { color: rgb(96, 165, 250) !important; }
+            .text-blue-600 { color: rgb(37, 99, 235) !important; }
+            .text-blue-700 { color: rgb(29, 78, 216) !important; }
+            .text-green-300 { color: rgb(134, 239, 172) !important; }
+            .text-green-700 { color: rgb(21, 128, 61) !important; }
+            .text-cyan-400 { color: rgb(34, 211, 238) !important; }
+            .text-cyan-600 { color: rgb(8, 145, 178) !important; }
+
+            /* Background colors */
+            .bg-white { background-color: rgb(255, 255, 255) !important; }
+            .bg-gray-50 { background-color: rgb(249, 250, 251) !important; }
+            .bg-gray-100 { background-color: rgb(243, 244, 246) !important; }
+            .bg-gray-200 { background-color: rgb(229, 231, 235) !important; }
+            .bg-gray-700 { background-color: rgb(55, 65, 81) !important; }
+            .bg-gray-800 { background-color: rgb(31, 41, 55) !important; }
+            .bg-indigo-50 { background-color: rgb(238, 242, 255) !important; }
+            .bg-indigo-100 { background-color: rgb(224, 231, 255) !important; }
+            .bg-purple-50 { background-color: rgb(250, 245, 255) !important; }
+            .bg-purple-100 { background-color: rgb(243, 232, 255) !important; }
+            .bg-pink-50 { background-color: rgb(253, 242, 248) !important; }
+            .bg-pink-100 { background-color: rgb(252, 231, 243) !important; }
+            .bg-rose-50 { background-color: rgb(255, 241, 242) !important; }
+            .bg-red-50 { background-color: rgb(254, 242, 242) !important; }
+            .bg-red-100 { background-color: rgb(254, 226, 226) !important; }
+            .bg-orange-50 { background-color: rgb(255, 247, 237) !important; }
+            .bg-amber-50 { background-color: rgb(255, 251, 235) !important; }
+            .bg-amber-200 { background-color: rgb(253, 230, 138) !important; }
+            .bg-blue-50 { background-color: rgb(239, 246, 255) !important; }
+            .bg-blue-100 { background-color: rgb(219, 234, 254) !important; }
+            .bg-cyan-50 { background-color: rgb(236, 254, 255) !important; }
+            .bg-green-50 { background-color: rgb(240, 253, 244) !important; }
+
+            /* Border colors */
+            .border-gray-200 { border-color: rgb(229, 231, 235) !important; }
+            .border-gray-600 { border-color: rgb(75, 85, 99) !important; }
+            .border-gray-700 { border-color: rgb(55, 65, 81) !important; }
+            .border-amber-200 { border-color: rgb(253, 230, 138) !important; }
+            .border-amber-900 { border-color: rgb(120, 53, 15) !important; }
+
+            /* Remove problematic gradients and replace with solid colors */
+            [class*="gradient"] {
+              background-image: none !important;
+              background-color: rgb(249, 250, 251) !important;
             }
 
-            // Replace border colors
-            if (computed.borderColor && (computed.borderColor.includes('lab') || computed.borderColor.includes('oklab'))) {
-              htmlEl.style.borderColor = '#e5e7eb'; // gray-200
+            /* Specific gradient overrides */
+            .bg-gradient-to-br.from-indigo-600 {
+              background: rgb(79, 70, 229) !important;
+              background-image: none !important;
             }
-
-            // Replace gradient backgrounds if they contain lab colors
-            if (computed.backgroundImage && computed.backgroundImage !== 'none') {
-              if (computed.backgroundImage.includes('lab') || computed.backgroundImage.includes('oklab')) {
-                htmlEl.style.backgroundImage = 'none';
-                htmlEl.style.backgroundColor = '#f9fafb';
-              }
+            .bg-gradient-to-br.from-amber-50 {
+              background: rgb(255, 251, 235) !important;
+              background-image: none !important;
             }
-          });
+            .bg-gradient-to-r.from-indigo-100 {
+              background: rgb(224, 231, 255) !important;
+              background-image: none !important;
+            }
+            .bg-gradient-to-br.from-pink-50 {
+              background: rgb(253, 242, 248) !important;
+              background-image: none !important;
+            }
+            .bg-gradient-to-br.from-purple-50 {
+              background: rgb(250, 245, 255) !important;
+              background-image: none !important;
+            }
+            .bg-gradient-to-br.from-blue-50 {
+              background: rgb(239, 246, 255) !important;
+              background-image: none !important;
+            }
+            .bg-gradient-to-b {
+              background-image: none !important;
+            }
+          `;
+          clonedDoc.head.appendChild(style);
         }
       });
 
