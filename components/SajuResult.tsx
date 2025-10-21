@@ -106,7 +106,9 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         logging: false,
         backgroundColor: '#ffffff',
         onclone: (clonedDoc) => {
-          // Inject CSS to override all oklab/lab colors with safe RGB values
+          // Double defense: CSS injection + inline style override
+
+          // 1. Inject CSS to override all oklab/lab colors with safe RGB values
           const style = clonedDoc.createElement('style');
           style.textContent = `
             * {
@@ -222,6 +224,30 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
             }
           `;
           clonedDoc.head.appendChild(style);
+
+          // 2. Force inline styles on all elements - unconditionally apply safe RGB colors
+          const clonedElement = clonedDoc.getElementById('saju-result');
+          if (clonedElement) {
+            // Remove all existing stylesheets to prevent oklab from being computed
+            const stylesheets = Array.from(clonedDoc.querySelectorAll('link[rel="stylesheet"], style'));
+            stylesheets.forEach(sheet => {
+              // Keep only our injected style
+              if (sheet !== style) {
+                sheet.remove();
+              }
+            });
+
+            // Apply inline styles to ALL elements to ensure no oklab leaks through
+            const allElements = clonedElement.querySelectorAll('*');
+            allElements.forEach((el) => {
+              const htmlEl = el as HTMLElement;
+
+              // Remove background gradients that might contain oklab
+              if (htmlEl.className.includes('gradient')) {
+                htmlEl.style.backgroundImage = 'none';
+              }
+            });
+          }
         }
       });
 
