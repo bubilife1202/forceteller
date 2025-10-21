@@ -242,6 +242,122 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         </div>
       </div>
 
+      {/* 12운성 */}
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white">12운성</h3>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+            <p className="text-xs text-gray-500 mb-1">시주</p>
+            <p className="font-bold text-purple-700 dark:text-purple-300">{result.twelveCycles.hour}</p>
+          </div>
+          <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl">
+            <p className="text-xs text-gray-500 mb-1">일주 (나)</p>
+            <p className="font-bold text-indigo-700 dark:text-indigo-300">{result.twelveCycles.day}</p>
+          </div>
+          <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+            <p className="text-xs text-gray-500 mb-1">월주</p>
+            <p className="font-bold text-purple-700 dark:text-purple-300">{result.twelveCycles.month}</p>
+          </div>
+          <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+            <p className="text-xs text-gray-500 mb-1">년주</p>
+            <p className="font-bold text-purple-700 dark:text-purple-300">{result.twelveCycles.year}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 대운 */}
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></div>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white">대운 (大運)</h3>
+        </div>
+
+        <div className="overflow-x-auto">
+          <div className="flex gap-2 min-w-max pb-2">
+            {result.daeun.slice(0, 6).map((daeun, idx) => (
+              <div key={idx} className="flex-shrink-0 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl min-w-[100px] text-center">
+                <p className="text-xs text-gray-500 mb-2">{daeun.age}세~</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  {daeun.stem.ko}{daeun.stem.cn}
+                </p>
+                <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+                  {daeun.branch.ko}{daeun.branch.cn}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 신살 & 합충 */}
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* 신살 */}
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-1 h-8 bg-gradient-to-b from-yellow-500 to-orange-500 rounded-full"></div>
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-white">신살</h3>
+          </div>
+
+          {result.shinsals.length > 0 ? (
+            <div className="space-y-3">
+              {result.shinsals.map((shinsal, idx) => (
+                <div key={idx} className={`p-4 rounded-xl ${
+                  shinsal.type === 'good'
+                    ? 'bg-green-50 dark:bg-green-900/20'
+                    : shinsal.type === 'bad'
+                    ? 'bg-red-50 dark:bg-red-900/20'
+                    : 'bg-gray-50 dark:bg-gray-700'
+                }`}>
+                  <p className={`font-bold ${
+                    shinsal.type === 'good'
+                      ? 'text-green-700 dark:text-green-300'
+                      : shinsal.type === 'bad'
+                      ? 'text-red-700 dark:text-red-300'
+                      : 'text-gray-700 dark:text-gray-300'
+                  }`}>{shinsal.name}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{shinsal.desc}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-4">특별한 신살이 없습니다</p>
+          )}
+        </div>
+
+        {/* 합충 */}
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 card-hover">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-1 h-8 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></div>
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-white">합충형파해</h3>
+          </div>
+
+          {result.hapchung.length > 0 ? (
+            <div className="space-y-3">
+              {result.hapchung.map((hap, idx) => (
+                <div key={idx} className={`p-4 rounded-xl ${
+                  hap.type === '지지충'
+                    ? 'bg-red-50 dark:bg-red-900/20'
+                    : 'bg-blue-50 dark:bg-blue-900/20'
+                }`}>
+                  <p className={`font-bold ${
+                    hap.type === '지지충'
+                      ? 'text-red-700 dark:text-red-300'
+                      : 'text-blue-700 dark:text-blue-300'
+                  }`}>{hap.name}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{hap.desc}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-4">합충이 없습니다</p>
+          )}
+        </div>
+      </div>
+
       {/* 하단 안내 */}
       <div className="text-center text-sm text-gray-500 space-y-2 pt-8">
         <p>이 사주 풀이는 전통적인 명리학 계산 방식을 기반으로 합니다</p>

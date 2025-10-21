@@ -1,7 +1,14 @@
 import { HEAVENLY_STEMS, EARTHLY_BRANCHES } from './saju-constants';
+import {
+  calculateDaeun,
+  getTwelveCycle,
+  calculateShinsals,
+  analyzeHapchung,
+  type DaeunPillar,
+  type Shinsal,
+  type HapchungResult
+} from './saju-advanced';
 
-// 음력 변환을 위한 간단한 유틸리티 (실제로는 라이브러리 사용 권장)
-// MVP에서는 양력만 사용
 export interface DateInfo {
   year: number;
   month: number;
@@ -25,6 +32,12 @@ export interface SajuResult {
     day: string;
     hour: string;
   };
+  twelveCycles: {
+    year: string;
+    month: string;
+    day: string;
+    hour: string;
+  };
   elements: {
     목: number;
     화: number;
@@ -33,6 +46,9 @@ export interface SajuResult {
     수: number;
   };
   strength: 'strong' | 'weak' | 'neutral';
+  daeun: DaeunPillar[];
+  shinsals: Shinsal[];
+  hapchung: HapchungResult[];
 }
 
 // 년주(年柱) 계산
@@ -195,8 +211,8 @@ export function calculateStrength(
   return 'neutral';
 }
 
-// 전체 사주 계산
-export function calculateSaju(dateInfo: DateInfo): SajuResult {
+// 전체 사주 계산 (Extended with 12운성, 신살, 합충, 대운)
+export function calculateSaju(dateInfo: DateInfo, gender: 'male' | 'female' = 'male'): SajuResult {
   const yearPillar = getYearPillar(dateInfo.year);
   const monthPillar = getMonthPillar(dateInfo.year, dateInfo.month);
   const dayPillar = getDayPillar(dateInfo.year, dateInfo.month, dateInfo.day);
@@ -216,8 +232,35 @@ export function calculateSaju(dateInfo: DateInfo): SajuResult {
     hour: getTenGod(dayPillar.stem.ko, hourPillar.stem.ko),
   };
 
+  // 12운성 계산
+  const twelveCycles = {
+    year: getTwelveCycle(dayPillar.stem.ko, yearPillar.branch.ko),
+    month: getTwelveCycle(dayPillar.stem.ko, monthPillar.branch.ko),
+    day: getTwelveCycle(dayPillar.stem.ko, dayPillar.branch.ko),
+    hour: getTwelveCycle(dayPillar.stem.ko, hourPillar.branch.ko),
+  };
+
   const elements = analyzeElements(pillars);
   const strength = calculateStrength(dayPillar.stem.ko, monthPillar.branch.ko, elements);
+
+  // 대운 계산
+  const daeun = calculateDaeun(
+    dateInfo.year,
+    dateInfo.month,
+    dateInfo.day,
+    gender,
+    yearPillar.stem.ko
+  );
+
+  // 신살 계산
+  const shinsals = calculateShinsals(
+    yearPillar.branch.ko,
+    dayPillar.branch.ko,
+    dayPillar.stem.ko
+  );
+
+  // 합충 분석
+  const hapchung = analyzeHapchung(pillars);
 
   return {
     year: yearPillar,
@@ -225,7 +268,11 @@ export function calculateSaju(dateInfo: DateInfo): SajuResult {
     day: dayPillar,
     hour: hourPillar,
     tenGods,
+    twelveCycles,
     elements,
     strength,
+    daeun,
+    shinsals,
+    hapchung,
   };
 }

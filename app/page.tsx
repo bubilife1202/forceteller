@@ -15,7 +15,7 @@ export default function Home() {
       month: formData.month,
       day: formData.day,
       hour: formData.timeUnknown ? 12 : formData.hour,
-    });
+    }, formData.gender);
 
     setResult(sajuResult);
     setUserData({
