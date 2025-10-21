@@ -78,11 +78,11 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
     }
   };
 
-  // 이미지 다운로드 - 화면 그대로 저장 (고품질)
+  // 이미지 다운로드 - 브라우저 full capture처럼 깔끔하게
   const handleDownloadPDF = async () => {
     setIsSaving(true);
     try {
-      const domtoimage = await import('dom-to-image-more');
+      const htmlToImage = await import('html-to-image');
 
       const element = document.getElementById('saju-result');
       if (!element) {
@@ -95,21 +95,17 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       const buttons = element.querySelectorAll('button');
       buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
 
-      // 약간의 지연 후 캡처 (DOM 안정화)
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // DOM 안정화 대기
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      // 고품질 PNG 생성 (dom-to-image는 색상을 완벽하게 재현)
-      const dataUrl = await domtoimage.toPng(element, {
+      // 고품질 PNG 생성 (픽셀 단위로 정확하게 캡처)
+      const dataUrl = await htmlToImage.toPng(element, {
         quality: 1.0,
-        bgcolor: '#ffffff',
-        width: element.offsetWidth * 3,
-        height: element.offsetHeight * 3,
-        style: {
-          transform: 'scale(3)',
-          transformOrigin: 'top left',
-          width: element.offsetWidth + 'px',
-          height: element.offsetHeight + 'px'
-        }
+        pixelRatio: 3, // 3배 해상도
+        backgroundColor: '#ffffff',
+        cacheBust: true, // 캐시 무시로 최신 상태 보장
+        skipAutoScale: false,
+        preferredFontFormat: 'woff2',
       });
 
       // 버튼 다시 보이기
@@ -125,6 +121,14 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       setIsSaving(false);
     } catch (error) {
       console.error('이미지 생성 오류:', error);
+
+      // 버튼 다시 보이기 (에러 시에도)
+      const element = document.getElementById('saju-result');
+      if (element) {
+        const buttons = element.querySelectorAll('button');
+        buttons.forEach(btn => (btn as HTMLElement).style.display = '');
+      }
+
       if (error instanceof Error) {
         alert(`이미지 생성 실패: ${error.message}\n\n브라우저를 새로고침 후 다시 시도해주세요.`);
       } else {
