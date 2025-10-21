@@ -79,12 +79,20 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
         <p className="text-sm text-gray-500 mb-4">
           서머타임은 물론 지역에 따른 1~2분의 미세 시차까지 보정합니다
         </p>
-        <a
-          href="/guide"
-          className="inline-block px-6 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition"
-        >
-          📖 사주 용어 설명 보기
-        </a>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <a
+            href="/guide"
+            className="inline-block px-6 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition"
+          >
+            📖 사주 용어 설명 보기
+          </a>
+          <a
+            href="/chatgpt-prompt"
+            className="inline-block px-6 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full font-medium hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition"
+          >
+            🤖 ChatGPT로 더 깊이 분석하기
+          </a>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

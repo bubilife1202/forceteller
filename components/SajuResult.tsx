@@ -150,7 +150,6 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // 요소의 실제 크기 가져오기 (잘림 방지)
-      const rect = element.getBoundingClientRect();
       const scrollWidth = element.scrollWidth;
       const scrollHeight = element.scrollHeight;
 
