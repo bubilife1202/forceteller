@@ -87,7 +87,8 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
 
       const element = document.getElementById('saju-result');
       if (!element) {
-        alert('PDF로 저장할 내용을 찾을 수 없습니다.');
+        console.error('PDF 대상 요소를 찾을 수 없습니다.');
+        setIsSaving(false);
         return;
       }
 
@@ -95,51 +96,15 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       const buttons = element.querySelectorAll('button');
       buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
 
+      // 약간의 지연 후 캡처 (DOM 안정화)
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight,
-        // lab 색상 문제 해결
-        onclone: (clonedDoc) => {
-          try {
-            const clonedElement = clonedDoc.getElementById('saju-result');
-            if (clonedElement) {
-              // lab 색상을 사용하는 Tailwind 클래스들을 안전한 색상으로 대체
-              const allElements = clonedElement.querySelectorAll('*');
-              allElements.forEach((el) => {
-                const htmlEl = el as HTMLElement;
-
-                // inline style로 안전한 색상 강제 적용
-                try {
-                  const style = htmlEl.style;
-
-                  // 배경색이 있으면 그대로, 없으면 패스
-                  if (style.backgroundColor) {
-                    const bgColor = style.backgroundColor;
-                    if (bgColor.includes('lab') || bgColor.includes('oklab')) {
-                      style.backgroundColor = 'white';
-                    }
-                  }
-
-                  // 텍스트 색상
-                  if (style.color) {
-                    const color = style.color;
-                    if (color.includes('lab') || color.includes('oklab')) {
-                      style.color = 'black';
-                    }
-                  }
-                } catch {
-                  // 개별 요소 에러는 무시하고 계속
-                }
-              });
-            }
-          } catch (err) {
-            console.warn('onclone 처리 중 경고:', err);
-          }
-        }
       });
 
       // 버튼 다시 보이기
@@ -164,11 +129,17 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
         heightLeft -= pageHeight;
       }
 
-      pdf.save(`${name}_사주풀이.pdf`);
-      alert('PDF 다운로드가 완료되었습니다!');
+      // PDF 파일명에 날짜 추가
+      const today = new Date().toISOString().split('T')[0];
+      pdf.save(`${name}_사주풀이_${today}.pdf`);
     } catch (error) {
       console.error('PDF 생성 오류:', error);
-      alert('PDF 생성 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      // 오류 발생 시에만 사용자에게 알림
+      if (error instanceof Error) {
+        alert(`PDF 생성 실패: ${error.message}\n\n브라우저를 새로고침 후 다시 시도해주세요.`);
+      } else {
+        alert('PDF 생성 중 오류가 발생했습니다.\n브라우저를 새로고침 후 다시 시도해주세요.');
+      }
     } finally {
       setIsSaving(false);
     }
