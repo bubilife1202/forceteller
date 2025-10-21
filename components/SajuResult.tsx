@@ -78,12 +78,11 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
     }
   };
 
-  // PDF 다운로드
+  // PDF 다운로드 - html2pdf.js 사용
   const handleDownloadPDF = async () => {
     setIsSaving(true);
     try {
-      const html2canvas = (await import('html2canvas')).default;
-      const { jsPDF } = await import('jspdf');
+      const html2pdf = (await import('html2pdf.js')).default;
 
       const element = document.getElementById('saju-result');
       if (!element) {
@@ -96,189 +95,31 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
       const buttons = element.querySelectorAll('button');
       buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
 
-      // 약간의 지연 후 캡처 (DOM 안정화)
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // PDF 파일명에 날짜 추가
+      const today = new Date().toISOString().split('T')[0];
+      const filename = `${name}_사주풀이_${today}.pdf`;
 
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-        onclone: (clonedDoc) => {
-          // Double defense: CSS injection + inline style override
+      // html2pdf 옵션 설정
+      const opt = {
+        margin: 10,
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff'
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
 
-          // 1. Inject CSS to override all oklab/lab colors with safe RGB values
-          const style = clonedDoc.createElement('style');
-          style.textContent = `
-            * {
-              /* Force all colors to use RGB instead of oklab/lab */
-              color: rgb(17, 24, 39) !important;
-            }
-
-            /* Override common Tailwind color utilities with RGB */
-            .text-white { color: rgb(255, 255, 255) !important; }
-            .text-black { color: rgb(0, 0, 0) !important; }
-            .text-gray-50 { color: rgb(249, 250, 251) !important; }
-            .text-gray-100 { color: rgb(243, 244, 246) !important; }
-            .text-gray-200 { color: rgb(229, 231, 235) !important; }
-            .text-gray-300 { color: rgb(209, 213, 219) !important; }
-            .text-gray-400 { color: rgb(156, 163, 175) !important; }
-            .text-gray-500 { color: rgb(107, 114, 128) !important; }
-            .text-gray-600 { color: rgb(75, 85, 99) !important; }
-            .text-gray-700 { color: rgb(55, 65, 81) !important; }
-            .text-gray-800 { color: rgb(31, 41, 55) !important; }
-            .text-gray-900 { color: rgb(17, 24, 39) !important; }
-            .text-indigo-300 { color: rgb(165, 180, 252) !important; }
-            .text-indigo-400 { color: rgb(129, 140, 248) !important; }
-            .text-indigo-500 { color: rgb(99, 102, 241) !important; }
-            .text-indigo-600 { color: rgb(79, 70, 229) !important; }
-            .text-indigo-700 { color: rgb(67, 56, 202) !important; }
-            .text-purple-300 { color: rgb(216, 180, 254) !important; }
-            .text-purple-400 { color: rgb(192, 132, 252) !important; }
-            .text-purple-500 { color: rgb(168, 85, 247) !important; }
-            .text-purple-600 { color: rgb(147, 51, 234) !important; }
-            .text-purple-700 { color: rgb(126, 34, 206) !important; }
-            .text-pink-300 { color: rgb(249, 168, 212) !important; }
-            .text-pink-600 { color: rgb(219, 39, 119) !important; }
-            .text-pink-700 { color: rgb(190, 24, 93) !important; }
-            .text-red-300 { color: rgb(252, 165, 165) !important; }
-            .text-red-400 { color: rgb(248, 113, 113) !important; }
-            .text-red-600 { color: rgb(220, 38, 38) !important; }
-            .text-red-700 { color: rgb(185, 28, 28) !important; }
-            .text-orange-300 { color: rgb(253, 186, 116) !important; }
-            .text-orange-700 { color: rgb(194, 65, 12) !important; }
-            .text-blue-300 { color: rgb(147, 197, 253) !important; }
-            .text-blue-400 { color: rgb(96, 165, 250) !important; }
-            .text-blue-600 { color: rgb(37, 99, 235) !important; }
-            .text-blue-700 { color: rgb(29, 78, 216) !important; }
-            .text-green-300 { color: rgb(134, 239, 172) !important; }
-            .text-green-700 { color: rgb(21, 128, 61) !important; }
-            .text-cyan-400 { color: rgb(34, 211, 238) !important; }
-            .text-cyan-600 { color: rgb(8, 145, 178) !important; }
-
-            /* Background colors */
-            .bg-white { background-color: rgb(255, 255, 255) !important; }
-            .bg-gray-50 { background-color: rgb(249, 250, 251) !important; }
-            .bg-gray-100 { background-color: rgb(243, 244, 246) !important; }
-            .bg-gray-200 { background-color: rgb(229, 231, 235) !important; }
-            .bg-gray-700 { background-color: rgb(55, 65, 81) !important; }
-            .bg-gray-800 { background-color: rgb(31, 41, 55) !important; }
-            .bg-indigo-50 { background-color: rgb(238, 242, 255) !important; }
-            .bg-indigo-100 { background-color: rgb(224, 231, 255) !important; }
-            .bg-purple-50 { background-color: rgb(250, 245, 255) !important; }
-            .bg-purple-100 { background-color: rgb(243, 232, 255) !important; }
-            .bg-pink-50 { background-color: rgb(253, 242, 248) !important; }
-            .bg-pink-100 { background-color: rgb(252, 231, 243) !important; }
-            .bg-rose-50 { background-color: rgb(255, 241, 242) !important; }
-            .bg-red-50 { background-color: rgb(254, 242, 242) !important; }
-            .bg-red-100 { background-color: rgb(254, 226, 226) !important; }
-            .bg-orange-50 { background-color: rgb(255, 247, 237) !important; }
-            .bg-amber-50 { background-color: rgb(255, 251, 235) !important; }
-            .bg-amber-200 { background-color: rgb(253, 230, 138) !important; }
-            .bg-blue-50 { background-color: rgb(239, 246, 255) !important; }
-            .bg-blue-100 { background-color: rgb(219, 234, 254) !important; }
-            .bg-cyan-50 { background-color: rgb(236, 254, 255) !important; }
-            .bg-green-50 { background-color: rgb(240, 253, 244) !important; }
-
-            /* Border colors */
-            .border-gray-200 { border-color: rgb(229, 231, 235) !important; }
-            .border-gray-600 { border-color: rgb(75, 85, 99) !important; }
-            .border-gray-700 { border-color: rgb(55, 65, 81) !important; }
-            .border-amber-200 { border-color: rgb(253, 230, 138) !important; }
-            .border-amber-900 { border-color: rgb(120, 53, 15) !important; }
-
-            /* Remove problematic gradients and replace with solid colors */
-            [class*="gradient"] {
-              background-image: none !important;
-              background-color: rgb(249, 250, 251) !important;
-            }
-
-            /* Specific gradient overrides */
-            .bg-gradient-to-br.from-indigo-600 {
-              background: rgb(79, 70, 229) !important;
-              background-image: none !important;
-            }
-            .bg-gradient-to-br.from-amber-50 {
-              background: rgb(255, 251, 235) !important;
-              background-image: none !important;
-            }
-            .bg-gradient-to-r.from-indigo-100 {
-              background: rgb(224, 231, 255) !important;
-              background-image: none !important;
-            }
-            .bg-gradient-to-br.from-pink-50 {
-              background: rgb(253, 242, 248) !important;
-              background-image: none !important;
-            }
-            .bg-gradient-to-br.from-purple-50 {
-              background: rgb(250, 245, 255) !important;
-              background-image: none !important;
-            }
-            .bg-gradient-to-br.from-blue-50 {
-              background: rgb(239, 246, 255) !important;
-              background-image: none !important;
-            }
-            .bg-gradient-to-b {
-              background-image: none !important;
-            }
-          `;
-          clonedDoc.head.appendChild(style);
-
-          // 2. Force inline styles on all elements - unconditionally apply safe RGB colors
-          const clonedElement = clonedDoc.getElementById('saju-result');
-          if (clonedElement) {
-            // Remove all existing stylesheets to prevent oklab from being computed
-            const stylesheets = Array.from(clonedDoc.querySelectorAll('link[rel="stylesheet"], style'));
-            stylesheets.forEach(sheet => {
-              // Keep only our injected style
-              if (sheet !== style) {
-                sheet.remove();
-              }
-            });
-
-            // Apply inline styles to ALL elements to ensure no oklab leaks through
-            const allElements = clonedElement.querySelectorAll('*');
-            allElements.forEach((el) => {
-              const htmlEl = el as HTMLElement;
-
-              // Remove background gradients that might contain oklab
-              if (htmlEl.className.includes('gradient')) {
-                htmlEl.style.backgroundImage = 'none';
-              }
-            });
-          }
-        }
-      });
+      // PDF 생성 및 다운로드
+      await html2pdf().set(opt).from(element).save();
 
       // 버튼 다시 보이기
       buttons.forEach(btn => (btn as HTMLElement).style.display = '');
-
-      const imgData = canvas.toDataURL('image/png');
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210;
-      const pageHeight = 297;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      // PDF 파일명에 날짜 추가
-      const today = new Date().toISOString().split('T')[0];
-      pdf.save(`${name}_사주풀이_${today}.pdf`);
     } catch (error) {
       console.error('PDF 생성 오류:', error);
-      // 오류 발생 시에만 사용자에게 알림
       if (error instanceof Error) {
         alert(`PDF 생성 실패: ${error.message}\n\n브라우저를 새로고침 후 다시 시도해주세요.`);
       } else {
