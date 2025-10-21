@@ -52,17 +52,80 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
     </div>
   );
 
-  // SNS 공유
-  const handleShare = async (platform: 'kakao' | 'facebook' | 'twitter') => {
-    const text = `${name}님의 사주 - ${result.day.stem.ko}${result.day.stem.cn} 일간`;
-    const url = window.location.href;
+  // 이미지로 공유하기 (Web Share API)
+  const handleShare = async () => {
+    try {
+      const htmlToImage = await import('html-to-image');
 
-    if (platform === 'kakao') {
-      alert('카카오톡 공유는 SDK 설정이 필요합니다.');
-    } else if (platform === 'facebook') {
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-    } else if (platform === 'twitter') {
-      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+      const element = document.getElementById('saju-result');
+      if (!element) {
+        alert('공유할 내용을 찾을 수 없습니다.');
+        return;
+      }
+
+      // 버튼 숨기기
+      const buttons = element.querySelectorAll('button');
+      buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
+
+      // DOM 안정화 대기
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // 이미지 생성
+      const scrollWidth = element.scrollWidth;
+      const scrollHeight = element.scrollHeight;
+
+      const blob = await htmlToImage.toBlob(element, {
+        quality: 1.0,
+        pixelRatio: 3,
+        backgroundColor: '#ffffff',
+        cacheBust: true,
+        width: scrollWidth,
+        height: scrollHeight,
+      });
+
+      // 버튼 다시 보이기
+      buttons.forEach(btn => (btn as HTMLElement).style.display = '');
+
+      if (!blob) {
+        alert('이미지 생성에 실패했습니다.');
+        return;
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      const file = new File([blob], `${name}_사주풀이_${today}.png`, { type: 'image/png' });
+
+      // Web Share API로 이미지 공유
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${name}님의 사주 풀이`,
+          text: `${name}님의 사주 분석 결과입니다.`,
+          files: [file]
+        });
+      } else {
+        // Web Share API 미지원 시 다운로드
+        alert('이 브라우저는 직접 공유를 지원하지 않습니다.\n이미지를 다운로드한 후 직접 공유해주세요.');
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `${name}_사주풀이_${today}.png`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('공유 오류:', error);
+
+      // 버튼 다시 보이기 (에러 시에도)
+      const element = document.getElementById('saju-result');
+      if (element) {
+        const buttons = element.querySelectorAll('button');
+        buttons.forEach(btn => (btn as HTMLElement).style.display = '');
+      }
+
+      if (error instanceof Error && error.name === 'AbortError') {
+        // 사용자가 공유 취소
+        return;
+      }
+      alert('공유 중 오류가 발생했습니다.');
     }
   };
 
@@ -171,11 +234,11 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
                 📸 {isSaving ? '생성중...' : '이미지'}
               </button>
               <button
-                onClick={() => handleShare('facebook')}
+                onClick={handleShare}
                 className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition"
-                title="공유하기"
+                title="이미지로 공유하기"
               >
-                🔗 공유
+                📤 공유
               </button>
               <button
                 onClick={onReset}
