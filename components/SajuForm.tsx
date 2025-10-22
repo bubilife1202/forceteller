@@ -179,42 +179,42 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <input
-                    type="number"
+                  <select
                     value={formData.year}
-                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) || new Date().getFullYear() })}
-                    placeholder="년"
-                    min="1900"
-                    max="2100"
-                    className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none"
+                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+                    className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none appearance-none cursor-pointer"
                     required
-                  />
+                  >
+                    {Array.from({ length: 201 }, (_, i) => 2100 - i).map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
                   <p className="text-xs text-gray-500 text-center mt-2">년</p>
                 </div>
                 <div>
-                  <input
-                    type="number"
+                  <select
                     value={formData.month}
-                    onChange={(e) => setFormData({ ...formData, month: parseInt(e.target.value) || 1 })}
-                    placeholder="월"
-                    min="1"
-                    max="12"
-                    className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none"
+                    onChange={(e) => setFormData({ ...formData, month: parseInt(e.target.value) })}
+                    className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none appearance-none cursor-pointer"
                     required
-                  />
+                  >
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                      <option key={month} value={month}>{month}월</option>
+                    ))}
+                  </select>
                   <p className="text-xs text-gray-500 text-center mt-2">월</p>
                 </div>
                 <div>
-                  <input
-                    type="number"
+                  <select
                     value={formData.day}
-                    onChange={(e) => setFormData({ ...formData, day: parseInt(e.target.value) || 1 })}
-                    placeholder="일"
-                    min="1"
-                    max="31"
-                    className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none"
+                    onChange={(e) => setFormData({ ...formData, day: parseInt(e.target.value) })}
+                    className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none appearance-none cursor-pointer"
                     required
-                  />
+                  >
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                      <option key={day} value={day}>{day}일</option>
+                    ))}
+                  </select>
                   <p className="text-xs text-gray-500 text-center mt-2">일</p>
                 </div>
               </div>
@@ -271,29 +271,29 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <input
-                          type="number"
+                        <select
                           value={formData.hour}
-                          onChange={(e) => setFormData({ ...formData, hour: parseInt(e.target.value) || 0 })}
-                          placeholder="시"
-                          min="0"
-                          max="23"
-                          className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none"
+                          onChange={(e) => setFormData({ ...formData, hour: parseInt(e.target.value) })}
+                          className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none appearance-none cursor-pointer"
                           required
-                        />
+                        >
+                          {Array.from({ length: 24 }, (_, i) => i).map(hour => (
+                            <option key={hour} value={hour}>{hour}시</option>
+                          ))}
+                        </select>
                         <p className="text-xs text-gray-500 text-center mt-2">시 (0-23)</p>
                       </div>
                       <div>
-                        <input
-                          type="number"
+                        <select
                           value={formData.minute}
-                          onChange={(e) => setFormData({ ...formData, minute: parseInt(e.target.value) || 0 })}
-                          placeholder="분"
-                          min="0"
-                          max="59"
-                          className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none"
+                          onChange={(e) => setFormData({ ...formData, minute: parseInt(e.target.value) })}
+                          className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none appearance-none cursor-pointer"
                           required
-                        />
+                        >
+                          {Array.from({ length: 60 }, (_, i) => i).map(minute => (
+                            <option key={minute} value={minute}>{minute}분</option>
+                          ))}
+                        </select>
                         <p className="text-xs text-gray-500 text-center mt-2">분 (0-59)</p>
                       </div>
                     </div>
