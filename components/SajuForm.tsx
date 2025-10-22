@@ -13,6 +13,7 @@ export interface FormData {
   city: string;
   timeUnknown: boolean;
   isLunar: boolean;
+  timeInputType: 'exact' | 'branch' | 'unknown';
 }
 
 interface SajuFormProps {
@@ -47,6 +48,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
     city: '',
     timeUnknown: false,
     isLunar: false,
+    timeInputType: 'exact',
   });
 
   const [showHourGuide, setShowHourGuide] = useState(false);
@@ -254,20 +256,45 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
               )}
 
               <div className="space-y-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <input
-                    type="checkbox"
-                    id="timeUnknown"
-                    checked={formData.timeUnknown}
-                    onChange={(e) => setFormData({ ...formData, timeUnknown: e.target.checked })}
-                    className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                  />
-                  <label htmlFor="timeUnknown" className="text-sm text-gray-700 dark:text-gray-300">
-                    시간을 모름 (정오 12시로 계산)
-                  </label>
+                {/* 시간 입력 방식 선택 */}
+                <div className="grid grid-cols-1 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, timeInputType: 'exact', timeUnknown: false })}
+                    className={`py-3 px-4 rounded-xl font-medium text-sm transition-all ${
+                      formData.timeInputType === 'exact'
+                        ? 'bg-indigo-600 text-white shadow-lg'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    ⏰ 정확한 시간 알고 있음
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, timeInputType: 'branch', timeUnknown: false, hour: 12, minute: 0 })}
+                    className={`py-3 px-4 rounded-xl font-medium text-sm transition-all ${
+                      formData.timeInputType === 'branch'
+                        ? 'bg-indigo-600 text-white shadow-lg'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    🐉 12간지만 알고 있음 (자시, 축시, 오시 등)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, timeInputType: 'unknown', timeUnknown: true, hour: 12, minute: 0 })}
+                    className={`py-3 px-4 rounded-xl font-medium text-sm transition-all ${
+                      formData.timeInputType === 'unknown'
+                        ? 'bg-indigo-600 text-white shadow-lg'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    ❓ 시간을 모름 (정오 12시로 계산)
+                  </button>
                 </div>
 
-                {!formData.timeUnknown && (
+                {/* 정확한 시간 입력 */}
+                {formData.timeInputType === 'exact' && (
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -307,6 +334,48 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                       </p>
                     </div>
                   </>
+                )}
+
+                {/* 12간지 시간 선택 */}
+                {formData.timeInputType === 'branch' && (
+                  <>
+                    <div>
+                      <select
+                        value={formData.hour}
+                        onChange={(e) => {
+                          const selectedHour = parseInt(e.target.value);
+                          setFormData({ ...formData, hour: selectedHour, minute: 0 });
+                        }}
+                        className="w-full px-4 py-4 text-center text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none appearance-none cursor-pointer"
+                        required
+                      >
+                        {HOUR_BRANCHES.map((branch, idx) => (
+                          <option key={idx} value={branch.hour}>
+                            {branch.label} {branch.time}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-xs text-gray-500 text-center mt-2">12간지 시간 선택</p>
+                    </div>
+
+                    <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
+                      <p className="text-sm text-purple-900 dark:text-purple-200">
+                        <span className="font-semibold">{getCurrentHourBranch().label}</span> 기준으로 계산됩니다
+                        <span className="block text-xs text-purple-700 dark:text-purple-300 mt-1">
+                          (시간대 중간값: {formData.hour}시 {formData.minute}분)
+                        </span>
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {/* 시간을 모르는 경우 */}
+                {formData.timeInputType === 'unknown' && (
+                  <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      정오 12시로 계산됩니다
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
