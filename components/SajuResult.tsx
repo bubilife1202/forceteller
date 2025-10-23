@@ -3,7 +3,6 @@
 import { SajuResult as SajuResultType } from '@/lib/saju-calculator';
 import { ELEMENTS } from '@/lib/saju-constants';
 import ElementsChart from './ElementsChart';
-import AdSense from './AdSense';
 import { useState } from 'react';
 
 interface SajuResultProps {
@@ -725,14 +724,6 @@ export default function SajuResult({ result, name, gender, onReset }: SajuResult
             <p className="text-gray-500 text-center py-4">합충이 없습니다</p>
           )}
         </div>
-      </div>
-
-      {/* 광고 */}
-      <div className="my-8">
-        <AdSense
-          adSlot="1234567890"
-          className="text-center"
-        />
       </div>
 
       {/* 하단 안내 */}

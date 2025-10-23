@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import AdSense from '@/components/AdSense';
 
 export default function ChatGPTPromptPage() {
   const promptTemplate = `너는 세계 최고 수준의 사주 전문가이자 동시에 현대적 자기계발 코치야.
@@ -181,14 +180,6 @@ export default function ChatGPTPromptPage() {
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* 광고 */}
-          <div className="my-8">
-            <AdSense
-              adSlot="0987654321"
-              className="text-center"
-            />
           </div>
 
           {/* 하단 정보 */}
