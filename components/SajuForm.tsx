@@ -421,7 +421,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
 
       {/* 안내 문구 */}
       <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p className="font-semibold text-indigo-600 dark:text-indigo-400">포스텔러 만세력 v2.4.0</p>
+        <p className="font-semibold text-indigo-600 dark:text-indigo-400">포스텔러 만세력 v2.4.1</p>
         <p className="mt-1">정확한 사주 분석을 위해 정보를 정확히 입력해주세요</p>
       </div>
     </div>

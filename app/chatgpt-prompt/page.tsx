@@ -193,7 +193,7 @@ export default function ChatGPTPromptPage() {
 
           {/* 하단 정보 */}
           <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-            <p>포스텔러 만세력 v2.4.0</p>
+            <p>포스텔러 만세력 v2.4.1</p>
             <p className="mt-2">
               <Link href="/" className="text-indigo-600 dark:text-indigo-400 hover:underline">
                 홈으로 돌아가기
