@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import AdSense from '@/components/AdSense';
 
 export default function GuidePage() {
   return (
@@ -298,6 +301,14 @@ export default function GuidePage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 광고 */}
+        <div className="my-8">
+          <AdSense
+            adSlot="9952740191"
+            className="text-center"
+          />
         </div>
 
         {/* 하단 안내 */}
