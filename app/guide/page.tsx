@@ -315,7 +315,7 @@ export default function GuidePage() {
             사주 풀이 하러 가기
           </Link>
           <div className="pt-6 border-t border-gray-200 dark:border-gray-700 mt-8">
-            <p className="font-semibold text-indigo-600 dark:text-indigo-400">포스텔러 만세력 v2.3.0</p>
+            <p className="font-semibold text-indigo-600 dark:text-indigo-400">포스텔러 만세력 v2.4.0</p>
             <p className="text-xs mt-1 text-gray-400">Comprehensive Saju Terminology Guide</p>
           </div>
         </div>
