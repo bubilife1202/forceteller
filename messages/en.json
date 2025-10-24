@@ -1,0 +1,387 @@
+{
+  "metadata": {
+    "title": "Forceteller - Free Saju (Four Pillars) Analysis, Great Fortune, Special Stars",
+    "description": "Accurate Saju (Four Pillars of Destiny) analysis service with precise time adjustments. Free analysis of Four Pillars, Ten Gods, Great Fortune, Twelve Life Cycles, Special Stars, and Combinations. Supports both Solar and Lunar calendars.",
+    "keywords": "saju, four pillars, destiny, bazi, ten gods, five elements, fortune, special stars, lunar, solar, fortune telling, chinese astrology"
+  },
+  "common": {
+    "language": "Language",
+    "korean": "한국어",
+    "english": "English",
+    "version": "Forceteller v2.4.1",
+    "backToHome": "← Back",
+    "goToHome": "Get Your Reading"
+  },
+  "form": {
+    "title": "Forceteller",
+    "subtitle": "Four Pillars Reading for Everyone",
+    "accuracyNote": "Accurate time corrections including daylight saving time and regional timezone offsets (1-2 minutes)",
+    "guideLink": "📖 Saju Terminology Guide",
+    "chatgptLink": "🤖 Deeper Analysis with ChatGPT",
+    "name": {
+      "label": "Name",
+      "placeholder": "Enter your name (max 12 characters)"
+    },
+    "gender": {
+      "label": "Gender",
+      "female": "Female",
+      "male": "Male"
+    },
+    "birthDate": {
+      "label": "Date of Birth",
+      "solar": "Solar",
+      "lunar": "Lunar",
+      "year": "Year",
+      "month": "Month",
+      "day": "Day"
+    },
+    "birthTime": {
+      "label": "Time of Birth",
+      "hourGuide": "12 Branch Time Chart",
+      "show": "Show",
+      "hide": "Hide",
+      "exact": "⏰ I know the exact time",
+      "branch": "🐉 I only know the 12 Branch time (Ja, Chuk, O, etc.)",
+      "unknown": "❓ I don't know the time (calculated as 12 PM)",
+      "hour": "Hour (0-23)",
+      "minute": "Minute (0-59)",
+      "currentBranch": "will be used for calculation",
+      "middleTime": "Mid-point time",
+      "noonDefault": "Calculated as 12 PM"
+    },
+    "city": {
+      "label": "Birth City",
+      "optional": "(Optional)",
+      "placeholder": "e.g., Seoul, Busan, New York, London",
+      "help": "Enter for accurate regional timezone correction"
+    },
+    "submit": "Start Saju Reading",
+    "footer": {
+      "note": "Please enter accurate information for precise Saju analysis"
+    },
+    "hourBranches": {
+      "ja": "Ja Time (子)",
+      "chuk": "Chuk Time (丑)",
+      "in": "In Time (寅)",
+      "myo": "Myo Time (卯)",
+      "jin": "Jin Time (辰)",
+      "sa": "Sa Time (巳)",
+      "o": "O Time (午)",
+      "mi": "Mi Time (未)",
+      "shin": "Shin Time (申)",
+      "yu": "Yu Time (酉)",
+      "sul": "Sul Time (戌)",
+      "hae": "Hae Time (亥)"
+    }
+  },
+  "result": {
+    "title": "{name}'s Saju Reading",
+    "gender": {
+      "male": "Male 👨",
+      "female": "Female 👩"
+    },
+    "dayMaster": "{stem} Day Master",
+    "element": "{element} {yinyang}",
+    "yang": "Yang",
+    "yin": "Yin",
+    "buttons": {
+      "image": "Image",
+      "imageSaving": "Generating...",
+      "share": "Share",
+      "reset": "Start Over",
+      "downloadTitle": "Download as Image",
+      "shareTitle": "Share as Image"
+    },
+    "alerts": {
+      "shareNotFound": "Content to share not found.",
+      "imageFailed": "Failed to generate image.",
+      "browserNotSupported": "This browser does not support direct sharing.\\nPlease download the image and share it manually.",
+      "shareFailed": "An error occurred while sharing.",
+      "imageError": "Image generation failed: {error}\\n\\nPlease refresh and try again.",
+      "imageErrorGeneric": "An error occurred while generating the image.\\nPlease refresh and try again."
+    },
+    "sections": {
+      "overview": {
+        "title": "⭐ Overall Summary",
+        "dayCharacter": "Day Master Character",
+        "strengthType": "Strong/Weak",
+        "yongsin": "Beneficial Element",
+        "yongsinHelp": "Supplementing these energies will improve your fortune",
+        "keyPoint": "Key Points",
+        "keyPointDesc": "The <strong>{stem} Day Master</strong> has strengths like {image}, characterized by {strength}. The Ten Gods composition consists of {bigub} Comparison, {sigsang} Output, {jaesung} Wealth, {gwansung} Power, and {insung} Resource",
+        "excessElements": " {elements} energies are strong",
+        "deficientElements": " {elements} energies are weak.",
+        "strong": "Strong 🔥",
+        "weak": "Weak 💧",
+        "neutral": "Balanced ⚖️",
+        "strongDesc": "Strong Day Master. Wealth and Power are beneficial",
+        "weakDesc": "Weak Day Master. Resource and Comparison are beneficial",
+        "neutralDesc": "Well-balanced chart"
+      },
+      "personality": {
+        "title": "Day Master Personality Analysis",
+        "strengths": "✨ Strengths",
+        "weaknesses": "⚠️ Areas to Watch",
+        "suitableJobs": "💼 Suitable Careers",
+        "successStrategy": "🎯 Success Strategy",
+        "strategy1": "Maximize your strength in {strength}",
+        "strategy2": "Work to improve {weakness}",
+        "strategy3": "Supplement {yongsin} energy as your beneficial element"
+      },
+      "pillars": {
+        "title": "Four Pillars (Bazi)",
+        "division": "Category",
+        "hour": "Hour",
+        "day": "Day",
+        "month": "Month",
+        "year": "Year",
+        "pillar": "Pillar",
+        "stem": "Stem",
+        "heavenlyStem": "Heavenly Stem",
+        "tenGod": "Ten God",
+        "tenGods": "Ten Gods",
+        "branch": "Branch",
+        "earthlyBranch": "Earthly Branch",
+        "self": "(Self)",
+        "dayMasterNote": "Day Master (Self)"
+      },
+      "elements": {
+        "title": "Five Elements Analysis",
+        "wood": "Wood",
+        "fire": "Fire",
+        "earth": "Earth",
+        "metal": "Metal",
+        "water": "Water"
+      },
+      "strength": {
+        "title": "Strength Analysis",
+        "strong": "Strong",
+        "weak": "Weak",
+        "neutral": "Balanced",
+        "strongDesc": "You have a strong Day Master",
+        "weakDesc": "You have a weak Day Master",
+        "neutralDesc": "You have a balanced Day Master",
+        "strongYongsin": "Wealth and Power stars can be beneficial elements",
+        "weakYongsin": "Resource and Comparison stars can be beneficial elements",
+        "neutralYongsin": "Well-balanced chart"
+      },
+      "twelveCycles": {
+        "title": "Twelve Life Cycles"
+      },
+      "daeun": {
+        "title": "Great Fortune Cycles",
+        "age": "Age {age}~"
+      },
+      "shinsals": {
+        "title": "Special Stars",
+        "none": "No special stars found"
+      },
+      "hapchung": {
+        "title": "Combinations & Clashes",
+        "none": "No combinations or clashes found"
+      }
+    },
+    "tooltips": {
+      "overview": "A summary of the overall characteristics of your Saju chart.",
+      "personality": "The Day Master (Heavenly Stem of your birth day) represents yourself and shows your basic personality and aptitudes.",
+      "pillars": "The four pillars (Year, Month, Day, Hour) represent the cosmic energies at the time of your birth.",
+      "tenGods": "The Ten Gods show the relationships between you and other stems/branches, representing various aspects of life.",
+      "elements": "Analyzes the balance of the five energies: Wood, Fire, Earth, Metal, and Water.",
+      "strength": "Determines whether the Day Master's influence is strong or weak.",
+      "twelveCycles": "Shows what life cycle stage the Day Master is in for each pillar.",
+      "daeun": "The flow of major fortunes that change every 10 years.",
+      "shinsals": "Special stars that bring fortune or misfortune.",
+      "hapchung": "Analyzes harmonies and conflicts between stems or branches."
+    },
+    "footer": {
+      "note1": "This Saju reading is based on traditional Chinese astrology calculation methods",
+      "note2": "For more accurate interpretation, please consult with a professional"
+    }
+  },
+  "guide": {
+    "title": "Saju Terminology Guide",
+    "subtitle": "Basic terms to help you understand your Saju reading results",
+    "sections": {
+      "pillars": {
+        "title": "Four Pillars (四柱八字)",
+        "description": "The Four Pillars (Year, Month, Day, Hour) represent the cosmic energies at the time of your birth. Each pillar consists of a Heavenly Stem (sky) and an Earthly Branch (earth), totaling 8 characters.",
+        "stem": {
+          "title": "Heavenly Stems (天干)",
+          "description": "Ten stems: Gab, Eul, Byeong, Jeong, Mu, Gi, Gyeong, Shin, Im, Gye. They represent heavenly energies, alternating between Yang and Yin."
+        },
+        "branch": {
+          "title": "Earthly Branches (地支)",
+          "description": "Twelve branches: Ja, Chuk, In, Myo, Jin, Sa, O, Mi, Shin, Yu, Sul, Hae. They represent earthly energies and the 12 zodiac animals."
+        },
+        "tenGods": {
+          "title": "Ten Gods (十星)",
+          "description": "Shows the meaning of other stems relative to the Day Master. Includes: Comparison & Rob Wealth (siblings), Output & Hurt Officer (expression), Wealth (money), Power & Officer (career), Resource & Seal (knowledge)."
+        }
+      },
+      "elements": {
+        "title": "Five Elements Analysis (五行)",
+        "description": "Analyzes the balance of five energies: Wood, Fire, Earth, Metal, Water. The elements have relationships of generation and control, and balance is important.",
+        "wood": {
+          "title": "Wood (木) - Tree",
+          "description": "Growth, expansion, creativity, benevolence. Energy of Spring"
+        },
+        "fire": {
+          "title": "Fire (火) - Flame",
+          "description": "Passion, activity, honor, courtesy. Energy of Summer"
+        },
+        "earth": {
+          "title": "Earth (土) - Soil",
+          "description": "Mediation, trust, stability, tolerance. Energy of Season transitions"
+        },
+        "metal": {
+          "title": "Metal (金) - Iron",
+          "description": "Righteousness, determination, justice, integrity. Energy of Autumn"
+        },
+        "water": {
+          "title": "Water (水) - Liquid",
+          "description": "Wisdom, flexibility, strategy, calmness. Energy of Winter"
+        },
+        "mutual": {
+          "title": "Mutual Generation (相生)",
+          "description": "Wood→Fire→Earth→Metal→Water→Wood in order, helping each other. (Wood feeds Fire, Fire creates ash for Earth...)"
+        }
+      },
+      "strength": {
+        "title": "Strong/Weak Day Master (身强/身弱)",
+        "description": "Determines whether the Day Master's influence is strong or weak. Strong if many supporting energies (Comparison, Resource) exist in the chart, weak if few.",
+        "strong": {
+          "title": "Strong Day Master (身强)",
+          "description": "Many supporting energies (Comparison, Resource) make the Day Master strong.",
+          "yongsin": "Beneficial elements: Wealth (money), Power (career/honor), Output (expression/talent)"
+        },
+        "weak": {
+          "title": "Weak Day Master (身弱)",
+          "description": "Few supporting energies make the Day Master weak.",
+          "yongsin": "Beneficial elements: Resource (knowledge/elders), Comparison (siblings/peers)"
+        }
+      },
+      "twelveCycles": {
+        "title": "Twelve Life Cycles (十二運星)",
+        "description": "Shows what life cycle stage the Day Master is in for each pillar (Year, Month, Day, Hour). Like dividing human life into 12 stages.",
+        "jangsaeng": "Birth - Beginning of new life",
+        "mokyok": "Bathing - Growth and change",
+        "gwandae": "Crown - Adulthood, vigor",
+        "geonrok": "Prosperity - Active period",
+        "jewang": "Emperor - Peak, zenith",
+        "soe": "Decline - Beginning of decline",
+        "byeong": "Illness - Weakening",
+        "sa": "Death - Disappearance",
+        "myo": "Tomb - Burial, dormancy",
+        "jeol": "Termination - Ending",
+        "tae": "Fetus - Embryo, preparation",
+        "yang": "Nurture - Nourishment, preparing for growth"
+      },
+      "daeun": {
+        "title": "Great Fortune Cycles (大運)",
+        "description": "The flow of major fortunes that change every 10 years. Calculated forward or backward from the Month pillar at birth.",
+        "forward": {
+          "title": "Forward Movement (順行)",
+          "description": "Yang-year males and Yin-year females progress forward from the Month pillar to the next stems/branches."
+        },
+        "backward": {
+          "title": "Backward Movement (逆行)",
+          "description": "Yang-year females and Yin-year males progress backward from the Month pillar to previous stems/branches."
+        },
+        "importance": {
+          "title": "Importance of Great Fortune",
+          "description": "Different stems and branches influence each Great Fortune period, allowing prediction of life's turning points. Good fortunes bring opportunities, while difficult fortunes require caution."
+        }
+      },
+      "shinsals": {
+        "title": "Special Stars (神殺)",
+        "description": "Lucky and unlucky stars that give special meaning to the Saju chart. They are not absolute and should be used as reference.",
+        "cheonul": {
+          "title": "Heavenly Noble (天乙貴人)",
+          "description": "Star of noble help. High chance of receiving help in difficulties or meeting benefactors."
+        },
+        "yeokma": {
+          "title": "Travel Star (驛馬殺)",
+          "description": "Star of movement and change. Frequent travel, moving, job changes may occur."
+        },
+        "dohwa": {
+          "title": "Peach Blossom (桃花殺)",
+          "description": "Star of romance and popularity. Good social skills and charm, but may need caution in romantic matters."
+        },
+        "munchang": {
+          "title": "Literary Star (文昌貴人)",
+          "description": "Star of academics and arts. Talent in studies or literature and arts."
+        }
+      },
+      "hapchung": {
+        "title": "Combinations & Clashes (合沖刑破害)",
+        "description": "Analyzes harmonies and conflicts between stems or branches. Combinations mean harmony, while clashes mean change or conflict.",
+        "stemCombination": {
+          "title": "Stem Combinations (天干合)",
+          "description": "Gab+Gi, Eul+Gyeong, Byeong+Shin, Jeong+Im, Mu+Gye combinations. They harmonize to transform into new elements.",
+          "example": "Example: Gab-Gi combine to transform into Earth"
+        },
+        "branchCombination": {
+          "title": "Branch Combinations (地支合)",
+          "description": "Ja+Chuk, In+Hae, Myo+Sul, Jin+Yu, Sa+Shin, O+Mi combinations. Called Six Combinations, they support each other."
+        },
+        "tripleCombination": {
+          "title": "Triple Combinations (三合)",
+          "description": "Three branches combine to form one element. Very strong harmony.",
+          "example": "Example: In+O+Sul=Fire, Hae+Myo+Mi=Wood, Sa+Yu+Chuk=Metal, Shin+Ja+Jin=Water"
+        },
+        "branchClash": {
+          "title": "Branch Clashes (地支沖)",
+          "description": "Ja↔O, Chuk↔Mi, In↔Shin, Myo↔Yu, Jin↔Sul, Sa↔Hae combinations. Head-on conflicts representing change or discord.",
+          "note": "Clashes are not always negative; they can also become opportunities for change and development."
+        }
+      }
+    },
+    "footer": {
+      "note": "This explanation is a brief summary of basic concepts in traditional Chinese astrology.",
+      "consult": "For more accurate and in-depth interpretation, please consult with a professional."
+    }
+  },
+  "chatgpt": {
+    "title": "ChatGPT Saju Analysis Prompt",
+    "subtitle": "Analyze your Forceteller results more deeply with ChatGPT",
+    "howToUse": {
+      "title": "📖 How to Use",
+      "step1": "Complete your Saju reading on Forceteller and save the result image using the <strong>\"Download Image\"</strong> button",
+      "step2": "Click the <strong>\"Copy Prompt\"</strong> button below",
+      "step3": "<strong>Attach your Saju result image</strong> to ChatGPT and paste the prompt",
+      "step4": "ChatGPT will analyze the image and provide professional-level detailed analysis!"
+    },
+    "promptSection": {
+      "title": "📋 Prompt Template",
+      "copyButton": "📋 Copy Prompt",
+      "copied": "Prompt copied!\\nAttach your Saju result image to ChatGPT and paste the prompt.",
+      "tip": "💡 <strong>Tip:</strong> ChatGPT will automatically extract all information from the image. Just attach the image without any additional input!"
+    },
+    "analysis": {
+      "title": "✨ What ChatGPT Will Analyze",
+      "fortune": {
+        "title": "① 2025 Fortune Forecast",
+        "description": "Quarterly/monthly trends, precautions, and 3 key themes"
+      },
+      "personality": {
+        "title": "② Innate Character & Personality",
+        "description": "Personality based on Five Elements balance and Ten Gods composition, strengths and areas to improve"
+      },
+      "patterns": {
+        "title": "③ Life Patterns & Turning Points",
+        "description": "Characteristics of 20s, 30s, 40s, recurring themes, major transitions"
+      },
+      "areas": {
+        "title": "④ Guide for 4 Major Areas",
+        "description": "Specific advice for career, relationships, finance, and health"
+      },
+      "actions": {
+        "title": "⑤ 5 Action Points",
+        "description": "Concrete action plans to use Saju like data"
+      }
+    },
+    "footer": {
+      "guideLink": "Saju Terminology Guide"
+    }
+  }
+}

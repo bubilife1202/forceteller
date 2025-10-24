@@ -1,0 +1,387 @@
+{
+  "metadata": {
+    "title": "포스텔러 만세력 - 무료 사주 풀이, 대운, 신살 분석",
+    "description": "정확한 시간 보정을 통한 사주 오행 분석 서비스. 사주 팔자, 십성, 대운, 12운성, 신살, 합충 분석을 무료로 제공합니다. 음력/양력 변환 지원.",
+    "keywords": "사주, 만세력, 사주풀이, 사주팔자, 십성, 오행, 대운, 신살, 음력, 양력, 운세, 명리학"
+  },
+  "common": {
+    "language": "언어",
+    "korean": "한국어",
+    "english": "English",
+    "version": "포스텔러 만세력 v2.4.1",
+    "backToHome": "← 돌아가기",
+    "goToHome": "사주 풀이 하러 가기"
+  },
+  "form": {
+    "title": "포스텔러 만세력",
+    "subtitle": "모두를 위한 사주풀이",
+    "accuracyNote": "서머타임은 물론 지역에 따른 1~2분의 미세 시차까지 보정합니다",
+    "guideLink": "📖 사주 용어 설명 보기",
+    "chatgptLink": "🤖 ChatGPT로 더 깊이 분석하기",
+    "name": {
+      "label": "이름",
+      "placeholder": "최대 12글자 이내로 입력하세요"
+    },
+    "gender": {
+      "label": "성별",
+      "female": "여자",
+      "male": "남자"
+    },
+    "birthDate": {
+      "label": "생년월일",
+      "solar": "양력",
+      "lunar": "음력",
+      "year": "년",
+      "month": "월",
+      "day": "일"
+    },
+    "birthTime": {
+      "label": "출생 시간",
+      "hourGuide": "12간지 시간표",
+      "show": "보기",
+      "hide": "숨기기",
+      "exact": "⏰ 정확한 시간 알고 있음",
+      "branch": "🐉 12간지만 알고 있음 (자시, 축시, 오시 등)",
+      "unknown": "❓ 시간을 모름 (정오 12시로 계산)",
+      "hour": "시 (0-23)",
+      "minute": "분 (0-59)",
+      "currentBranch": "기준으로 계산됩니다",
+      "middleTime": "시간대 중간값",
+      "noonDefault": "정오 12시로 계산됩니다"
+    },
+    "city": {
+      "label": "출생 도시",
+      "optional": "(선택사항)",
+      "placeholder": "예: 서울특별시, 부산광역시",
+      "help": "정확한 지역 시차 보정을 위해 입력해주세요"
+    },
+    "submit": "사주 풀이 시작하기",
+    "footer": {
+      "note": "정확한 사주 분석을 위해 정보를 정확히 입력해주세요"
+    },
+    "hourBranches": {
+      "ja": "자시(子時)",
+      "chuk": "축시(丑時)",
+      "in": "인시(寅時)",
+      "myo": "묘시(卯時)",
+      "jin": "진시(辰時)",
+      "sa": "사시(巳時)",
+      "o": "오시(午時)",
+      "mi": "미시(未時)",
+      "shin": "신시(申時)",
+      "yu": "유시(酉時)",
+      "sul": "술시(戌時)",
+      "hae": "해시(亥時)"
+    }
+  },
+  "result": {
+    "title": "{name}님의 사주 풀이",
+    "gender": {
+      "male": "남자 👨",
+      "female": "여자 👩"
+    },
+    "dayMaster": "{stem} 일간",
+    "element": "{element} {yinyang}",
+    "yang": "양",
+    "yin": "음",
+    "buttons": {
+      "image": "이미지",
+      "imageSaving": "생성중...",
+      "share": "공유",
+      "reset": "다시 입력하기",
+      "downloadTitle": "이미지로 다운로드",
+      "shareTitle": "이미지로 공유하기"
+    },
+    "alerts": {
+      "shareNotFound": "공유할 내용을 찾을 수 없습니다.",
+      "imageFailed": "이미지 생성에 실패했습니다.",
+      "browserNotSupported": "이 브라우저는 직접 공유를 지원하지 않습니다.\\n이미지를 다운로드한 후 직접 공유해주세요.",
+      "shareFailed": "공유 중 오류가 발생했습니다.",
+      "imageError": "이미지 생성 실패: {error}\\n\\n브라우저를 새로고침 후 다시 시도해주세요.",
+      "imageErrorGeneric": "이미지 생성 중 오류가 발생했습니다.\\n브라우저를 새로고침 후 다시 시도해주세요."
+    },
+    "sections": {
+      "overview": {
+        "title": "⭐ 종합 평가",
+        "dayCharacter": "일간 특성",
+        "strengthType": "신강/신약",
+        "yongsin": "용신 추천",
+        "yongsinHelp": "필요한 기운을 보충하면 운이 좋아집니다",
+        "keyPoint": "핵심 포인트",
+        "keyPointDesc": "<strong>{stem} 일간</strong>은 {image}처럼 {strength}의 장점이 있습니다. 십성 구성은 비겁 {bigub}, 식상 {sigsang}, 재성 {jaesung}, 관성 {gwansung}, 인성 {insung}개로 이루어져 있으며",
+        "excessElements": " {elements} 기운이 강하고",
+        "deficientElements": " {elements} 기운이 부족합니다.",
+        "strong": "신강 🔥",
+        "weak": "신약 💧",
+        "neutral": "중화 ⚖️",
+        "strongDesc": "일간이 강한 사주. 재성·관성이 용신",
+        "weakDesc": "일간이 약한 사주. 인성·비겁이 용신",
+        "neutralDesc": "균형 잡힌 중화 사주"
+      },
+      "personality": {
+        "title": "일간 성격 분석",
+        "strengths": "✨ 장점",
+        "weaknesses": "⚠️ 주의할 점",
+        "suitableJobs": "💼 적합한 직업",
+        "successStrategy": "🎯 성공 전략",
+        "strategy1": "장점인 {strength}을(를) 최대한 활용하세요",
+        "strategy2": "{weakness}을(를) 보완하도록 노력하세요",
+        "strategy3": "용신인 {yongsin} 기운을 보충하세요"
+      },
+      "pillars": {
+        "title": "사주 팔자",
+        "division": "구분",
+        "hour": "시주",
+        "day": "일주",
+        "month": "월주",
+        "year": "년주",
+        "pillar": "柱",
+        "stem": "천간",
+        "heavenlyStem": "天干",
+        "tenGod": "십성",
+        "tenGods": "十星",
+        "branch": "지지",
+        "earthlyBranch": "地支",
+        "self": "(나)",
+        "dayMasterNote": "일간 (자신)"
+      },
+      "elements": {
+        "title": "오행 분석",
+        "wood": "목",
+        "fire": "화",
+        "earth": "토",
+        "metal": "금",
+        "water": "수"
+      },
+      "strength": {
+        "title": "신강/신약 분석",
+        "strong": "신강",
+        "weak": "신약",
+        "neutral": "중화",
+        "strongDesc": "일간이 강한 사주입니다",
+        "weakDesc": "일간이 약한 사주입니다",
+        "neutralDesc": "일간이 중화된 사주입니다",
+        "strongYongsin": "재성(財星)과 관성(官星)이 용신이 될 수 있습니다",
+        "weakYongsin": "인성(印星)과 비겁(比劫)이 용신이 될 수 있습니다",
+        "neutralYongsin": "균형잡힌 사주입니다"
+      },
+      "twelveCycles": {
+        "title": "12운성"
+      },
+      "daeun": {
+        "title": "대운 (大運)",
+        "age": "{age}세~"
+      },
+      "shinsals": {
+        "title": "신살",
+        "none": "특별한 신살이 없습니다"
+      },
+      "hapchung": {
+        "title": "합충형파해",
+        "none": "합충이 없습니다"
+      }
+    },
+    "tooltips": {
+      "overview": "사주의 전체적인 특징을 한눈에 볼 수 있는 요약입니다.",
+      "personality": "일간(태어난 날의 천간)은 나 자신을 나타내며, 기본 성격과 적성을 보여줍니다.",
+      "pillars": "년·월·일·시 네 기둥으로 태어난 시간의 우주 에너지를 나타냅니다.",
+      "tenGods": "십성은 나와 다른 간지의 관계를 나타내며, 인생의 여러 측면을 보여줍니다.",
+      "elements": "목·화·토·금·수 다섯 기운의 균형을 분석합니다.",
+      "strength": "일간의 세력이 강한지 약한지 판단합니다.",
+      "twelveCycles": "일간이 각 기둥에서 어떤 생명 주기 단계에 있는지 나타냅니다.",
+      "daeun": "10년마다 바뀌는 큰 운의 흐름입니다.",
+      "shinsals": "특별한 길흉의 별입니다.",
+      "hapchung": "천간이나 지지 간의 조화와 충돌을 분석합니다."
+    },
+    "footer": {
+      "note1": "이 사주 풀이는 전통적인 명리학 계산 방식을 기반으로 합니다",
+      "note2": "더 정확한 해석을 원하시면 전문가와 상담하시기 바랍니다"
+    }
+  },
+  "guide": {
+    "title": "사주 용어 설명",
+    "subtitle": "사주 풀이 결과를 이해하기 위한 기본 용어들을 설명합니다",
+    "sections": {
+      "pillars": {
+        "title": "사주팔자 (四柱八字)",
+        "description": "년(年)·월(月)·일(日)·시(時) 네 기둥으로 태어난 시간의 우주 에너지를 나타냅니다. 각 기둥은 천간(天干, 하늘)과 지지(地支, 땅) 두 글자로 구성되어 총 8글자가 됩니다.",
+        "stem": {
+          "title": "천간 (天干)",
+          "description": "갑(甲)·을(乙)·병(丙)·정(丁)·무(戊)·기(己)·경(庚)·신(辛)·임(壬)·계(癸) 10개. 하늘의 기운을 나타내며, 양(陽)과 음(陰)이 번갈아 나타납니다."
+        },
+        "branch": {
+          "title": "지지 (地支)",
+          "description": "자(子)·축(丑)·인(寅)·묘(卯)·진(辰)·사(巳)·오(午)·미(未)·신(申)·유(酉)·술(戌)·해(亥) 12개. 땅의 기운이자 12띠 동물을 나타냅니다."
+        },
+        "tenGods": {
+          "title": "십성 (十星)",
+          "description": "나(일간)를 기준으로 다른 천간이 어떤 의미인지 보여줍니다. 비견·겁재(형제), 식신·상관(표현), 편재·정재(재물), 편관·정관(직장), 편인·정인(학문) 등이 있습니다."
+        }
+      },
+      "elements": {
+        "title": "오행 분석 (五行)",
+        "description": "목(木)·화(火)·토(土)·금(金)·수(水) 다섯 기운의 균형을 분석합니다. 오행은 서로 생(生)하거나 극(剋)하는 관계를 가지며, 균형이 중요합니다.",
+        "wood": {
+          "title": "목 (木) - 나무",
+          "description": "성장, 확장, 창의성, 인자함. 봄의 기운"
+        },
+        "fire": {
+          "title": "화 (火) - 불",
+          "description": "열정, 활동, 명예, 예의. 여름의 기운"
+        },
+        "earth": {
+          "title": "토 (土) - 흙",
+          "description": "중재, 신용, 안정, 포용. 환절기의 기운"
+        },
+        "metal": {
+          "title": "금 (金) - 쇠",
+          "description": "의리, 결단, 정의, 강직함. 가을의 기운"
+        },
+        "water": {
+          "title": "수 (水) - 물",
+          "description": "지혜, 유연, 지략, 침착함. 겨울의 기운"
+        },
+        "mutual": {
+          "title": "상생(相生) 관계",
+          "description": "목→화→토→금→수→목 순서로 서로를 도와줍니다. (나무는 불을 피우고, 불은 재가 되어 흙을 만들고...)"
+        }
+      },
+      "strength": {
+        "title": "신강/신약 (身强/身弱)",
+        "description": "일간(나)의 세력이 강한지 약한지 판단합니다. 사주 팔자 안에서 나를 돕는 기운이 많으면 신강, 적으면 신약입니다.",
+        "strong": {
+          "title": "신강 (身强)",
+          "description": "나를 돕는 기운(비겁·인성)이 많아 일간이 강한 상태입니다.",
+          "yongsin": "용신: 재성(재물), 관성(직장·명예), 식상(표현·재능)이 좋습니다."
+        },
+        "weak": {
+          "title": "신약 (身弱)",
+          "description": "나를 돕는 기운이 적어 일간이 약한 상태입니다.",
+          "yongsin": "용신: 인성(학문·어른), 비겁(형제·동료)이 도움이 됩니다."
+        }
+      },
+      "twelveCycles": {
+        "title": "12운성 (十二運星)",
+        "description": "일간이 각 기둥(년·월·일·시)에서 어떤 생명 주기 단계에 있는지 나타냅니다. 사람의 인생을 12단계로 나눈 것과 같습니다.",
+        "jangsaeng": "장생 - 새 생명의 시작",
+        "mokyok": "목욕 - 성장과 변화",
+        "gwandae": "관대 - 성년, 왕성함",
+        "geonrok": "건록 - 왕성한 활동",
+        "jewang": "제왕 - 정점, 최고조",
+        "soe": "쇠 - 쇠퇴 시작",
+        "byeong": "병 - 약해짐",
+        "sa": "사 - 소멸",
+        "myo": "묘 - 무덤, 잠복",
+        "jeol": "절 - 끊어짐",
+        "tae": "태 - 태아, 준비",
+        "yang": "양 - 자양, 성장 준비"
+      },
+      "daeun": {
+        "title": "대운 (大運)",
+        "description": "10년마다 바뀌는 큰 운의 흐름입니다. 태어난 월주를 기준으로 순행 또는 역행하며 계산됩니다.",
+        "forward": {
+          "title": "순행 (順行)",
+          "description": "양년생 남자, 음년생 여자는 월주에서 다음 간지로 순서대로 진행합니다."
+        },
+        "backward": {
+          "title": "역행 (逆行)",
+          "description": "양년생 여자, 음년생 남자는 월주에서 이전 간지로 거꾸로 진행합니다."
+        },
+        "importance": {
+          "title": "대운의 중요성",
+          "description": "각 대운마다 영향을 주는 천간·지지가 달라 인생의 전환기를 예측할 수 있습니다. 좋은 대운이 오면 기회를 잡기 좋고, 나쁜 대운에는 조심해야 합니다."
+        }
+      },
+      "shinsals": {
+        "title": "신살 (神殺)",
+        "description": "사주에 특별한 의미를 부여하는 길성(吉星)과 흉성(凶星)입니다. 신살이 있다고 해서 절대적인 것은 아니며, 참고용으로 활용합니다.",
+        "cheonul": {
+          "title": "천을귀인 (天乙貴人)",
+          "description": "귀인의 도움을 받는 별. 어려울 때 도움을 받거나 귀인을 만날 가능성이 높습니다."
+        },
+        "yeokma": {
+          "title": "역마살 (驛馬殺)",
+          "description": "이동과 변화가 많은 별. 여행, 이사, 직장 이동 등이 잦을 수 있습니다."
+        },
+        "dohwa": {
+          "title": "도화살 (桃花殺)",
+          "description": "이성운과 인기가 있는 별. 사교성이 좋고 매력적이지만, 이성 문제에 주의가 필요할 수 있습니다."
+        },
+        "munchang": {
+          "title": "문창귀인 (文昌貴人)",
+          "description": "학문과 예술의 별. 공부를 잘하거나 문학·예술 방면에 재능이 있습니다."
+        }
+      },
+      "hapchung": {
+        "title": "합충형파해 (合沖刑破害)",
+        "description": "천간이나 지지 간의 조화와 충돌을 분석합니다. 합(合)은 조화를, 충(沖)은 변화·충돌을 의미합니다.",
+        "stemCombination": {
+          "title": "천간합 (天干合)",
+          "description": "갑+기, 을+경, 병+신, 정+임, 무+계 조합. 서로 화합하여 새로운 오행으로 변화합니다.",
+          "example": "예: 갑기합화토 (갑+기 → 토로 변화)"
+        },
+        "branchCombination": {
+          "title": "지지합 (地支合)",
+          "description": "자+축, 인+해, 묘+술, 진+유, 사+신, 오+미 조합. 육합(六合)이라고 하며 서로 돕는 관계입니다."
+        },
+        "tripleCombination": {
+          "title": "삼합 (三合)",
+          "description": "세 지지가 합하여 하나의 오행을 이루는 것. 매우 강한 조화입니다.",
+          "example": "예: 인+오+술=화, 해+묘+미=목, 사+유+축=금, 신+자+진=수"
+        },
+        "branchClash": {
+          "title": "지지충 (地支沖)",
+          "description": "자↔오, 축↔미, 인↔신, 묘↔유, 진↔술, 사↔해 조합. 정면으로 충돌하는 관계로 변화나 갈등을 의미합니다.",
+          "note": "충은 나쁜 것만은 아니며, 변화와 발전의 계기가 되기도 합니다."
+        }
+      }
+    },
+    "footer": {
+      "note": "이 설명은 전통 명리학의 기본 개념을 간략히 정리한 것입니다.",
+      "consult": "더 정확하고 깊이 있는 해석을 원하시면 전문가와 상담하시기 바랍니다."
+    }
+  },
+  "chatgpt": {
+    "title": "ChatGPT 사주 분석 프롬프트",
+    "subtitle": "포스텔러 결과를 ChatGPT로 더 깊이 분석하세요",
+    "howToUse": {
+      "title": "📖 사용 방법",
+      "step1": "포스텔러에서 사주 풀이 완료 후 <strong>\"이미지 다운로드\"</strong> 버튼으로 결과 이미지 저장",
+      "step2": "아래 <strong>\"프롬프트 복사\"</strong> 버튼 클릭",
+      "step3": "ChatGPT에 <strong>사주 결과 이미지를 첨부</strong>하고 프롬프트 붙여넣기",
+      "step4": "ChatGPT가 이미지를 보고 전문가 수준의 상세 분석 제공!"
+    },
+    "promptSection": {
+      "title": "📋 프롬프트 템플릿",
+      "copyButton": "📋 프롬프트 복사",
+      "copied": "프롬프트가 복사되었습니다!\\nChatGPT에 사주 결과 이미지를 첨부하고 프롬프트를 붙여넣으세요.",
+      "tip": "💡 <strong>팁:</strong> ChatGPT가 이미지를 읽고 자동으로 모든 정보를 추출합니다. 별도로 입력할 필요 없이 이미지만 첨부하면 됩니다!"
+    },
+    "analysis": {
+      "title": "✨ ChatGPT가 분석해주는 내용",
+      "fortune": {
+        "title": "① 2025년 운세 전망",
+        "description": "분기별·월별 흐름, 주의사항, 전체 키워드 3가지"
+      },
+      "personality": {
+        "title": "② 타고난 기질과 성격",
+        "description": "오행 밸런스와 십성 구성으로 본 성격, 장점과 보완점"
+      },
+      "patterns": {
+        "title": "③ 인생 패턴과 전환점",
+        "description": "20대·30대·40대 특징, 반복되는 테마, 주요 전환기"
+      },
+      "areas": {
+        "title": "④ 4대 영역별 가이드",
+        "description": "커리어·관계·재정·건강 각 영역별 구체적 조언"
+      },
+      "actions": {
+        "title": "⑤ 실행 포인트 5가지",
+        "description": "사주를 데이터처럼 활용하는 구체적 행동 계획"
+      }
+    },
+    "footer": {
+      "guideLink": "사주 용어 설명"
+    }
+  }
+}

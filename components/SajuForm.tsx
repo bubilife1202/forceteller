@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import Link from 'next/link';
 import AdSense from './AdSense';
 
 export interface FormData {
@@ -23,21 +25,24 @@ interface SajuFormProps {
 
 // 12간지 시간표
 const HOUR_BRANCHES = [
-  { hour: 23, label: '자시(子時)', time: '23:00-01:00', branch: '쥐' },
-  { hour: 1, label: '축시(丑時)', time: '01:00-03:00', branch: '소' },
-  { hour: 3, label: '인시(寅時)', time: '03:00-05:00', branch: '호랑이' },
-  { hour: 5, label: '묘시(卯時)', time: '05:00-07:00', branch: '토끼' },
-  { hour: 7, label: '진시(辰時)', time: '07:00-09:00', branch: '용' },
-  { hour: 9, label: '사시(巳時)', time: '09:00-11:00', branch: '뱀' },
-  { hour: 11, label: '오시(午時)', time: '11:00-13:00', branch: '말' },
-  { hour: 13, label: '미시(未時)', time: '13:00-15:00', branch: '양' },
-  { hour: 15, label: '신시(申時)', time: '15:00-17:00', branch: '원숭이' },
-  { hour: 17, label: '유시(酉時)', time: '17:00-19:00', branch: '닭' },
-  { hour: 19, label: '술시(戌時)', time: '19:00-21:00', branch: '개' },
-  { hour: 21, label: '해시(亥時)', time: '21:00-23:00', branch: '돼지' },
+  { hour: 23, key: 'ja', time: '23:00-01:00' },
+  { hour: 1, key: 'chuk', time: '01:00-03:00' },
+  { hour: 3, key: 'in', time: '03:00-05:00' },
+  { hour: 5, key: 'myo', time: '05:00-07:00' },
+  { hour: 7, key: 'jin', time: '07:00-09:00' },
+  { hour: 9, key: 'sa', time: '09:00-11:00' },
+  { hour: 11, key: 'o', time: '11:00-13:00' },
+  { hour: 13, key: 'mi', time: '13:00-15:00' },
+  { hour: 15, key: 'shin', time: '15:00-17:00' },
+  { hour: 17, key: 'yu', time: '17:00-19:00' },
+  { hour: 19, key: 'sul', time: '19:00-21:00' },
+  { hour: 21, key: 'hae', time: '21:00-23:00' },
 ];
 
 export default function SajuForm({ onSubmit }: SajuFormProps) {
+  const t = useTranslations('form');
+  const locale = useLocale();
+
   const [formData, setFormData] = useState<FormData>({
     name: '',
     gender: 'male',
@@ -74,27 +79,27 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
       {/* 헤더 */}
       <div className="text-center mb-12">
         <h1 className="text-5xl md:text-6xl font-bold mb-4 gradient-text">
-          포스텔러 만세력
+          {t('title')}
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-2">
-          모두를 위한 사주풀이
+          {t('subtitle')}
         </p>
         <p className="text-sm text-gray-500 mb-4">
-          서머타임은 물론 지역에 따른 1~2분의 미세 시차까지 보정합니다
+          {t('accuracyNote')}
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
-          <a
-            href="/guide"
+          <Link
+            href={`/${locale}/guide`}
             className="inline-block px-6 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition"
           >
-            📖 사주 용어 설명 보기
-          </a>
-          <a
-            href="/chatgpt-prompt"
+            {t('guideLink')}
+          </Link>
+          <Link
+            href={`/${locale}/chatgpt-prompt`}
             className="inline-block px-6 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full font-medium hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition"
           >
-            🤖 ChatGPT로 더 깊이 분석하기
-          </a>
+            {t('chatgptLink')}
+          </Link>
         </div>
       </div>
 
@@ -105,13 +110,13 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
             {/* 이름 입력 */}
             <div className="animate-slide-in">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
-                이름
+                {t('name.label')}
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="최대 12글자 이내로 입력하세요"
+                placeholder={t('name.placeholder')}
                 maxLength={12}
                 className="w-full px-5 py-4 text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none"
                 required
@@ -121,7 +126,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
             {/* 성별 선택 */}
             <div className="animate-slide-in" style={{ animationDelay: '0.1s' }}>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
-                성별
+                {t('gender.label')}
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <button
@@ -133,7 +138,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
-                  여자
+                  {t('gender.female')}
                 </button>
                 <button
                   type="button"
@@ -144,7 +149,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
-                  남자
+                  {t('gender.male')}
                 </button>
               </div>
             </div>
@@ -153,7 +158,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
             <div className="animate-slide-in" style={{ animationDelay: '0.2s' }}>
               <div className="flex items-center justify-between mb-3">
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                  생년월일
+                  {t('birthDate.label')}
                 </label>
                 <div className="flex gap-2">
                   <button
@@ -165,7 +170,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                     }`}
                   >
-                    양력
+                    {t('birthDate.solar')}
                   </button>
                   <button
                     type="button"
@@ -176,7 +181,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                     }`}
                   >
-                    음력
+                    {t('birthDate.lunar')}
                   </button>
                 </div>
               </div>
@@ -192,7 +197,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                       <option key={year} value={year}>{year}</option>
                     ))}
                   </select>
-                  <p className="text-xs text-gray-500 text-center mt-2">년</p>
+                  <p className="text-xs text-gray-500 text-center mt-2">{t('birthDate.year')}</p>
                 </div>
                 <div>
                   <select
@@ -202,10 +207,10 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                     required
                   >
                     {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                      <option key={month} value={month}>{month}월</option>
+                      <option key={month} value={month}>{month}{t('birthDate.month')}</option>
                     ))}
                   </select>
-                  <p className="text-xs text-gray-500 text-center mt-2">월</p>
+                  <p className="text-xs text-gray-500 text-center mt-2">{t('birthDate.month')}</p>
                 </div>
                 <div>
                   <select
@@ -215,10 +220,10 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                     required
                   >
                     {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                      <option key={day} value={day}>{day}일</option>
+                      <option key={day} value={day}>{day}{t('birthDate.day')}</option>
                     ))}
                   </select>
-                  <p className="text-xs text-gray-500 text-center mt-2">일</p>
+                  <p className="text-xs text-gray-500 text-center mt-2">{t('birthDate.day')}</p>
                 </div>
               </div>
             </div>
@@ -227,14 +232,14 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
             <div className="animate-slide-in" style={{ animationDelay: '0.3s' }}>
               <div className="flex items-center justify-between mb-3">
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                  출생 시간
+                  {t('birthTime.label')}
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowHourGuide(!showHourGuide)}
                   className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
                 >
-                  12간지 시간표 {showHourGuide ? '숨기기' : '보기'}
+                  {t('birthTime.hourGuide')} {showHourGuide ? t('birthTime.hide') : t('birthTime.show')}
                 </button>
               </div>
 
@@ -247,7 +252,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                         className="p-2 bg-white dark:bg-gray-700 rounded-lg"
                       >
                         <div className="font-semibold text-indigo-600 dark:text-indigo-400">
-                          {branch.label}
+                          {t(`hourBranches.${branch.key}`)}
                         </div>
                         <div className="text-gray-600 dark:text-gray-400">{branch.time}</div>
                       </div>
@@ -268,7 +273,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
-                    ⏰ 정확한 시간 알고 있음
+                    {t('birthTime.exact')}
                   </button>
                   <button
                     type="button"
@@ -279,7 +284,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
-                    🐉 12간지만 알고 있음 (자시, 축시, 오시 등)
+                    {t('birthTime.branch')}
                   </button>
                   <button
                     type="button"
@@ -290,7 +295,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
-                    ❓ 시간을 모름 (정오 12시로 계산)
+                    {t('birthTime.unknown')}
                   </button>
                 </div>
 
@@ -306,10 +311,10 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                           required
                         >
                           {Array.from({ length: 24 }, (_, i) => i).map(hour => (
-                            <option key={hour} value={hour}>{hour}시</option>
+                            <option key={hour} value={hour}>{hour}</option>
                           ))}
                         </select>
-                        <p className="text-xs text-gray-500 text-center mt-2">시 (0-23)</p>
+                        <p className="text-xs text-gray-500 text-center mt-2">{t('birthTime.hour')}</p>
                       </div>
                       <div>
                         <select
@@ -319,16 +324,16 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                           required
                         >
                           {Array.from({ length: 60 }, (_, i) => i).map(minute => (
-                            <option key={minute} value={minute}>{minute}분</option>
+                            <option key={minute} value={minute}>{minute}</option>
                           ))}
                         </select>
-                        <p className="text-xs text-gray-500 text-center mt-2">분 (0-59)</p>
+                        <p className="text-xs text-gray-500 text-center mt-2">{t('birthTime.minute')}</p>
                       </div>
                     </div>
 
                     <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
                       <p className="text-sm text-purple-900 dark:text-purple-200">
-                        <span className="font-semibold">{getCurrentHourBranch().label}</span>
+                        <span className="font-semibold">{t(`hourBranches.${getCurrentHourBranch().key}`)}</span>
                         <span className="text-purple-700 dark:text-purple-300 ml-2">
                           ({getCurrentHourBranch().time})
                         </span>
@@ -352,18 +357,18 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                       >
                         {HOUR_BRANCHES.map((branch, idx) => (
                           <option key={idx} value={branch.hour}>
-                            {branch.label} {branch.time}
+                            {t(`hourBranches.${branch.key}`)} {branch.time}
                           </option>
                         ))}
                       </select>
-                      <p className="text-xs text-gray-500 text-center mt-2">12간지 시간 선택</p>
+                      <p className="text-xs text-gray-500 text-center mt-2">{t('birthTime.hourGuide')}</p>
                     </div>
 
                     <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
                       <p className="text-sm text-purple-900 dark:text-purple-200">
-                        <span className="font-semibold">{getCurrentHourBranch().label}</span> 기준으로 계산됩니다
+                        <span className="font-semibold">{t(`hourBranches.${getCurrentHourBranch().key}`)}</span> {t('birthTime.currentBranch')}
                         <span className="block text-xs text-purple-700 dark:text-purple-300 mt-1">
-                          (시간대 중간값: {formData.hour}시 {formData.minute}분)
+                          ({t('birthTime.middleTime')}: {formData.hour} {formData.minute})
                         </span>
                       </p>
                     </div>
@@ -374,7 +379,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
                 {formData.timeInputType === 'unknown' && (
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      정오 12시로 계산됩니다
+                      {t('birthTime.noonDefault')}
                     </p>
                   </div>
                 )}
@@ -384,17 +389,17 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
             {/* 도시 입력 */}
             <div className="animate-slide-in" style={{ animationDelay: '0.4s' }}>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
-                출생 도시 <span className="text-xs text-gray-500">(선택사항)</span>
+                {t('city.label')} <span className="text-xs text-gray-500">{t('city.optional')}</span>
               </label>
               <input
                 type="text"
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                placeholder="예: 서울특별시, 부산광역시"
+                placeholder={t('city.placeholder')}
                 className="w-full px-5 py-4 text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:ring-4 focus:ring-indigo-200 dark:focus:ring-indigo-900 focus:border-indigo-500 outline-none"
               />
               <p className="text-xs text-gray-500 mt-2">
-                정확한 지역 시차 보정을 위해 입력해주세요
+                {t('city.help')}
               </p>
             </div>
           </div>
@@ -406,7 +411,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
             type="submit"
             className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-5 px-8 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 focus:ring-4 focus:ring-purple-300"
           >
-            사주 풀이 시작하기
+            {t('submit')}
           </button>
         </div>
       </form>
@@ -421,8 +426,8 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
 
       {/* 안내 문구 */}
       <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p className="font-semibold text-indigo-600 dark:text-indigo-400">포스텔러 만세력 v2.4.1</p>
-        <p className="mt-1">정확한 사주 분석을 위해 정보를 정확히 입력해주세요</p>
+        <p className="font-semibold text-indigo-600 dark:text-indigo-400">{t('../common.version')}</p>
+        <p className="mt-1">{t('footer.note')}</p>
       </div>
     </div>
   );
