@@ -21,15 +21,19 @@ interface SajuResultProps {
 
 export default function SajuResultSimplified({ result, name, gender, onReset }: SajuResultProps) {
   const t = useTranslations('result');
+  const tCommon = useTranslations('common');
   const [isSaving, setIsSaving] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   // 이미지로 공유하기 (Web Share API)
   const handleShare = async () => {
+    setIsSharing(true);
     try {
       const htmlToImage = await import('html-to-image');
       const element = document.getElementById('saju-result');
       if (!element) {
         alert(t('alerts.shareNotFound'));
+        setIsSharing(false);
         return;
       }
 
@@ -53,6 +57,7 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
 
       if (!blob) {
         alert(t('alerts.imageFailed'));
+        setIsSharing(false);
         return;
       }
 
@@ -65,15 +70,18 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
           text: t('title', { name }),
           files: [file]
         });
+        // 공유 성공 (사용자가 공유 완료한 경우)
       } else {
-        alert(t('alerts.browserNotSupported'));
+        // Web Share API를 지원하지 않으면 다운로드
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = `${name}_사주풀이_${today}.png`;
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
+        alert('이미지가 다운로드되었습니다. 다운로드 폴더를 확인해주세요.');
       }
+      setIsSharing(false);
     } catch (error) {
       console.error('공유 오류:', error);
       const element = document.getElementById('saju-result');
@@ -81,6 +89,8 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
         const buttons = element.querySelectorAll('button');
         buttons.forEach(btn => (btn as HTMLElement).style.display = '');
       }
+      setIsSharing(false);
+      // AbortError는 사용자가 공유를 취소한 경우이므로 에러 메시지 표시 안 함
       if (error instanceof Error && error.name === 'AbortError') return;
       alert(t('alerts.shareFailed'));
     }
@@ -174,7 +184,7 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={handleDownloadPDF}
-                disabled={isSaving}
+                disabled={isSaving || isSharing}
                 className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition disabled:opacity-50"
                 title={t('buttons.downloadTitle')}
               >
@@ -182,10 +192,11 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
               </button>
               <button
                 onClick={handleShare}
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition"
+                disabled={isSaving || isSharing}
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition disabled:opacity-50"
                 title={t('buttons.shareTitle')}
               >
-                📤 {t('buttons.share')}
+                📤 {isSharing ? '공유 준비중...' : t('buttons.share')}
               </button>
               <button
                 onClick={onReset}
@@ -350,7 +361,7 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
         <p>{t('footer.note1')}</p>
         <p>{t('footer.note2')}</p>
         <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-6">
-          <p className="font-semibold text-indigo-600 dark:text-indigo-400">{t('../common.version')}</p>
+          <p className="font-semibold text-indigo-600 dark:text-indigo-400">{tCommon('version')}</p>
         </div>
       </div>
     </div>

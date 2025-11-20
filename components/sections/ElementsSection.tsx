@@ -35,7 +35,7 @@ export default function ElementsSection({ result }: ElementsSectionProps) {
                     {ELEMENTS[element as keyof typeof ELEMENTS].cn}
                   </span>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {t(`sections.elements.${element}`)}
+                    {element}
                   </span>
                 </div>
                 <span className="text-xl font-bold text-gray-700 dark:text-gray-300">{value.toFixed(1)}%</span>

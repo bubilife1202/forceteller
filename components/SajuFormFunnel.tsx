@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslations } from 'next-intl';
 import GlassCard from './ui/glass-card';
 import { Sparkles, User, Calendar, Clock } from 'lucide-react';
 
@@ -129,7 +128,7 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
       transition={pageTransition}
       className="max-w-md mx-auto"
     >
-      <GlassCard variant="strong" glow="purple">
+      <GlassCard variant="strong" glow="purple" animate={false}>
         <div className="text-center mb-8">
           <User className="w-16 h-16 text-purple-400 mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
@@ -182,7 +181,7 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
       transition={pageTransition}
       className="max-w-2xl mx-auto"
     >
-      <GlassCard variant="strong" glow="gold">
+      <GlassCard variant="strong" glow="gold" animate={false}>
         <div className="text-center mb-8">
           <Calendar className="w-16 h-16 text-amber-400 mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
@@ -320,7 +319,7 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
       transition={pageTransition}
       className="max-w-2xl mx-auto"
     >
-      <GlassCard variant="strong" glow="purple">
+      <GlassCard variant="strong" glow="purple" animate={false}>
         <div className="text-center mb-8">
           <Clock className="w-16 h-16 text-purple-400 mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>

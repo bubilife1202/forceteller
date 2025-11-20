@@ -10,6 +10,7 @@ interface GlassCardProps {
   variant?: 'default' | 'strong' | 'subtle';
   glow?: 'none' | 'gold' | 'purple';
   hover?: boolean;
+  animate?: boolean; // 초기 애니메이션 여부
 }
 
 const variantStyles = {
@@ -29,12 +30,13 @@ export default function GlassCard({
   className = '',
   variant = 'default',
   glow = 'none',
-  hover = true
+  hover = true,
+  animate = true
 }: GlassCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={animate ? { opacity: 0, y: 20 } : false}
+      animate={animate ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
       className={cn(
         'rounded-2xl p-8',

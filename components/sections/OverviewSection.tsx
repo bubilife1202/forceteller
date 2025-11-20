@@ -69,8 +69,6 @@ export default function OverviewSection({ result }: OverviewSectionProps) {
               {t('sections.overview.keyPoint')}
             </h4>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              <strong>{result.day.stem.ko}{result.day.stem.cn} {t('dayMaster', { stem: '' })}</strong>
-              {result.dayPersonality.image} {result.dayPersonality.strength.split(',')[0]}
               {t('sections.overview.keyPointDesc', {
                 stem: `${result.day.stem.ko}${result.day.stem.cn}`,
                 image: result.dayPersonality.image,
