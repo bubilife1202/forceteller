@@ -3,13 +3,17 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import SajuFormFunnel, { FormData } from '@/components/SajuFormFunnel';
-import SajuResult from '@/components/SajuResult';
+import SajuResultPremium from '@/components/SajuResultPremium';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
 
 export default function Home() {
   const [result, setResult] = useState<SajuResultType | null>(null);
-  const [userData, setUserData] = useState<{ name: string; gender: 'male' | 'female' } | null>(null);
+  const [userData, setUserData] = useState<{
+    name: string;
+    gender: 'male' | 'female';
+    birthDate: { year: number; month: number; day: number };
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
@@ -29,6 +33,11 @@ export default function Home() {
     setUserData({
       name: formData.name,
       gender: formData.gender,
+      birthDate: {
+        year: formData.year,
+        month: formData.month,
+        day: formData.day,
+      },
     });
     setIsLoading(false);
 
@@ -60,14 +69,13 @@ export default function Home() {
           <SajuFormFunnel onSubmit={handleSubmit} />
         ) : (
           userData && (
-            <div className="py-12 px-4 md:px-6 lg:px-8">
-              <SajuResult
-                result={result}
-                name={userData.name}
-                gender={userData.gender}
-                onReset={handleReset}
-              />
-            </div>
+            <SajuResultPremium
+              result={result}
+              name={userData.name}
+              gender={userData.gender}
+              birthDate={userData.birthDate}
+              onReset={handleReset}
+            />
           )
         )}
 
