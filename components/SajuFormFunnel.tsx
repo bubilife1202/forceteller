@@ -52,6 +52,10 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
   });
 
   const handleNext = () => {
+    // Step 1 (이름 입력)에서 다음으로 갈 때 ref에서 값 가져오기
+    if (step === 1 && nameInputRef.current) {
+      setFormData({ ...formData, name: nameInputRef.current.value });
+    }
     if (step < 3) setStep(step + 1);
   };
 
@@ -63,22 +67,13 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
     onSubmit(formData);
   };
 
-  // 한글 입력 처리 - useRef로 composition 상태 추적 (리렌더링 방지)
-  const isComposingRef = useRef(false);
+  // 한글 입력 문제 해결 - uncontrolled input 사용
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const [hasName, setHasName] = useState(formData.name.length > 0);
 
-  const handleCompositionStart = () => {
-    isComposingRef.current = true;
-  };
-
-  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
-    isComposingRef.current = false;
-    setFormData({ ...formData, name: e.currentTarget.value });
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // IME 입력 중이 아닐 때만 상태 업데이트 (영문/숫자 등)
-    if (!isComposingRef.current) {
-      setFormData({ ...formData, name: e.target.value });
+  const handleNameInput = () => {
+    if (nameInputRef.current) {
+      setHasName(nameInputRef.current.value.trim().length > 0);
     }
   };
 
@@ -158,11 +153,10 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
         <div className="space-y-6">
           <div>
             <input
+              ref={nameInputRef}
               type="text"
-              value={formData.name}
-              onChange={handleNameChange}
-              onCompositionStart={handleCompositionStart}
-              onCompositionEnd={handleCompositionEnd}
+              defaultValue={formData.name}
+              onInput={handleNameInput}
               placeholder="이름을 입력하세요"
               maxLength={12}
               className="w-full px-6 py-4 text-lg bg-slate-800/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition text-center"
@@ -179,7 +173,7 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
             </button>
             <button
               onClick={handleNext}
-              disabled={!formData.name}
+              disabled={!hasName}
               className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               다음
