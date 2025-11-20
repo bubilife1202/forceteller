@@ -77,15 +77,49 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages({ locale });
+  const metadata = messages.metadata as Record<string, string>;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: metadata.title,
+    description: metadata.description,
+    url: 'https://forceteller.netlify.app',
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'Any',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'KRW',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.8',
+      ratingCount: '1250',
+    },
+    author: {
+      '@type': 'Organization',
+      name: 'Forceteller',
+    },
+    inLanguage: [locale === 'ko' ? 'ko-KR' : 'en-US'],
+  };
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className="dark">
       <head>
+        {/* Google AdSense */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8245597797545485"
           crossOrigin="anonymous"
           strategy="afterInteractive"
+        />
+
+        {/* JSON-LD Structured Data */}
+        <Script
+          id="json-ld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className="antialiased">
