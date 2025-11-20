@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GlassCard from './ui/glass-card';
 import { Sparkles, User, Calendar, Clock } from 'lucide-react';
@@ -61,6 +61,25 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
 
   const handleSubmit = () => {
     onSubmit(formData);
+  };
+
+  // 한글 입력 처리 - useRef로 composition 상태 추적 (리렌더링 방지)
+  const isComposingRef = useRef(false);
+
+  const handleCompositionStart = () => {
+    isComposingRef.current = true;
+  };
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+    isComposingRef.current = false;
+    setFormData({ ...formData, name: e.currentTarget.value });
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // IME 입력 중이 아닐 때만 상태 업데이트 (영문/숫자 등)
+    if (!isComposingRef.current) {
+      setFormData({ ...formData, name: e.target.value });
+    }
   };
 
   // Step 0: 인트로 화면
@@ -141,7 +160,9 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={handleNameChange}
+              onCompositionStart={handleCompositionStart}
+              onCompositionEnd={handleCompositionEnd}
               placeholder="이름을 입력하세요"
               maxLength={12}
               className="w-full px-6 py-4 text-lg bg-slate-800/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition text-center"
