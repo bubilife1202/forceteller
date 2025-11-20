@@ -121,10 +121,9 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
   const NameStep = () => (
     <motion.div
       key="name"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
+      initial={{ opacity: 1, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -100 }}
       transition={pageTransition}
       className="max-w-md mx-auto"
     >
@@ -174,10 +173,9 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
   const BirthStep = () => (
     <motion.div
       key="birth"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
+      initial={{ opacity: 1, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -100 }}
       transition={pageTransition}
       className="max-w-2xl mx-auto"
     >
@@ -312,10 +310,9 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
   const TimeStep = () => (
     <motion.div
       key="time"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
+      initial={{ opacity: 1, x: 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -100 }}
       transition={pageTransition}
       className="max-w-2xl mx-auto"
     >
