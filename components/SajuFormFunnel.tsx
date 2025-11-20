@@ -54,7 +54,9 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
   const handleNext = () => {
     // Step 1 (이름 입력)에서 다음으로 갈 때 ref에서 값 가져오기
     if (step === 1 && nameInputRef.current) {
-      setFormData({ ...formData, name: nameInputRef.current.value });
+      const name = nameInputRef.current.value.trim();
+      if (!name) return; // 이름 없으면 다음으로 못 감
+      setFormData({ ...formData, name });
     }
     if (step < 3) setStep(step + 1);
   };
@@ -67,15 +69,8 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
     onSubmit(formData);
   };
 
-  // 한글 입력 문제 해결 - uncontrolled input 사용
+  // 한글 입력 문제 해결 - 완전한 uncontrolled input (리렌더링 0)
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const [hasName, setHasName] = useState(formData.name.length > 0);
-
-  const handleNameInput = () => {
-    if (nameInputRef.current) {
-      setHasName(nameInputRef.current.value.trim().length > 0);
-    }
-  };
 
   // Step 0: 인트로 화면
   const IntroStep = () => (
@@ -156,7 +151,6 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
               ref={nameInputRef}
               type="text"
               defaultValue={formData.name}
-              onInput={handleNameInput}
               placeholder="이름을 입력하세요"
               maxLength={12}
               className="w-full px-6 py-4 text-lg bg-slate-800/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition text-center"
@@ -173,8 +167,7 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
             </button>
             <button
               onClick={handleNext}
-              disabled={!hasName}
-              className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition"
             >
               다음
             </button>
