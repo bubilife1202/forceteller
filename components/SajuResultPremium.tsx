@@ -73,32 +73,36 @@ export default function SajuResultPremium({
   // 이미지 다운로드
   const handleDownload = async () => {
     setIsSaving(true);
+
+    const element = document.getElementById('saju-result-premium');
+    const buttons = element?.querySelectorAll('button');
+
     try {
-      const htmlToImage = await import('html-to-image');
-      const element = document.getElementById('saju-result-premium');
       if (!element) {
         alert('저장할 내용을 찾을 수 없습니다.');
-        setIsSaving(false);
         return;
       }
 
       // 버튼 숨기기
-      const buttons = element.querySelectorAll('button');
-      buttons.forEach((btn) => ((btn as HTMLElement).style.display = 'none'));
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      buttons?.forEach((btn) => ((btn as HTMLElement).style.display = 'none'));
 
-      // 이미지 생성
-      const dataUrl = await htmlToImage.toPng(element, {
-        quality: 1.0,
-        pixelRatio: 3,
-        backgroundColor: '#0f172a',
-        cacheBust: true,
-        skipAutoScale: false,
-        preferredFontFormat: 'woff2',
-      });
+      // DOM 업데이트 대기
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // 버튼 다시 보이기
-      buttons.forEach((btn) => ((btn as HTMLElement).style.display = ''));
+      // 이미지 생성 (타임아웃 포함)
+      const htmlToImage = await import('html-to-image');
+
+      const dataUrl = await Promise.race([
+        htmlToImage.toPng(element, {
+          quality: 0.95,
+          pixelRatio: 2,
+          backgroundColor: '#0f172a',
+          cacheBust: true,
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('타임아웃')), 15000)
+        )
+      ]);
 
       // 다운로드
       const link = document.createElement('a');
@@ -108,18 +112,12 @@ export default function SajuResultPremium({
       link.click();
 
       alert('이미지가 다운로드되었습니다!');
-      setIsSaving(false);
     } catch (error) {
       console.error('이미지 생성 오류:', error);
-
-      // 버튼 다시 보이기 (에러 시에도)
-      const element = document.getElementById('saju-result-premium');
-      if (element) {
-        const buttons = element.querySelectorAll('button');
-        buttons.forEach((btn) => ((btn as HTMLElement).style.display = ''));
-      }
-
-      alert('이미지 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+      alert('이미지 생성 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
+    } finally {
+      // 항상 버튼 복구
+      buttons?.forEach((btn) => ((btn as HTMLElement).style.display = ''));
       setIsSaving(false);
     }
   };
@@ -127,37 +125,39 @@ export default function SajuResultPremium({
   // 공유하기
   const handleShare = async () => {
     setIsSharing(true);
+
+    const element = document.getElementById('saju-result-premium');
+    const buttons = element?.querySelectorAll('button');
+
     try {
-      const htmlToImage = await import('html-to-image');
-      const element = document.getElementById('saju-result-premium');
       if (!element) {
         alert('공유할 내용을 찾을 수 없습니다.');
-        setIsSharing(false);
         return;
       }
 
       // 버튼 숨기기
-      const buttons = element.querySelectorAll('button');
-      buttons.forEach((btn) => ((btn as HTMLElement).style.display = 'none'));
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      buttons?.forEach((btn) => ((btn as HTMLElement).style.display = 'none'));
 
-      // 이미지 생성
-      const blob = await htmlToImage.toBlob(element, {
-        quality: 1.0,
-        pixelRatio: 3,
-        backgroundColor: '#0f172a',
-        cacheBust: true,
-        skipAutoScale: false,
-        preferredFontFormat: 'woff2',
-      });
+      // DOM 업데이트 대기
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // 버튼 다시 보이기
-      buttons.forEach((btn) => ((btn as HTMLElement).style.display = ''));
+      // 이미지 생성 (타임아웃 포함)
+      const htmlToImage = await import('html-to-image');
+
+      const blob = await Promise.race([
+        htmlToImage.toBlob(element, {
+          quality: 0.95,
+          pixelRatio: 2,
+          backgroundColor: '#0f172a',
+          cacheBust: true,
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('타임아웃')), 15000)
+        )
+      ]);
 
       if (!blob) {
-        alert('이미지 생성에 실패했습니다. 다시 시도해주세요.');
-        setIsSharing(false);
-        return;
+        throw new Error('이미지 생성에 실패했습니다');
       }
 
       const today = new Date().toISOString().split('T')[0];
@@ -170,7 +170,6 @@ export default function SajuResultPremium({
           text: `${name}님의 사주 풀이 결과입니다`,
           files: [file],
         });
-        // 공유 완료 (사용자가 취소하지 않은 경우)
       } else {
         // Web Share API를 지원하지 않으면 다운로드
         const url = URL.createObjectURL(blob);
@@ -179,27 +178,20 @@ export default function SajuResultPremium({
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
-        alert('이미지가 다운로드되었습니다! 다운로드 폴더를 확인해주세요.');
+        alert('이미지가 다운로드되었습니다!');
       }
-
-      setIsSharing(false);
     } catch (error) {
       console.error('공유 오류:', error);
 
-      // 버튼 다시 보이기 (에러 시에도)
-      const element = document.getElementById('saju-result-premium');
-      if (element) {
-        const buttons = element.querySelectorAll('button');
-        buttons.forEach((btn) => ((btn as HTMLElement).style.display = ''));
-      }
-
       // AbortError는 사용자가 공유를 취소한 경우
       if (error instanceof Error && error.name === 'AbortError') {
-        setIsSharing(false);
         return;
       }
 
-      alert('공유 중 오류가 발생했습니다. 다시 시도해주세요.');
+      alert('공유 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
+    } finally {
+      // 항상 버튼 복구
+      buttons?.forEach((btn) => ((btn as HTMLElement).style.display = ''));
       setIsSharing(false);
     }
   };
