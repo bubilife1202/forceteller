@@ -1,7 +1,6 @@
 'use client';
 
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from 'recharts';
-import { ELEMENTS } from '@/lib/saju-constants';
 
 interface ElementsChartProps {
   elements: {
