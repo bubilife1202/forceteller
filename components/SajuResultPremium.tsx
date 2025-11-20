@@ -82,28 +82,44 @@ export default function SajuResultPremium({
         return;
       }
 
+      // 버튼 숨기기
       const buttons = element.querySelectorAll('button');
       buttons.forEach((btn) => ((btn as HTMLElement).style.display = 'none'));
       await new Promise((resolve) => setTimeout(resolve, 500));
 
+      // 이미지 생성
       const dataUrl = await htmlToImage.toPng(element, {
         quality: 1.0,
-        pixelRatio: 2,
+        pixelRatio: 3,
         backgroundColor: '#0f172a',
+        cacheBust: true,
+        skipAutoScale: false,
+        preferredFontFormat: 'woff2',
       });
 
+      // 버튼 다시 보이기
       buttons.forEach((btn) => ((btn as HTMLElement).style.display = ''));
 
+      // 다운로드
       const link = document.createElement('a');
       const today = new Date().toISOString().split('T')[0];
       link.download = `${name}_사주풀이_${today}.png`;
       link.href = dataUrl;
       link.click();
 
+      alert('이미지가 다운로드되었습니다!');
       setIsSaving(false);
     } catch (error) {
       console.error('이미지 생성 오류:', error);
-      alert('이미지 생성 중 오류가 발생했습니다.');
+
+      // 버튼 다시 보이기 (에러 시에도)
+      const element = document.getElementById('saju-result-premium');
+      if (element) {
+        const buttons = element.querySelectorAll('button');
+        buttons.forEach((btn) => ((btn as HTMLElement).style.display = ''));
+      }
+
+      alert('이미지 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
       setIsSaving(false);
     }
   };
@@ -120,20 +136,26 @@ export default function SajuResultPremium({
         return;
       }
 
+      // 버튼 숨기기
       const buttons = element.querySelectorAll('button');
       buttons.forEach((btn) => ((btn as HTMLElement).style.display = 'none'));
       await new Promise((resolve) => setTimeout(resolve, 500));
 
+      // 이미지 생성
       const blob = await htmlToImage.toBlob(element, {
         quality: 1.0,
-        pixelRatio: 2,
+        pixelRatio: 3,
         backgroundColor: '#0f172a',
+        cacheBust: true,
+        skipAutoScale: false,
+        preferredFontFormat: 'woff2',
       });
 
+      // 버튼 다시 보이기
       buttons.forEach((btn) => ((btn as HTMLElement).style.display = ''));
 
       if (!blob) {
-        alert('이미지 생성에 실패했습니다.');
+        alert('이미지 생성에 실패했습니다. 다시 시도해주세요.');
         setIsSharing(false);
         return;
       }
@@ -141,29 +163,43 @@ export default function SajuResultPremium({
       const today = new Date().toISOString().split('T')[0];
       const file = new File([blob], `${name}_사주풀이_${today}.png`, { type: 'image/png' });
 
+      // Web Share API 사용 가능 여부 확인
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           title: `${name}님의 사주 풀이`,
+          text: `${name}님의 사주 풀이 결과입니다`,
           files: [file],
         });
+        // 공유 완료 (사용자가 취소하지 않은 경우)
       } else {
+        // Web Share API를 지원하지 않으면 다운로드
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = `${name}_사주풀이_${today}.png`;
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
-        alert('이미지가 다운로드되었습니다!');
+        alert('이미지가 다운로드되었습니다! 다운로드 폴더를 확인해주세요.');
       }
 
       setIsSharing(false);
     } catch (error) {
       console.error('공유 오류:', error);
+
+      // 버튼 다시 보이기 (에러 시에도)
+      const element = document.getElementById('saju-result-premium');
+      if (element) {
+        const buttons = element.querySelectorAll('button');
+        buttons.forEach((btn) => ((btn as HTMLElement).style.display = ''));
+      }
+
+      // AbortError는 사용자가 공유를 취소한 경우
       if (error instanceof Error && error.name === 'AbortError') {
         setIsSharing(false);
         return;
       }
-      alert('공유 중 오류가 발생했습니다.');
+
+      alert('공유 중 오류가 발생했습니다. 다시 시도해주세요.');
       setIsSharing(false);
     }
   };
