@@ -51,9 +51,6 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
     timeInputType: 'exact',
   });
 
-  // 한글 입력 중복 방지를 위한 composition 상태
-  const [isComposing, setIsComposing] = useState(false);
-
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
   };
@@ -64,22 +61,6 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
 
   const handleSubmit = () => {
     onSubmit(formData);
-  };
-
-  // 한글 입력을 위한 안전한 핸들러
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isComposing) {
-      setFormData({ ...formData, name: e.target.value });
-    }
-  };
-
-  const handleCompositionStart = () => {
-    setIsComposing(true);
-  };
-
-  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
-    setIsComposing(false);
-    setFormData({ ...formData, name: (e.target as HTMLInputElement).value });
   };
 
   // Step 0: 인트로 화면
@@ -160,9 +141,7 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
             <input
               type="text"
               value={formData.name}
-              onChange={handleNameChange}
-              onCompositionStart={handleCompositionStart}
-              onCompositionEnd={handleCompositionEnd}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="이름을 입력하세요"
               maxLength={12}
               className="w-full px-6 py-4 text-lg bg-slate-800/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition text-center"
