@@ -150,6 +150,10 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
         if (result.tenGods.day.includes('재')) 재성위치.push('일주');
         if (result.tenGods.hour.includes('재')) 재성위치.push('시주');
 
+        // 용신에서 오행만 추출
+        const yongsinMatch = result.yongsin.match(/^(목|화|토|금|수)/);
+        const yongsinElem = yongsinMatch ? yongsinMatch[1] : '';
+
         return {
           title: '돈이 들어오는 패턴',
           sections: [
@@ -184,15 +188,17 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
                 },
                 {
                   label: '유리한 투자처',
-                  content: result.yongsin === '목'
+                  content: yongsinElem === '목'
                     ? '교육, 출판, 섬유 관련 투자'
-                    : result.yongsin === '화'
+                    : yongsinElem === '화'
                     ? '전기, IT, 에너지 관련 투자'
-                    : result.yongsin === '토'
+                    : yongsinElem === '토'
                     ? '부동산, 건설 관련 투자'
-                    : result.yongsin === '금'
+                    : yongsinElem === '금'
                     ? '금융, 귀금속, 기계 관련 투자'
-                    : '물류, 관광, 수산업 관련 투자',
+                    : yongsinElem === '수'
+                    ? '물류, 관광, 수산업 관련 투자'
+                    : '다양한 분야 투자 가능',
                   icon: '💎',
                 },
                 {
@@ -221,7 +227,7 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
                 },
                 {
                   label: '구체적 조언',
-                  content: `${result.yongsin}색 지갑을 사용하고, 동쪽(목), 남쪽(화), 서쪽(금), 북쪽(수) 중 용신 방향으로 책상을 배치하세요.`,
+                  content: `${yongsinElem}색 지갑을 사용하고, ${yongsinElem === '목' ? '동쪽' : yongsinElem === '화' ? '남쪽' : yongsinElem === '토' ? '중앙' : yongsinElem === '금' ? '서쪽' : '북쪽'} 방향으로 책상을 배치하세요.`,
                   icon: '💡',
                 },
               ],
@@ -230,6 +236,10 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
         };
 
       case '애정':
+        // 용신에서 오행만 추출
+        const yongsinLoveMatch = result.yongsin.match(/^(목|화|토|금|수)/);
+        const yongsinLoveElem = yongsinLoveMatch ? yongsinLoveMatch[1] : '';
+
         return {
           title: '당신의 사랑 운명',
           sections: [
@@ -250,13 +260,15 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
                 },
                 {
                   label: '이상형',
-                  content: `용신 ${result.yongsin} 기운을 가진 사람과 좋은 인연이 될 수 있습니다. ${
-                    result.yongsin === '목' ? '활발하고 성장지향적인' :
-                    result.yongsin === '화' ? '열정적이고 밝은' :
-                    result.yongsin === '토' ? '차분하고 신뢰감 있는' :
-                    result.yongsin === '금' ? '깔끔하고 원칙있는' :
-                    '지적이고 유연한'
-                  } 사람에게 끌립니다.`,
+                  content: yongsinLoveElem
+                    ? `용신 ${yongsinLoveElem} 기운을 가진 사람과 좋은 인연이 될 수 있습니다. ${
+                      yongsinLoveElem === '목' ? '활발하고 성장지향적인' :
+                      yongsinLoveElem === '화' ? '열정적이고 밝은' :
+                      yongsinLoveElem === '토' ? '차분하고 신뢰감 있는' :
+                      yongsinLoveElem === '금' ? '깔끔하고 원칙있는' :
+                      '지적이고 유연한'
+                    } 사람에게 끌립니다.`
+                    : '상대방의 장점을 존중하고 서로 보완하는 관계가 좋습니다.',
                   icon: '✨',
                 },
               ],
@@ -321,6 +333,23 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
         if (관성 >= 2) jobsByTenGod.push('공무원, 법조, 대기업');
         if (인성 >= 2) jobsByTenGod.push('연구, 학술, 교육');
 
+        // 용신에서 오행만 추출 (예: "목(재성...)" → "목")
+        const extractElement = (yongsin: string): string => {
+          const match = yongsin.match(/^(목|화|토|금|수)/);
+          return match ? match[1] : '목'; // 기본값은 목
+        };
+
+        const yongsinElement = extractElement(result.yongsin);
+        const recommendedJobs = jobsByElement[yongsinElement] || ['교육', '출판', '문화'];
+
+        // 방향 계산
+        const getDirection = (element: string): string => {
+          const directions: {[key: string]: string} = {
+            '목': '동쪽', '화': '남쪽', '토': '중앙', '금': '서쪽', '수': '북쪽'
+          };
+          return directions[element] || '동쪽';
+        };
+
         return {
           title: '천직을 찾는 나침반',
           sections: [
@@ -346,7 +375,7 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
               items: [
                 {
                   label: 'TOP 추천 직업',
-                  content: `${jobsByElement[result.yongsin]?.slice(0, 3).join(', ')} 관련 분야가 가장 유리합니다`,
+                  content: `${recommendedJobs.slice(0, 3).join(', ')} 관련 분야가 가장 유리합니다`,
                   icon: '💼',
                 },
                 {
@@ -370,7 +399,7 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
               items: [
                 {
                   label: '~30세',
-                  content: `다양한 경험을 쌓는 시기입니다. ${jobsByElement[result.yongsin]?.[0]} 분야로 진입하세요.`,
+                  content: `다양한 경험을 쌓는 시기입니다. ${recommendedJobs[0]} 분야로 진입하세요.`,
                   icon: '🌱',
                 },
                 {
@@ -405,7 +434,7 @@ export default function DetailTabsEnhanced({ result, birthYear }: DetailTabsEnha
                 },
                 {
                   label: '구체적 조언',
-                  content: `${result.yongsin === '목' ? '동쪽' : result.yongsin === '화' ? '남쪽' : result.yongsin === '금' ? '서쪽' : result.yongsin === '수' ? '북쪽' : '중앙'} 방향으로 책상을 배치하고, ${result.yongsin}색 계열 명함/네임택을 사용하세요.`,
+                  content: `${getDirection(yongsinElement)} 방향으로 책상을 배치하고, ${yongsinElement}색 계열 명함/네임택을 사용하세요.`,
                   icon: '💡',
                 },
               ],
