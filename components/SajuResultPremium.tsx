@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import CircularScore from './premium/CircularScore';
 import ElementsRadarChart from './premium/ElementsRadarChart';
-import DetailTabs from './premium/DetailTabs';
+import DetailTabsEnhanced from './premium/DetailTabsEnhanced';
 import AIPromptGenerator from './premium/AIPromptGenerator';
 import { Download, Share2, RotateCcw } from 'lucide-react';
 
@@ -69,6 +69,42 @@ export default function SajuResultPremium({
   };
 
   const sajuScore = calculateScore();
+
+  // 격국 판단
+  const getGyeokguk = () => {
+    const { 재성, 관성, 식상, 인성 } = result.tenGodsCount;
+    if (재성 >= 2) return '재성격';
+    if (관성 >= 2) return '관성격';
+    if (식상 >= 2) return '식상격';
+    if (인성 >= 2) return '인성격';
+    return '보통격';
+  };
+
+  // 희신 판단 (용신을 생하는 오행)
+  const getHeesin = () => {
+    const elementCycle: { [key: string]: string } = {
+      '목': '수', '화': '목', '토': '화', '금': '토', '수': '금'
+    };
+    return elementCycle[result.yongsin] || result.yongsin;
+  };
+
+  // 핵심 평가
+  const getCoreEvaluation = () => {
+    const { 재성, 관성, 식상 } = result.tenGodsCount;
+    const parts = [];
+
+    if (재성 >= 2) parts.push('재물 기운 왕성');
+    if (관성 >= 2) parts.push('리더십 강함');
+    if (식상 >= 2) parts.push('창의력 탁월');
+    if (result.strength === 'strong') parts.push('의지력 강인');
+    if (result.shinsals.some(s => s.type === 'good')) parts.push('귀인운 있음');
+
+    return parts.length > 0 ? parts.join(', ') : '균형잡힌 사주';
+  };
+
+  const gyeokguk = getGyeokguk();
+  const heesin = getHeesin();
+  const coreEvaluation = getCoreEvaluation();
 
   // 이미지 다운로드
   const handleDownload = async () => {
@@ -216,19 +252,32 @@ export default function SajuResultPremium({
           >
             {name}님의 사주 풀이
           </h1>
-          <div className="flex items-center justify-center gap-4 flex-wrap text-sm">
+          <div className="flex items-center justify-center gap-3 flex-wrap text-sm mb-4">
             <span className="px-4 py-2 bg-slate-800/50 rounded-full text-amber-400">
               {t(`gender.${gender}`)}
             </span>
             <span className="px-4 py-2 bg-slate-800/50 rounded-full text-amber-400">
-              {result.day.stem.ko}
-              {result.day.stem.cn} 일간
+              {result.day.stem.ko}{result.day.stem.cn} 일간
             </span>
             <span className="px-4 py-2 bg-slate-800/50 rounded-full text-amber-400">
               {result.day.stem.element}{' '}
               {result.day.stem.yinyang === '+' ? t('yang') : t('yin')}
             </span>
+            <span className="px-4 py-2 bg-purple-900/50 rounded-full text-purple-300 border border-purple-500/30">
+              {gyeokguk}
+            </span>
           </div>
+          <div className="flex items-center justify-center gap-3 flex-wrap text-sm mb-3">
+            <span className="px-4 py-2 bg-gradient-to-r from-blue-900/50 to-cyan-900/50 rounded-full text-cyan-300 border border-cyan-500/30">
+              용신: {result.yongsin}
+            </span>
+            <span className="px-4 py-2 bg-gradient-to-r from-blue-900/50 to-cyan-900/50 rounded-full text-cyan-300 border border-cyan-500/30">
+              희신: {heesin}
+            </span>
+          </div>
+          <p className="text-slate-300 text-base font-medium mt-4">
+            ✨ {coreEvaluation}
+          </p>
         </div>
 
         {/* Score */}
@@ -315,7 +364,7 @@ export default function SajuResultPremium({
       </motion.div>
 
       {/* Detail Tabs */}
-      <DetailTabs result={result} />
+      <DetailTabsEnhanced result={result} birthYear={birthDate.year} />
 
       {/* AI Prompt Generator */}
       <AIPromptGenerator
