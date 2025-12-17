@@ -282,8 +282,8 @@ export function calculateSaju(dateInfo: DateInfo, gender: 'male' | 'female' = 'm
   // 오행 균형 분석
   const elementBalance = analyzeElementBalance(elements);
 
-  // 용신 계산
-  const yongsin = calculateYongsin(strength, elements);
+  // 용신 계산 (일간의 오행 전달)
+  const yongsin = calculateYongsin(strength, elements, dayPillar.stem.element);
 
   // 십성 개수 세기
   const tenGodsCount = countTenGods(tenGods);
@@ -321,21 +321,54 @@ function analyzeElementBalance(elements: { 목: number; 화: number; 토: number
   return { excess, deficiency };
 }
 
-// 용신 계산 (간단 버전)
+// 용신 계산 (오행 기반)
 function calculateYongsin(
   strength: 'strong' | 'weak' | 'neutral',
-  elements: { 목: number; 화: number; 토: number; 금: number; 수: number }
+  elements: { 목: number; 화: number; 토: number; 금: number; 수: number },
+  dayElement: string // 일간의 오행
 ): string {
+  // 상생 관계: 나를 생하는 오행 (인성)
+  const generates: { [key: string]: string } = {
+    '목': '수', '화': '목', '토': '화', '금': '토', '수': '금'
+  };
+  // 상극 관계: 나를 극하는 오행 (관성)
+  const controls: { [key: string]: string } = {
+    '목': '금', '화': '수', '토': '목', '금': '화', '수': '토'
+  };
+  // 내가 생하는 오행 (식상)
+  const iGenerate: { [key: string]: string } = {
+    '목': '화', '화': '토', '토': '금', '금': '수', '수': '목'
+  };
+  // 내가 극하는 오행 (재성)
+  const iControl: { [key: string]: string } = {
+    '목': '토', '화': '금', '토': '수', '금': '목', '수': '화'
+  };
+
   if (strength === 'strong') {
-    // 신강이면 재성(재물), 관성(명예), 식상(표현)이 용신
-    // 부족한 오행을 찾아서 추천
-    const sorted = Object.entries(elements).sort((a, b) => a[1] - b[1]);
-    return `${sorted[0][0]}(재성/관성/식상 중 부족한 기운 보충)`;
+    // 신강: 나를 설기하는 오행(식상)이나 내가 극하는 오행(재성)이 용신
+    // 가장 부족한 오행 중에서 식상/재성에 해당하는 것 선택
+    const shisang = iGenerate[dayElement];
+    const jaesung = iControl[dayElement];
+
+    // 식상과 재성 중 더 부족한 것을 용신으로
+    if (elements[shisang as keyof typeof elements] <= elements[jaesung as keyof typeof elements]) {
+      return shisang;
+    }
+    return jaesung;
   } else if (strength === 'weak') {
-    // 신약이면 인성(학문), 비겁(형제)이 용신
-    return '인성·비겁 (나를 돕는 기운 필요)';
+    // 신약: 나를 생하는 오행(인성)이나 같은 오행(비겁)이 용신
+    const insung = generates[dayElement];
+    const bigeop = dayElement;
+
+    // 인성과 비겁 중 더 부족한 것을 용신으로
+    if (elements[insung as keyof typeof elements] <= elements[bigeop as keyof typeof elements]) {
+      return insung;
+    }
+    return bigeop;
   } else {
-    return '균형 유지 (중화된 사주)';
+    // 중화: 가장 부족한 오행을 용신으로
+    const sorted = Object.entries(elements).sort((a, b) => a[1] - b[1]);
+    return sorted[0][0];
   }
 }
 
