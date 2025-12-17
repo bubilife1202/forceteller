@@ -1,9 +1,8 @@
 'use client';
 
 import { SajuResult as SajuResultType } from '@/lib/saju-calculator';
-import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import CircularScore from './premium/CircularScore';
 import ElementsRadarChart from './premium/ElementsRadarChart';
 import DetailTabsEnhanced from './premium/DetailTabsEnhanced';
@@ -14,7 +13,7 @@ import ShinsalAnalysis from './premium/ShinsalAnalysis';
 import HealthAdvice from './premium/HealthAdvice';
 import DaeunTimeline from './premium/DaeunTimeline';
 import MonthlyForecast2025 from './premium/MonthlyForecast2025';
-import { Download, RotateCcw, Loader2 } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 
 interface SajuResultPremiumProps {
   result: SajuResultType;
@@ -37,41 +36,6 @@ export default function SajuResultPremium({
 }: SajuResultPremiumProps) {
   const t = useTranslations('result');
   const tCommon = useTranslations('common');
-  const [isSharing, setIsSharing] = useState(false);
-  const [isPageReady, setIsPageReady] = useState(false);
-  const [shareProgress, setShareProgress] = useState<string>('');
-
-  // 페이지 로딩 완료 감지
-  useEffect(() => {
-    const checkPageReady = async () => {
-      // 모든 이미지 로딩 대기
-      const images = document.querySelectorAll('#saju-result-premium img');
-      const imagePromises = Array.from(images).map((img) => {
-        const imgElement = img as HTMLImageElement;
-        if (imgElement.complete) return Promise.resolve();
-        return new Promise((resolve) => {
-          imgElement.onload = resolve;
-          imgElement.onerror = resolve;
-        });
-      });
-
-      // 폰트 로딩 대기
-      if (document.fonts) {
-        await document.fonts.ready;
-      }
-
-      // 모든 이미지 로딩 대기
-      await Promise.all(imagePromises);
-
-      // 약간의 지연으로 렌더링 완료 보장
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      setIsPageReady(true);
-    };
-
-    checkPageReady();
-  }, []);
-
 
   // 운세 점수 계산 (0-100)
   const calculateScore = () => {
@@ -145,123 +109,8 @@ export default function SajuResultPremium({
   const heesin = getHeesin();
   const coreEvaluation = getCoreEvaluation();
 
-  // 이미지로 저장
-  const handleSaveImage = useCallback(async () => {
-    if (!isPageReady) {
-      alert('페이지가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.');
-      return;
-    }
-
-    setIsSharing(true);
-    setShareProgress('준비 중...');
-
-    const element = document.getElementById('saju-result-premium');
-    const buttons = element?.querySelectorAll('button');
-    const overlays = document.querySelectorAll('.no-print');
-    const originalStyles: { el: HTMLElement; display: string }[] = [];
-
-    try {
-      if (!element) {
-        alert('저장할 내용을 찾을 수 없습니다.');
-        return;
-      }
-
-      // 버튼과 오버레이 숨기기
-      setShareProgress('화면 캡처 준비 중...');
-      buttons?.forEach((btn) => {
-        const el = btn as HTMLElement;
-        originalStyles.push({ el, display: el.style.display });
-        el.style.display = 'none';
-      });
-      overlays?.forEach((overlay) => {
-        const el = overlay as HTMLElement;
-        if (!el.classList.contains('glass-strong') || !el.closest('#saju-result-premium')) {
-          originalStyles.push({ el, display: el.style.display });
-          el.style.display = 'none';
-        }
-      });
-
-      // DOM 업데이트 대기
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      // html2canvas로 이미지 생성
-      setShareProgress('이미지 생성 중... (잠시만 기다려주세요)');
-      const html2canvas = (await import('html2canvas')).default;
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        backgroundColor: '#0f172a',
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-        scrollX: 0,
-        scrollY: -window.scrollY,
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight,
-        foreignObjectRendering: true, // SVG 아이콘 렌더링
-        removeContainer: false,
-        imageTimeout: 30000,
-      });
-
-      // canvas를 blob으로 변환
-      setShareProgress('다운로드 준비 중...');
-      const blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob((b) => resolve(b), 'image/png', 1.0);
-      });
-
-      if (!blob) {
-        throw new Error('이미지 생성에 실패했습니다');
-      }
-
-      // 이미지 다운로드
-      setShareProgress('다운로드 중...');
-      const today = new Date().toISOString().split('T')[0];
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.download = `${name}_사주풀이_${today}.png`;
-      link.href = url;
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('이미지 저장 오류:', error);
-      alert('이미지 저장 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
-    } finally {
-      // 항상 버튼 복구
-      originalStyles.forEach(({ el, display }) => {
-        el.style.display = display;
-      });
-      setIsSharing(false);
-      setShareProgress('');
-    }
-  }, [isPageReady, name]);
-
   return (
     <div id="saju-result-premium" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4 relative">
-      {/* 이미지 저장 진행 오버레이 */}
-      <AnimatePresence>
-        {isSharing && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm no-print"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="glass-strong rounded-2xl p-8 text-center max-w-sm mx-4"
-            >
-              <Loader2 className="w-12 h-12 text-amber-400 animate-spin mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">이미지 저장 중</h3>
-              <p className="text-amber-400 font-medium">
-                {shareProgress || '처리 중...'}
-              </p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Hero Section */}
       <motion.div
         className="glass-strong rounded-3xl p-8 md:p-12 relative overflow-hidden"
@@ -352,31 +201,11 @@ export default function SajuResultPremium({
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 no-print">
-          <motion.button
-            onClick={handleSaveImage}
-            disabled={!isPageReady || isSharing}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
-            whileHover={isPageReady ? { scale: 1.05 } : {}}
-            whileTap={isPageReady ? { scale: 0.95 } : {}}
-          >
-            {!isPageReady ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                로딩 중...
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" />
-                이미지로 저장
-              </>
-            )}
-          </motion.button>
-
+        {/* Action Button */}
+        <div className="flex justify-center">
           <motion.button
             onClick={onReset}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition"
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -443,12 +272,19 @@ export default function SajuResultPremium({
       {/* Monthly Forecast 2025 */}
       <MonthlyForecast2025 result={result} />
 
-      {/* Footer */}
-      <div className="text-center text-slate-500 text-sm space-y-2">
-        <p>이 사주 풀이는 전통 명리학을 기반으로 합니다</p>
-        <p>더 정확한 해석을 원하시면 전문가와 상담하시기 바랍니다</p>
-        <div className="pt-4">
-          <p className="font-semibold text-amber-400">{tCommon('version')}</p>
+      {/* Footer - 면책 조항 */}
+      <div className="glass rounded-2xl p-6 text-center space-y-3">
+        <p className="text-slate-300 text-sm">
+          ⚠️ 본 사주 풀이는 <strong className="text-amber-400">전통 명리학 이론</strong>을 기반으로
+          프로그래밍된 결과이며, 참고용으로만 활용해 주세요.
+        </p>
+        <p className="text-slate-400 text-xs">
+          실제 운세나 인생의 중요한 결정은 본인의 판단과 노력이 가장 중요합니다.
+          <br />
+          더 정확하고 심층적인 해석을 원하시면 전문 역술인과 상담하시기를 권장합니다.
+        </p>
+        <div className="pt-3 border-t border-slate-700/50">
+          <p className="font-semibold text-amber-400 text-sm">{tCommon('version')}</p>
         </div>
       </div>
     </div>
