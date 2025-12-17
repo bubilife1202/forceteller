@@ -229,18 +229,85 @@
 
 /* PDF Print Styles */
 @media print {
+  /* 기본 설정 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  body {
+    background: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  /* 배경 숨기기 */
+  .starry-bg {
+    display: none !important;
+  }
+
+  /* 버튼 숨기기 */
+  button, .no-print {
+    display: none !important;
+  }
+
+  /* Glass 효과를 solid 배경으로 */
+  .glass, .glass-strong {
+    background: rgba(30, 41, 59, 0.95) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* 그라데이션 텍스트 처리 */
+  .gradient-text, .gradient-text-purple {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: #fbbf24 !important;
+    color: #fbbf24 !important;
+  }
+
+  /* 컨테이너 */
+  #saju-result-premium {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 20px !important;
+    margin: 0 !important;
+  }
+
+  /* 페이지 나눔 */
   .pdf-avoid-break {
-    page-break-inside: avoid;
-    break-inside: avoid;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .pdf-page-break-before {
-    page-break-before: always;
-    break-before: page;
+    page-break-before: always !important;
+    break-before: page !important;
   }
 
-  .pdf-page-break-after {
-    page-break-after: always;
-    break-after: page;
+  /* 섹션별 페이지 나눔 */
+  #saju-result-premium > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+
+  /* 애니메이션 비활성화 */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* 그림자 단순화 */
+  .glow-gold, .glow-purple {
+    box-shadow: none !important;
+  }
+
+  /* 페이지 설정 */
+  @page {
+    size: A4;
+    margin: 10mm;
   }
 }

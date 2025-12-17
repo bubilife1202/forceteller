@@ -37,11 +37,9 @@ export default function SajuResultPremium({
 }: SajuResultPremiumProps) {
   const t = useTranslations('result');
   const tCommon = useTranslations('common');
-  const [isSaving, setIsSaving] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [isPageReady, setIsPageReady] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState<string>('');
-  const [elapsedTime, setElapsedTime] = useState(0);
+  const [shareProgress, setShareProgress] = useState<string>('');
 
   // 페이지 로딩 완료 감지
   useEffect(() => {
@@ -74,19 +72,6 @@ export default function SajuResultPremium({
     checkPageReady();
   }, []);
 
-  // 다운로드 시간 측정
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isSaving || isSharing) {
-      setElapsedTime(0);
-      interval = setInterval(() => {
-        setElapsedTime((prev) => prev + 0.1);
-      }, 100);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isSaving, isSharing]);
 
   // 운세 점수 계산 (0-100)
   const calculateScore = () => {
@@ -160,127 +145,17 @@ export default function SajuResultPremium({
   const heesin = getHeesin();
   const coreEvaluation = getCoreEvaluation();
 
-  // PDF 다운로드
-  const handleDownload = useCallback(async () => {
+  // PDF 다운로드 (브라우저 인쇄 기능 사용 - 원본 품질 보장)
+  const handleDownload = useCallback(() => {
     if (!isPageReady) {
       alert('페이지가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.');
       return;
     }
 
-    setIsSaving(true);
-    setDownloadProgress('준비 중...');
-
-    const element = document.getElementById('saju-result-premium');
-    const buttons = element?.querySelectorAll('button');
-    const originalStyles: { el: HTMLElement; display: string }[] = [];
-
-    try {
-      if (!element) {
-        alert('저장할 내용을 찾을 수 없습니다.');
-        return;
-      }
-
-      // 버튼 숨기기
-      setDownloadProgress('화면 캡처 준비 중...');
-      buttons?.forEach((btn) => {
-        const el = btn as HTMLElement;
-        originalStyles.push({ el, display: el.style.display });
-        el.style.display = 'none';
-      });
-
-      // DOM 업데이트 대기
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      // html2canvas와 jsPDF 동적 import
-      setDownloadProgress('라이브러리 로딩 중...');
-      const [html2canvasModule, jsPDFModule] = await Promise.all([
-        import('html2canvas'),
-        import('jspdf'),
-      ]);
-      const html2canvas = html2canvasModule.default;
-      const jsPDF = jsPDFModule.default;
-
-      // 캔버스로 변환 (최적화된 옵션)
-      setDownloadProgress('화면 캡처 중...');
-      const canvas = await html2canvas(element, {
-        scale: 1.5, // 속도와 품질 균형
-        backgroundColor: '#0f172a',
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-        foreignObjectRendering: false,
-        imageTimeout: 5000,
-        removeContainer: true,
-        // 스타일 보정
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('saju-result-premium');
-          if (clonedElement) {
-            // glass 효과가 있는 요소들의 backdrop-filter 제거하고 배경색으로 대체
-            const glassElements = clonedElement.querySelectorAll('.glass, .glass-strong');
-            glassElements.forEach((el) => {
-              const htmlEl = el as HTMLElement;
-              htmlEl.style.backdropFilter = 'none';
-              (htmlEl.style as unknown as Record<string, string>).webkitBackdropFilter = 'none';
-              htmlEl.style.backgroundColor = 'rgba(30, 41, 59, 0.95)';
-            });
-            // 그라데이션 텍스트 처리
-            const gradientTexts = clonedElement.querySelectorAll('.gradient-text');
-            gradientTexts.forEach((el) => {
-              const htmlEl = el as HTMLElement;
-              htmlEl.style.background = 'none';
-              (htmlEl.style as unknown as Record<string, string>).webkitBackgroundClip = 'unset';
-              htmlEl.style.backgroundClip = 'unset';
-              (htmlEl.style as unknown as Record<string, string>).webkitTextFillColor = '#fbbf24';
-              htmlEl.style.color = '#fbbf24';
-            });
-          }
-        },
-      });
-
-      // PDF 생성 (JPEG 사용으로 속도 개선)
-      setDownloadProgress('PDF 생성 중...');
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      let position = 0;
-
-      // 첫 페이지
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      // 여러 페이지로 분할
-      let pageCount = 1;
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-        pageCount++;
-        setDownloadProgress(`PDF 생성 중... (${pageCount}페이지)`);
-      }
-
-      // PDF 다운로드
-      setDownloadProgress('다운로드 중...');
-      const today = new Date().toISOString().split('T')[0];
-      pdf.save(`${name}_사주풀이_${today}.pdf`);
-
-      setDownloadProgress('완료!');
-    } catch (error) {
-      console.error('PDF 생성 오류:', error);
-      alert('PDF 생성 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
-    } finally {
-      // 항상 버튼 복구
-      originalStyles.forEach(({ el, display }) => {
-        el.style.display = display;
-      });
-      setIsSaving(false);
-      setDownloadProgress('');
-    }
-  }, [isPageReady, name]);
+    // 브라우저 인쇄 다이얼로그 열기 (PDF로 저장 선택 가능)
+    // CSS @media print로 스타일 최적화됨
+    window.print();
+  }, [isPageReady]);
 
   // 공유하기
   const handleShare = useCallback(async () => {
@@ -290,7 +165,7 @@ export default function SajuResultPremium({
     }
 
     setIsSharing(true);
-    setDownloadProgress('준비 중...');
+    setShareProgress('준비 중...');
 
     const element = document.getElementById('saju-result-premium');
     const buttons = element?.querySelectorAll('button');
@@ -303,7 +178,7 @@ export default function SajuResultPremium({
       }
 
       // 버튼 숨기기
-      setDownloadProgress('화면 캡처 준비 중...');
+      setShareProgress('화면 캡처 준비 중...');
       buttons?.forEach((btn) => {
         const el = btn as HTMLElement;
         originalStyles.push({ el, display: el.style.display });
@@ -314,10 +189,9 @@ export default function SajuResultPremium({
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       // 이미지 생성 (타임아웃 포함)
-      setDownloadProgress('라이브러리 로딩 중...');
+      setShareProgress('이미지 생성 중...');
       const htmlToImage = await import('html-to-image');
 
-      setDownloadProgress('이미지 생성 중...');
       const blob = await Promise.race([
         htmlToImage.toBlob(element, {
           quality: 0.9,
@@ -334,7 +208,7 @@ export default function SajuResultPremium({
         throw new Error('이미지 생성에 실패했습니다');
       }
 
-      setDownloadProgress('공유 준비 중...');
+      setShareProgress('공유 준비 중...');
       const today = new Date().toISOString().split('T')[0];
       const file = new File([blob], `${name}_사주풀이_${today}.png`, { type: 'image/png' });
 
@@ -345,17 +219,15 @@ export default function SajuResultPremium({
           text: `${name}님의 사주 풀이 결과입니다`,
           files: [file],
         });
-        setDownloadProgress('완료!');
       } else {
         // Web Share API를 지원하지 않으면 다운로드
-        setDownloadProgress('다운로드 중...');
+        setShareProgress('이미지 다운로드 중...');
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = `${name}_사주풀이_${today}.png`;
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
-        setDownloadProgress('완료!');
       }
     } catch (error) {
       console.error('공유 오류:', error);
@@ -372,20 +244,20 @@ export default function SajuResultPremium({
         el.style.display = display;
       });
       setIsSharing(false);
-      setDownloadProgress('');
+      setShareProgress('');
     }
   }, [isPageReady, name]);
 
   return (
     <div id="saju-result-premium" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4 relative">
-      {/* 다운로드 진행 오버레이 */}
+      {/* 공유 진행 오버레이 */}
       <AnimatePresence>
-        {(isSaving || isSharing) && (
+        {isSharing && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm no-print"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -394,23 +266,10 @@ export default function SajuResultPremium({
               className="glass-strong rounded-2xl p-8 text-center max-w-sm mx-4"
             >
               <Loader2 className="w-12 h-12 text-amber-400 animate-spin mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">
-                {isSaving ? 'PDF 생성 중' : '공유 준비 중'}
-              </h3>
-              <p className="text-amber-400 font-medium mb-3">
-                {downloadProgress || '처리 중...'}
+              <h3 className="text-xl font-bold text-white mb-2">공유 준비 중</h3>
+              <p className="text-amber-400 font-medium">
+                {shareProgress || '처리 중...'}
               </p>
-              <p className="text-slate-400 text-sm">
-                {elapsedTime.toFixed(1)}초 경과
-              </p>
-              <div className="mt-4 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-amber-400 to-purple-500"
-                  initial={{ width: '0%' }}
-                  animate={{ width: '100%' }}
-                  transition={{ duration: 8, ease: 'linear' }}
-                />
-              </div>
             </motion.div>
           </motion.div>
         )}
@@ -462,6 +321,36 @@ export default function SajuResultPremium({
           </p>
         </div>
 
+        {/* 용신/희신 설명 */}
+        <div className="mt-8 grid md:grid-cols-2 gap-4">
+          <div className="glass rounded-xl p-5">
+            <h4 className="font-bold text-cyan-400 mb-2 flex items-center gap-2">
+              💎 용신(用神): {result.yongsin}
+            </h4>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              사주에서 <strong className="text-amber-400">가장 필요한 오행</strong>입니다.
+              {result.strength === 'strong' && ' 신강한 사주이므로 기운을 설기시키는 오행이 용신입니다.'}
+              {result.strength === 'weak' && ' 신약한 사주이므로 나를 돕는 오행이 용신입니다.'}
+              {result.strength === 'neutral' && ' 균형잡힌 사주지만 가장 부족한 오행을 보충하면 좋습니다.'}
+            </p>
+            <p className="text-slate-400 text-xs mt-2">
+              💡 {result.yongsin} 오행의 색상, 방향, 직업이 도움이 됩니다.
+            </p>
+          </div>
+          <div className="glass rounded-xl p-5">
+            <h4 className="font-bold text-purple-400 mb-2 flex items-center gap-2">
+              ✨ 희신(喜神): {heesin}
+            </h4>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              <strong className="text-amber-400">용신을 생해주는 오행</strong>입니다.
+              용신의 보조 역할로, 용신과 함께 활용하면 효과가 배가됩니다.
+            </p>
+            <p className="text-slate-400 text-xs mt-2">
+              💡 {heesin}(희신) → {result.yongsin}(용신)을 생합니다.
+            </p>
+          </div>
+        </div>
+
         {/* Score */}
         <div className="flex flex-col items-center my-12">
           <CircularScore score={sajuScore} size={220} strokeWidth={14} />
@@ -477,10 +366,10 @@ export default function SajuResultPremium({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-wrap justify-center gap-3 no-print">
           <motion.button
             onClick={handleDownload}
-            disabled={!isPageReady || isSaving || isSharing}
+            disabled={!isPageReady || isSharing}
             className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={isPageReady ? { scale: 1.05 } : {}}
             whileTap={isPageReady ? { scale: 0.95 } : {}}
@@ -493,14 +382,14 @@ export default function SajuResultPremium({
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                PDF 저장
+                PDF로 인쇄
               </>
             )}
           </motion.button>
 
           <motion.button
             onClick={handleShare}
-            disabled={!isPageReady || isSaving || isSharing}
+            disabled={!isPageReady || isSharing}
             className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={isPageReady ? { scale: 1.05 } : {}}
             whileTap={isPageReady ? { scale: 0.95 } : {}}
