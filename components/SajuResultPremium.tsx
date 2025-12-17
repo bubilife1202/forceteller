@@ -14,7 +14,7 @@ import ShinsalAnalysis from './premium/ShinsalAnalysis';
 import HealthAdvice from './premium/HealthAdvice';
 import DaeunTimeline from './premium/DaeunTimeline';
 import MonthlyForecast2025 from './premium/MonthlyForecast2025';
-import { Download, Share2, RotateCcw, Loader2 } from 'lucide-react';
+import { Download, RotateCcw, Loader2 } from 'lucide-react';
 
 interface SajuResultPremiumProps {
   result: SajuResultType;
@@ -145,20 +145,8 @@ export default function SajuResultPremium({
   const heesin = getHeesin();
   const coreEvaluation = getCoreEvaluation();
 
-  // PDF 다운로드 (브라우저 인쇄 기능 사용 - 원본 품질 보장)
-  const handleDownload = useCallback(() => {
-    if (!isPageReady) {
-      alert('페이지가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.');
-      return;
-    }
-
-    // 브라우저 인쇄 다이얼로그 열기 (PDF로 저장 선택 가능)
-    // CSS @media print로 스타일 최적화됨
-    window.print();
-  }, [isPageReady]);
-
-  // 공유하기
-  const handleShare = useCallback(async () => {
+  // 이미지로 저장
+  const handleSaveImage = useCallback(async () => {
     if (!isPageReady) {
       alert('페이지가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.');
       return;
@@ -173,7 +161,7 @@ export default function SajuResultPremium({
 
     try {
       if (!element) {
-        alert('공유할 내용을 찾을 수 없습니다.');
+        alert('저장할 내용을 찾을 수 없습니다.');
         return;
       }
 
@@ -186,21 +174,22 @@ export default function SajuResultPremium({
       });
 
       // DOM 업데이트 대기
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
-      // 이미지 생성 (타임아웃 포함)
-      setShareProgress('이미지 생성 중...');
+      // 이미지 생성 (타임아웃 60초로 증가)
+      setShareProgress('이미지 생성 중... (잠시만 기다려주세요)');
       const htmlToImage = await import('html-to-image');
 
       const blob = await Promise.race([
         htmlToImage.toBlob(element, {
-          quality: 0.9,
-          pixelRatio: 1.5,
+          quality: 0.85,
+          pixelRatio: 1.2,
           backgroundColor: '#0f172a',
           cacheBust: true,
+          skipFonts: true,
         }),
         new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('타임아웃')), 15000)
+          setTimeout(() => reject(new Error('이미지 생성 시간이 초과되었습니다. 다시 시도해주세요.')), 60000)
         )
       ]);
 
@@ -208,36 +197,18 @@ export default function SajuResultPremium({
         throw new Error('이미지 생성에 실패했습니다');
       }
 
-      setShareProgress('공유 준비 중...');
+      // 이미지 다운로드
+      setShareProgress('다운로드 중...');
       const today = new Date().toISOString().split('T')[0];
-      const file = new File([blob], `${name}_사주풀이_${today}.png`, { type: 'image/png' });
-
-      // Web Share API 사용 가능 여부 확인
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: `${name}님의 사주 풀이`,
-          text: `${name}님의 사주 풀이 결과입니다`,
-          files: [file],
-        });
-      } else {
-        // Web Share API를 지원하지 않으면 다운로드
-        setShareProgress('이미지 다운로드 중...');
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = `${name}_사주풀이_${today}.png`;
-        link.href = url;
-        link.click();
-        URL.revokeObjectURL(url);
-      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = `${name}_사주풀이_${today}.png`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('공유 오류:', error);
-
-      // AbortError는 사용자가 공유를 취소한 경우
-      if (error instanceof Error && error.name === 'AbortError') {
-        return;
-      }
-
-      alert('공유 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
+      console.error('이미지 저장 오류:', error);
+      alert('이미지 저장 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
     } finally {
       // 항상 버튼 복구
       originalStyles.forEach(({ el, display }) => {
@@ -250,7 +221,7 @@ export default function SajuResultPremium({
 
   return (
     <div id="saju-result-premium" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4 relative">
-      {/* 공유 진행 오버레이 */}
+      {/* 이미지 저장 진행 오버레이 */}
       <AnimatePresence>
         {isSharing && (
           <motion.div
@@ -266,7 +237,7 @@ export default function SajuResultPremium({
               className="glass-strong rounded-2xl p-8 text-center max-w-sm mx-4"
             >
               <Loader2 className="w-12 h-12 text-amber-400 animate-spin mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">공유 준비 중</h3>
+              <h3 className="text-xl font-bold text-white mb-2">이미지 저장 중</h3>
               <p className="text-amber-400 font-medium">
                 {shareProgress || '처리 중...'}
               </p>
@@ -368,7 +339,7 @@ export default function SajuResultPremium({
         {/* Action Buttons */}
         <div className="flex flex-wrap justify-center gap-3 no-print">
           <motion.button
-            onClick={handleDownload}
+            onClick={handleSaveImage}
             disabled={!isPageReady || isSharing}
             className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={isPageReady ? { scale: 1.05 } : {}}
@@ -382,27 +353,7 @@ export default function SajuResultPremium({
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                PDF로 인쇄
-              </>
-            )}
-          </motion.button>
-
-          <motion.button
-            onClick={handleShare}
-            disabled={!isPageReady || isSharing}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
-            whileHover={isPageReady ? { scale: 1.05 } : {}}
-            whileTap={isPageReady ? { scale: 0.95 } : {}}
-          >
-            {!isPageReady ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                로딩 중...
-              </>
-            ) : (
-              <>
-                <Share2 className="w-4 h-4" />
-                공유하기
+                이미지로 저장
               </>
             )}
           </motion.button>
