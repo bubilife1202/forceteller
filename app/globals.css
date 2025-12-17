@@ -227,18 +227,18 @@
   animation: scaleIn 0.4s ease-out;
 }
 
-/* PDF Print Styles */
+/* PDF Print Styles - 흰색 배경으로 깔끔하게 인쇄 */
 @media print {
-  /* 기본 설정 */
+  /* 기본 설정 - 흰색 배경 */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
 
-  body {
-    background: #0f172a !important;
-    -webkit-print-color-adjust: exact !important;
+  html, body {
+    background: white !important;
+    color: #1e293b !important;
   }
 
   /* 배경 숨기기 */
@@ -251,21 +251,22 @@
     display: none !important;
   }
 
-  /* Glass 효과를 solid 배경으로 */
+  /* Glass 효과를 흰색 배경으로 */
   .glass, .glass-strong {
-    background: rgba(30, 41, 59, 0.95) !important;
+    background: #f8fafc !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
   }
 
-  /* 그라데이션 텍스트 처리 */
+  /* 그라데이션 텍스트 처리 - 진한 색상으로 */
   .gradient-text, .gradient-text-purple {
     background: none !important;
     -webkit-background-clip: unset !important;
     background-clip: unset !important;
-    -webkit-text-fill-color: #fbbf24 !important;
-    color: #fbbf24 !important;
+    -webkit-text-fill-color: #7c3aed !important;
+    color: #7c3aed !important;
   }
 
   /* 컨테이너 */
@@ -274,6 +275,59 @@
     max-width: none !important;
     padding: 20px !important;
     margin: 0 !important;
+    background: white !important;
+  }
+
+  /* 텍스트 색상 변경 */
+  #saju-result-premium,
+  #saju-result-premium * {
+    color: #1e293b !important;
+  }
+
+  /* 특정 색상 요소들 */
+  #saju-result-premium .text-slate-100,
+  #saju-result-premium .text-slate-200,
+  #saju-result-premium .text-slate-300,
+  #saju-result-premium .text-white {
+    color: #1e293b !important;
+  }
+
+  #saju-result-premium .text-slate-400,
+  #saju-result-premium .text-slate-500 {
+    color: #64748b !important;
+  }
+
+  #saju-result-premium .text-amber-400 {
+    color: #d97706 !important;
+  }
+
+  #saju-result-premium .text-cyan-300,
+  #saju-result-premium .text-cyan-400 {
+    color: #0891b2 !important;
+  }
+
+  #saju-result-premium .text-purple-300,
+  #saju-result-premium .text-purple-400 {
+    color: #7c3aed !important;
+  }
+
+  #saju-result-premium .text-red-400 {
+    color: #dc2626 !important;
+  }
+
+  #saju-result-premium .text-blue-400 {
+    color: #2563eb !important;
+  }
+
+  #saju-result-premium .text-green-400 {
+    color: #16a34a !important;
+  }
+
+  /* 배지/태그 스타일 */
+  #saju-result-premium span[class*="rounded-full"] {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
   }
 
   /* 페이지 나눔 */
@@ -308,6 +362,6 @@
   /* 페이지 설정 */
   @page {
     size: A4;
-    margin: 10mm;
+    margin: 15mm;
   }
 }
