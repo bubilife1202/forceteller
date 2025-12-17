@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import CircularScore from './premium/CircularScore';
 import ElementsRadarChart from './premium/ElementsRadarChart';
 import DetailTabsEnhanced from './premium/DetailTabsEnhanced';
-import AIPromptGenerator from './premium/AIPromptGenerator';
 import SajuPillarTable from './premium/SajuPillarTable';
 import TenGodsAnalysis from './premium/TenGodsAnalysis';
 import HapchungAnalysis from './premium/HapchungAnalysis';
@@ -113,7 +112,7 @@ export default function SajuResultPremium({
   const heesin = getHeesin();
   const coreEvaluation = getCoreEvaluation();
 
-  // 이미지 다운로드
+  // PDF 다운로드
   const handleDownload = async () => {
     setIsSaving(true);
 
@@ -132,32 +131,48 @@ export default function SajuResultPremium({
       // DOM 업데이트 대기
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // 이미지 생성 (타임아웃 포함)
-      const htmlToImage = await import('html-to-image');
+      // html2canvas와 jsPDF 동적 import
+      const html2canvas = (await import('html2canvas')).default;
+      const jsPDF = (await import('jspdf')).default;
 
-      const dataUrl = await Promise.race([
-        htmlToImage.toPng(element, {
-          quality: 0.95,
-          pixelRatio: 2,
-          backgroundColor: '#0f172a',
-          cacheBust: true,
-        }),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('타임아웃')), 15000)
-        )
-      ]);
+      // 캔버스로 변환
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#0f172a',
+        logging: false,
+        useCORS: true,
+      });
 
-      // 다운로드
-      const link = document.createElement('a');
+      // PDF 생성
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      let position = 0;
+
+      // 첫 페이지
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // 여러 페이지로 분할
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // PDF 다운로드
       const today = new Date().toISOString().split('T')[0];
-      link.download = `${name}_사주풀이_${today}.png`;
-      link.href = dataUrl;
-      link.click();
+      pdf.save(`${name}_사주풀이_${today}.pdf`);
 
-      alert('이미지가 다운로드되었습니다!');
+      alert('PDF가 다운로드되었습니다!');
     } catch (error) {
-      console.error('이미지 생성 오류:', error);
-      alert('이미지 생성 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
+      console.error('PDF 생성 오류:', error);
+      alert('PDF 생성 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
     } finally {
       // 항상 버튼 복구
       buttons?.forEach((btn) => ((btn as HTMLElement).style.display = ''));
@@ -311,7 +326,7 @@ export default function SajuResultPremium({
             whileTap={{ scale: 0.95 }}
           >
             <Download className="w-4 h-4" />
-            {isSaving ? '저장 중...' : '이미지 저장'}
+            {isSaving ? 'PDF 생성 중...' : 'PDF 저장'}
           </motion.button>
 
           <motion.button
@@ -393,14 +408,6 @@ export default function SajuResultPremium({
 
       {/* Monthly Forecast 2025 */}
       <MonthlyForecast2025 result={result} />
-
-      {/* AI Prompt Generator */}
-      <AIPromptGenerator
-        result={result}
-        name={name}
-        gender={gender}
-        birthDate={birthDate}
-      />
 
       {/* Footer */}
       <div className="text-center text-slate-500 text-sm space-y-2">
