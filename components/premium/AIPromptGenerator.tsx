@@ -27,7 +27,6 @@ export default function AIPromptGenerator({
 
   const generatePrompt = () => {
     const genderText = gender === 'male' ? '남자' : '여자';
-    const ilju = `${result.day.stem.ko}${result.day.stem.cn}${result.day.branch.ko}${result.day.branch.cn}`;
 
     // 오행 분포
     const elementsText = Object.entries(result.elements)

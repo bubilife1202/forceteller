@@ -8,6 +8,13 @@ import CircularScore from './premium/CircularScore';
 import ElementsRadarChart from './premium/ElementsRadarChart';
 import DetailTabsEnhanced from './premium/DetailTabsEnhanced';
 import AIPromptGenerator from './premium/AIPromptGenerator';
+import SajuPillarTable from './premium/SajuPillarTable';
+import TenGodsAnalysis from './premium/TenGodsAnalysis';
+import HapchungAnalysis from './premium/HapchungAnalysis';
+import ShinsalAnalysis from './premium/ShinsalAnalysis';
+import HealthAdvice from './premium/HealthAdvice';
+import DaeunTimeline from './premium/DaeunTimeline';
+import MonthlyForecast2025 from './premium/MonthlyForecast2025';
 import { Download, Share2, RotateCcw } from 'lucide-react';
 
 interface SajuResultPremiumProps {
@@ -363,8 +370,29 @@ export default function SajuResultPremium({
         </div>
       </motion.div>
 
+      {/* Saju Pillar Table */}
+      <SajuPillarTable result={result} birthYear={birthDate.year} />
+
+      {/* Ten Gods Analysis */}
+      <TenGodsAnalysis result={result} />
+
+      {/* Hapchung Analysis */}
+      <HapchungAnalysis result={result} />
+
+      {/* Shinsal Analysis */}
+      <ShinsalAnalysis result={result} />
+
+      {/* Health Advice */}
+      <HealthAdvice result={result} />
+
       {/* Detail Tabs */}
       <DetailTabsEnhanced result={result} birthYear={birthDate.year} />
+
+      {/* Daeun Timeline */}
+      <DaeunTimeline result={result} birthYear={birthDate.year} />
+
+      {/* Monthly Forecast 2025 */}
+      <MonthlyForecast2025 result={result} />
 
       {/* AI Prompt Generator */}
       <AIPromptGenerator
