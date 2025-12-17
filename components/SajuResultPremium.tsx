@@ -275,13 +275,13 @@ export default function SajuResultPremium({
       {/* Footer - 면책 조항 */}
       <div className="glass rounded-2xl p-6 text-center space-y-3">
         <p className="text-slate-300 text-sm">
-          ⚠️ 본 사주 풀이는 <strong className="text-amber-400">전통 명리학 이론</strong>을 기반으로
-          프로그래밍된 결과이며, 참고용으로만 활용해 주세요.
+          ⚠️ 본 사주 풀이는 <strong className="text-amber-400">전통 명리학 이론과 전문가 자문</strong>을 바탕으로
+          제작되었으며, 재미와 참고용으로 활용해 주세요.
         </p>
         <p className="text-slate-400 text-xs">
           실제 운세나 인생의 중요한 결정은 본인의 판단과 노력이 가장 중요합니다.
           <br />
-          더 정확하고 심층적인 해석을 원하시면 전문 역술인과 상담하시기를 권장합니다.
+          더 심층적인 상담을 원하시면 전문 역술인과 직접 상담하시기를 권장합니다.
         </p>
         <div className="pt-3 border-t border-slate-700/50">
           <p className="font-semibold text-amber-400 text-sm">{tCommon('version')}</p>

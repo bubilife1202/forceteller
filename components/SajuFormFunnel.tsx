@@ -410,9 +410,9 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
             </button>
             <button
               onClick={handleSubmit}
-              className="flex-1 px-6 py-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-xl font-bold text-lg btn-glow glow-gold transition"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 rounded-xl font-bold text-lg btn-glow glow-gold transition whitespace-nowrap"
             >
-              운명 확인하기 ✨
+              사주 풀이 보기
             </button>
           </div>
         </div>
