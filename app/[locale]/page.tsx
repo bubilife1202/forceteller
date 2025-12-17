@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import MainMenu, { MenuOption } from '@/components/MainMenu';
 import SajuFormFunnel, { FormData } from '@/components/SajuFormFunnel';
 import SajuResultPremium from '@/components/SajuResultPremium';
+import NewYearResult2026 from '@/components/NewYearResult2026';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
 
 export default function Home() {
+  const [menuSelection, setMenuSelection] = useState<MenuOption | null>(null);
   const [result, setResult] = useState<SajuResultType | null>(null);
   const [userData, setUserData] = useState<{
     name: string;
@@ -15,6 +18,10 @@ export default function Home() {
     birthDate: { year: number; month: number; day: number };
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleMenuSelect = (option: MenuOption) => {
+    setMenuSelection(option);
+  };
 
   const handleSubmit = async (formData: FormData) => {
     setIsLoading(true);
@@ -53,6 +60,13 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleBackToMenu = () => {
+    setResult(null);
+    setUserData(null);
+    setMenuSelection(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Starry Night Background */}
@@ -65,22 +79,42 @@ export default function Home() {
 
       {/* Content */}
       <div className="relative z-10">
-        {!result ? (
+        {/* 메인 메뉴 */}
+        {!menuSelection && !result && (
+          <MainMenu onSelect={handleMenuSelect} />
+        )}
+
+        {/* 만세력/사주 풀이 플로우 */}
+        {menuSelection === 'saju' && !result && (
           <SajuFormFunnel onSubmit={handleSubmit} />
-        ) : (
-          userData && (
-            <SajuResultPremium
-              result={result}
-              name={userData.name}
-              gender={userData.gender}
-              birthDate={userData.birthDate}
-              onReset={handleReset}
-            />
-          )
+        )}
+        {menuSelection === 'saju' && result && userData && (
+          <SajuResultPremium
+            result={result}
+            name={userData.name}
+            gender={userData.gender}
+            birthDate={userData.birthDate}
+            onReset={handleReset}
+          />
+        )}
+
+        {/* 2026 신년운세 플로우 */}
+        {menuSelection === 'newyear2026' && !result && (
+          <SajuFormFunnel onSubmit={handleSubmit} />
+        )}
+        {menuSelection === 'newyear2026' && result && userData && (
+          <NewYearResult2026
+            result={result}
+            name={userData.name}
+            gender={userData.gender}
+            birthDate={userData.birthDate}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
         )}
 
         {/* Footer */}
-        {!result && (
+        {!result && !menuSelection && (
           <footer className="text-center pb-12">
             <div className="inline-block px-6 py-3 glass rounded-2xl">
               <p className="text-xs text-slate-400">

@@ -12,8 +12,6 @@ import HapchungAnalysis from './premium/HapchungAnalysis';
 import ShinsalAnalysis from './premium/ShinsalAnalysis';
 import HealthAdvice from './premium/HealthAdvice';
 import DaeunTimeline from './premium/DaeunTimeline';
-import MonthlyForecast2025 from './premium/MonthlyForecast2025';
-import MonthlyForecast2026 from './premium/MonthlyForecast2026';
 import { RotateCcw } from 'lucide-react';
 
 interface SajuResultPremiumProps {
@@ -269,12 +267,6 @@ export default function SajuResultPremium({
 
       {/* Daeun Timeline */}
       <DaeunTimeline result={result} birthYear={birthDate.year} />
-
-      {/* Monthly Forecast 2025 */}
-      <MonthlyForecast2025 result={result} />
-
-      {/* Monthly Forecast 2026 */}
-      <MonthlyForecast2026 result={result} />
 
       {/* Footer - 면책 조항 */}
       <div className="glass rounded-2xl p-6 text-center space-y-3">
