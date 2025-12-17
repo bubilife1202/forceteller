@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://forceteller.netlify.app'
+  const baseUrl = 'https://forceteller.nomadlab.kr'
 
   return [
     {

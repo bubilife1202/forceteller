@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://forceteller.netlify.app/sitemap.xml',
+    sitemap: 'https://forceteller.nomadlab.kr/sitemap.xml',
   }
 }

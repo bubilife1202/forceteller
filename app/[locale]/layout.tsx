@@ -41,7 +41,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       locale: locale === 'ko' ? 'ko_KR' : 'en_US',
-      url: "https://forceteller.netlify.app",
+      url: "https://forceteller.nomadlab.kr",
       title: metadata.title,
       description: metadata.description,
       siteName: locale === 'ko' ? "포스텔러 만세력" : "Forceteller",
@@ -84,7 +84,7 @@ export default async function LocaleLayout({
     '@type': 'WebApplication',
     name: metadata.title,
     description: metadata.description,
-    url: 'https://forceteller.netlify.app',
+    url: 'https://forceteller.nomadlab.kr',
     applicationCategory: 'LifestyleApplication',
     operatingSystem: 'Any',
     offers: {
