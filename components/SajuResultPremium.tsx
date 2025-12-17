@@ -157,6 +157,7 @@ export default function SajuResultPremium({
 
     const element = document.getElementById('saju-result-premium');
     const buttons = element?.querySelectorAll('button');
+    const overlays = document.querySelectorAll('.no-print');
     const originalStyles: { el: HTMLElement; display: string }[] = [];
 
     try {
@@ -165,33 +166,48 @@ export default function SajuResultPremium({
         return;
       }
 
-      // 버튼 숨기기
+      // 버튼과 오버레이 숨기기
       setShareProgress('화면 캡처 준비 중...');
       buttons?.forEach((btn) => {
         const el = btn as HTMLElement;
         originalStyles.push({ el, display: el.style.display });
         el.style.display = 'none';
       });
+      overlays?.forEach((overlay) => {
+        const el = overlay as HTMLElement;
+        if (!el.classList.contains('glass-strong') || !el.closest('#saju-result-premium')) {
+          originalStyles.push({ el, display: el.style.display });
+          el.style.display = 'none';
+        }
+      });
 
       // DOM 업데이트 대기
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // 이미지 생성 (타임아웃 60초로 증가)
+      // html2canvas로 이미지 생성
       setShareProgress('이미지 생성 중... (잠시만 기다려주세요)');
-      const htmlToImage = await import('html-to-image');
+      const html2canvas = (await import('html2canvas')).default;
 
-      const blob = await Promise.race([
-        htmlToImage.toBlob(element, {
-          quality: 0.85,
-          pixelRatio: 1.2,
-          backgroundColor: '#0f172a',
-          cacheBust: true,
-          skipFonts: true,
-        }),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('이미지 생성 시간이 초과되었습니다. 다시 시도해주세요.')), 60000)
-        )
-      ]);
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#0f172a',
+        logging: false,
+        useCORS: true,
+        allowTaint: true,
+        scrollX: 0,
+        scrollY: -window.scrollY,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
+        foreignObjectRendering: true, // SVG 아이콘 렌더링
+        removeContainer: false,
+        imageTimeout: 30000,
+      });
+
+      // canvas를 blob으로 변환
+      setShareProgress('다운로드 준비 중...');
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob((b) => resolve(b), 'image/png', 1.0);
+      });
 
       if (!blob) {
         throw new Error('이미지 생성에 실패했습니다');
