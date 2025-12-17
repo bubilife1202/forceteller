@@ -1,9 +1,9 @@
 'use client';
 
 import { SajuResult as SajuResultType } from '@/lib/saju-calculator';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import CircularScore from './premium/CircularScore';
 import ElementsRadarChart from './premium/ElementsRadarChart';
 import DetailTabsEnhanced from './premium/DetailTabsEnhanced';
@@ -14,7 +14,7 @@ import ShinsalAnalysis from './premium/ShinsalAnalysis';
 import HealthAdvice from './premium/HealthAdvice';
 import DaeunTimeline from './premium/DaeunTimeline';
 import MonthlyForecast2025 from './premium/MonthlyForecast2025';
-import { Download, Share2, RotateCcw } from 'lucide-react';
+import { Download, Share2, RotateCcw, Loader2 } from 'lucide-react';
 
 interface SajuResultPremiumProps {
   result: SajuResultType;
@@ -39,6 +39,54 @@ export default function SajuResultPremium({
   const tCommon = useTranslations('common');
   const [isSaving, setIsSaving] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isPageReady, setIsPageReady] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState<string>('');
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  // 페이지 로딩 완료 감지
+  useEffect(() => {
+    const checkPageReady = async () => {
+      // 모든 이미지 로딩 대기
+      const images = document.querySelectorAll('#saju-result-premium img');
+      const imagePromises = Array.from(images).map((img) => {
+        const imgElement = img as HTMLImageElement;
+        if (imgElement.complete) return Promise.resolve();
+        return new Promise((resolve) => {
+          imgElement.onload = resolve;
+          imgElement.onerror = resolve;
+        });
+      });
+
+      // 폰트 로딩 대기
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+
+      // 모든 이미지 로딩 대기
+      await Promise.all(imagePromises);
+
+      // 약간의 지연으로 렌더링 완료 보장
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setIsPageReady(true);
+    };
+
+    checkPageReady();
+  }, []);
+
+  // 다운로드 시간 측정
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isSaving || isSharing) {
+      setElapsedTime(0);
+      interval = setInterval(() => {
+        setElapsedTime((prev) => prev + 0.1);
+      }, 100);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isSaving, isSharing]);
 
   // 운세 점수 계산 (0-100)
   const calculateScore = () => {
@@ -113,11 +161,18 @@ export default function SajuResultPremium({
   const coreEvaluation = getCoreEvaluation();
 
   // PDF 다운로드
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
+    if (!isPageReady) {
+      alert('페이지가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
     setIsSaving(true);
+    setDownloadProgress('준비 중...');
 
     const element = document.getElementById('saju-result-premium');
     const buttons = element?.querySelectorAll('button');
+    const originalStyles: { el: HTMLElement; display: string }[] = [];
 
     try {
       if (!element) {
@@ -126,25 +181,65 @@ export default function SajuResultPremium({
       }
 
       // 버튼 숨기기
-      buttons?.forEach((btn) => ((btn as HTMLElement).style.display = 'none'));
+      setDownloadProgress('화면 캡처 준비 중...');
+      buttons?.forEach((btn) => {
+        const el = btn as HTMLElement;
+        originalStyles.push({ el, display: el.style.display });
+        el.style.display = 'none';
+      });
 
       // DOM 업데이트 대기
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // html2canvas와 jsPDF 동적 import
-      const html2canvas = (await import('html2canvas')).default;
-      const jsPDF = (await import('jspdf')).default;
+      setDownloadProgress('라이브러리 로딩 중...');
+      const [html2canvasModule, jsPDFModule] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ]);
+      const html2canvas = html2canvasModule.default;
+      const jsPDF = jsPDFModule.default;
 
-      // 캔버스로 변환
+      // 캔버스로 변환 (최적화된 옵션)
+      setDownloadProgress('화면 캡처 중...');
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 1.5, // 속도와 품질 균형
         backgroundColor: '#0f172a',
         logging: false,
         useCORS: true,
+        allowTaint: true,
+        foreignObjectRendering: false,
+        imageTimeout: 5000,
+        removeContainer: true,
+        // 스타일 보정
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.getElementById('saju-result-premium');
+          if (clonedElement) {
+            // glass 효과가 있는 요소들의 backdrop-filter 제거하고 배경색으로 대체
+            const glassElements = clonedElement.querySelectorAll('.glass, .glass-strong');
+            glassElements.forEach((el) => {
+              const htmlEl = el as HTMLElement;
+              htmlEl.style.backdropFilter = 'none';
+              (htmlEl.style as unknown as Record<string, string>).webkitBackdropFilter = 'none';
+              htmlEl.style.backgroundColor = 'rgba(30, 41, 59, 0.95)';
+            });
+            // 그라데이션 텍스트 처리
+            const gradientTexts = clonedElement.querySelectorAll('.gradient-text');
+            gradientTexts.forEach((el) => {
+              const htmlEl = el as HTMLElement;
+              htmlEl.style.background = 'none';
+              (htmlEl.style as unknown as Record<string, string>).webkitBackgroundClip = 'unset';
+              htmlEl.style.backgroundClip = 'unset';
+              (htmlEl.style as unknown as Record<string, string>).webkitTextFillColor = '#fbbf24';
+              htmlEl.style.color = '#fbbf24';
+            });
+          }
+        },
       });
 
-      // PDF 생성
-      const imgData = canvas.toDataURL('image/png');
+      // PDF 생성 (JPEG 사용으로 속도 개선)
+      setDownloadProgress('PDF 생성 중...');
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
       const imgWidth = 210; // A4 width in mm
       const pageHeight = 297; // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -154,38 +249,52 @@ export default function SajuResultPremium({
       let position = 0;
 
       // 첫 페이지
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
       // 여러 페이지로 분할
+      let pageCount = 1;
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
+        pageCount++;
+        setDownloadProgress(`PDF 생성 중... (${pageCount}페이지)`);
       }
 
       // PDF 다운로드
+      setDownloadProgress('다운로드 중...');
       const today = new Date().toISOString().split('T')[0];
       pdf.save(`${name}_사주풀이_${today}.pdf`);
 
-      alert('PDF가 다운로드되었습니다!');
+      setDownloadProgress('완료!');
     } catch (error) {
       console.error('PDF 생성 오류:', error);
       alert('PDF 생성 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
     } finally {
       // 항상 버튼 복구
-      buttons?.forEach((btn) => ((btn as HTMLElement).style.display = ''));
+      originalStyles.forEach(({ el, display }) => {
+        el.style.display = display;
+      });
       setIsSaving(false);
+      setDownloadProgress('');
     }
-  };
+  }, [isPageReady, name]);
 
   // 공유하기
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
+    if (!isPageReady) {
+      alert('페이지가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
     setIsSharing(true);
+    setDownloadProgress('준비 중...');
 
     const element = document.getElementById('saju-result-premium');
     const buttons = element?.querySelectorAll('button');
+    const originalStyles: { el: HTMLElement; display: string }[] = [];
 
     try {
       if (!element) {
@@ -194,18 +303,25 @@ export default function SajuResultPremium({
       }
 
       // 버튼 숨기기
-      buttons?.forEach((btn) => ((btn as HTMLElement).style.display = 'none'));
+      setDownloadProgress('화면 캡처 준비 중...');
+      buttons?.forEach((btn) => {
+        const el = btn as HTMLElement;
+        originalStyles.push({ el, display: el.style.display });
+        el.style.display = 'none';
+      });
 
       // DOM 업데이트 대기
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // 이미지 생성 (타임아웃 포함)
+      setDownloadProgress('라이브러리 로딩 중...');
       const htmlToImage = await import('html-to-image');
 
+      setDownloadProgress('이미지 생성 중...');
       const blob = await Promise.race([
         htmlToImage.toBlob(element, {
-          quality: 0.95,
-          pixelRatio: 2,
+          quality: 0.9,
+          pixelRatio: 1.5,
           backgroundColor: '#0f172a',
           cacheBust: true,
         }),
@@ -218,6 +334,7 @@ export default function SajuResultPremium({
         throw new Error('이미지 생성에 실패했습니다');
       }
 
+      setDownloadProgress('공유 준비 중...');
       const today = new Date().toISOString().split('T')[0];
       const file = new File([blob], `${name}_사주풀이_${today}.png`, { type: 'image/png' });
 
@@ -228,15 +345,17 @@ export default function SajuResultPremium({
           text: `${name}님의 사주 풀이 결과입니다`,
           files: [file],
         });
+        setDownloadProgress('완료!');
       } else {
         // Web Share API를 지원하지 않으면 다운로드
+        setDownloadProgress('다운로드 중...');
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = `${name}_사주풀이_${today}.png`;
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
-        alert('이미지가 다운로드되었습니다!');
+        setDownloadProgress('완료!');
       }
     } catch (error) {
       console.error('공유 오류:', error);
@@ -249,13 +368,54 @@ export default function SajuResultPremium({
       alert('공유 중 오류가 발생했습니다.\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
     } finally {
       // 항상 버튼 복구
-      buttons?.forEach((btn) => ((btn as HTMLElement).style.display = ''));
+      originalStyles.forEach(({ el, display }) => {
+        el.style.display = display;
+      });
       setIsSharing(false);
+      setDownloadProgress('');
     }
-  };
+  }, [isPageReady, name]);
 
   return (
-    <div id="saju-result-premium" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
+    <div id="saju-result-premium" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4 relative">
+      {/* 다운로드 진행 오버레이 */}
+      <AnimatePresence>
+        {(isSaving || isSharing) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="glass-strong rounded-2xl p-8 text-center max-w-sm mx-4"
+            >
+              <Loader2 className="w-12 h-12 text-amber-400 animate-spin mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">
+                {isSaving ? 'PDF 생성 중' : '공유 준비 중'}
+              </h3>
+              <p className="text-amber-400 font-medium mb-3">
+                {downloadProgress || '처리 중...'}
+              </p>
+              <p className="text-slate-400 text-sm">
+                {elapsedTime.toFixed(1)}초 경과
+              </p>
+              <div className="mt-4 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-amber-400 to-purple-500"
+                  initial={{ width: '0%' }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 8, ease: 'linear' }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero Section */}
       <motion.div
         className="glass-strong rounded-3xl p-8 md:p-12 relative overflow-hidden"
@@ -320,24 +480,42 @@ export default function SajuResultPremium({
         <div className="flex flex-wrap justify-center gap-3">
           <motion.button
             onClick={handleDownload}
-            disabled={isSaving || isSharing}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            disabled={!isPageReady || isSaving || isSharing}
+            className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={isPageReady ? { scale: 1.05 } : {}}
+            whileTap={isPageReady ? { scale: 0.95 } : {}}
           >
-            <Download className="w-4 h-4" />
-            {isSaving ? 'PDF 생성 중...' : 'PDF 저장'}
+            {!isPageReady ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                로딩 중...
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4" />
+                PDF 저장
+              </>
+            )}
           </motion.button>
 
           <motion.button
             onClick={handleShare}
-            disabled={isSaving || isSharing}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            disabled={!isPageReady || isSaving || isSharing}
+            className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={isPageReady ? { scale: 1.05 } : {}}
+            whileTap={isPageReady ? { scale: 0.95 } : {}}
           >
-            <Share2 className="w-4 h-4" />
-            {isSharing ? '공유 준비중...' : '공유하기'}
+            {!isPageReady ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                로딩 중...
+              </>
+            ) : (
+              <>
+                <Share2 className="w-4 h-4" />
+                공유하기
+              </>
+            )}
           </motion.button>
 
           <motion.button
