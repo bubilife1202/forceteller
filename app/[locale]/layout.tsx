@@ -46,9 +46,9 @@ export async function generateMetadata({
       siteName: locale === 'ko' ? "팔자왕" : "Paljawang",
       images: [
         {
-          url: "https://forceteller.nomadlab.kr/opengraph-image",
+          url: "https://forceteller.nomadlab.kr/og-image.png",
           width: 1200,
-          height: 630,
+          height: 1200,
           alt: locale === 'ko' ? "팔자왕 - 무료 사주 운세 서비스" : "Paljawang - Free Fortune Telling",
         },
       ],
@@ -57,7 +57,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: metadata.title,
       description: metadata.description,
-      images: ["https://forceteller.nomadlab.kr/opengraph-image"],
+      images: ["https://forceteller.nomadlab.kr/og-image.png"],
     },
     viewport: {
       width: "device-width",
