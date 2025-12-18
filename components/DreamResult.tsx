@@ -338,7 +338,7 @@ export default function DreamResult({ formData, onReset, onBack }: DreamResultPr
           className="mb-6 flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>메뉴로 돌아가기</span>
+          <span>메뉴로</span>
         </motion.button>
 
         {/* 헤더 */}

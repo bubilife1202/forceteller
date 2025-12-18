@@ -787,7 +787,7 @@ export default function CompatibilityResult({
             whileTap={{ scale: 0.98 }}
           >
             <ArrowLeft className="w-4 h-4" />
-            메뉴로 돌아가기
+            메뉴로
           </motion.button>
           <motion.button
             onClick={onReset}

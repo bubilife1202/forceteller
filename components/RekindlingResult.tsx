@@ -386,7 +386,7 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
           className="mb-6 flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>메뉴로 돌아가기</span>
+          <span>메뉴로</span>
         </motion.button>
 
         {/* 헤더 */}
@@ -630,7 +630,7 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
             onClick={onBack}
             className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"
           >
-            메인으로 돌아가기
+            메뉴로
           </button>
         </motion.div>
 
