@@ -229,14 +229,19 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
       </div>
 
       {/* Footer hint */}
-      <motion.p
-        className="text-slate-500 text-sm mt-12 text-center"
+      <motion.div
+        className="text-center mt-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        팔자왕 - 전통 명리학 기반 종합 운세 서비스
-      </motion.p>
+        <p className="text-slate-500 text-sm">
+          팔자왕 - 전통 명리학 기반 종합 운세 서비스
+        </p>
+        <p className="text-slate-600 text-xs mt-2">
+          © 2025 Paljawang. All rights reserved.
+        </p>
+      </motion.div>
     </div>
   );
 }
