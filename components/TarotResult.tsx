@@ -624,6 +624,24 @@ export default function TarotResult({ formData, onReset, onBack }: TarotResultPr
               </div>
             </div>
 
+            {/* 오늘의 타로 헤더 */}
+            <motion.div
+              className="text-center mb-6"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              <h1
+                className="text-3xl md:text-4xl font-bold gradient-text mb-2"
+                style={{ fontFamily: "'Noto Serif KR', serif" }}
+              >
+                🃏 오늘의 타로
+              </h1>
+              <p className="text-slate-400">
+                22장의 메이저 아르카나가 전하는 오늘의 메시지
+              </p>
+            </motion.div>
+
             {/* 카드 정보 */}
             <motion.div
               className="glass-strong rounded-3xl p-6 md:p-8 text-center mb-6"
@@ -641,9 +659,9 @@ export default function TarotResult({ formData, onReset, onBack }: TarotResultPr
                 </motion.div>
               </div>
 
-              <h1 className="text-2xl md:text-3xl font-bold text-white mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
                 {selectedCard.name}
-              </h1>
+              </h2>
               {isReversed && (
                 <span className="inline-block px-3 py-1 bg-red-500/20 text-red-400 text-sm rounded-full mb-3">
                   역방향
@@ -662,20 +680,26 @@ export default function TarotResult({ formData, onReset, onBack }: TarotResultPr
               </div>
             </motion.div>
 
-            {/* 선택한 카테고리 결과 */}
+            {/* 선택한 카테고리 결과 - 강조 */}
             <motion.div
-              className="glass-strong rounded-3xl p-6 md:p-8 mb-6"
+              className="glass-strong rounded-3xl p-6 md:p-8 mb-6 border-2 border-purple-500/50 relative overflow-hidden"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
+              {/* 배경 글로우 효과 */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -z-10" />
+
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
                   {getCategoryIcon()}
                 </div>
-                <h2 className="text-xl font-bold text-white">{getCategoryName()}</h2>
+                <div>
+                  <span className="text-purple-400 text-xs font-medium">선택한 분야</span>
+                  <h2 className="text-xl font-bold text-white">{getCategoryName()}</h2>
+                </div>
               </div>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-slate-200 leading-relaxed text-lg">
                 {isReversed ? selectedCard.reversed : getCategoryMessage()}
               </p>
             </motion.div>
@@ -806,16 +830,25 @@ export default function TarotResult({ formData, onReset, onBack }: TarotResultPr
               </button>
             </motion.div>
 
-            {/* 푸터 안내 */}
-            <motion.p
-              className="text-center text-slate-500 text-sm mt-8"
+            {/* 푸터 - 면책 조항 */}
+            <motion.div
+              className="glass rounded-2xl p-6 text-center space-y-3 mt-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              타로 카드는 현재의 에너지를 읽는 도구입니다.<br />
-              미래는 당신의 선택에 달려 있습니다. 🌟
-            </motion.p>
+              <p className="text-slate-300 text-sm">
+                ⚠️ 타로 카드는 <strong className="text-amber-400">현재의 에너지를 읽는 도구</strong>입니다.
+                미래는 당신의 선택에 달려 있습니다.
+              </p>
+              <p className="text-slate-400 text-xs">
+                본 타로 해석은 재미와 참고용으로 활용해 주세요.<br />
+                인생의 중요한 결정은 본인의 판단과 노력이 가장 중요합니다.
+              </p>
+              <div className="pt-3 border-t border-slate-700/50">
+                <p className="font-semibold text-amber-400 text-sm">🃏 오늘의 타로 - 팔자왕</p>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
