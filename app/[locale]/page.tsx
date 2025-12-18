@@ -161,7 +161,7 @@ export default function Home() {
 
         {/* 궁합 보기 플로우 */}
         {menuSelection === 'compatibility' && !compatibilityData && (
-          <CompatibilityForm onSubmit={handleCompatibilitySubmit} />
+          <CompatibilityForm onSubmit={handleCompatibilitySubmit} onBack={handleBackToMenu} />
         )}
         {menuSelection === 'compatibility' && compatibilityData && (
           <CompatibilityResult

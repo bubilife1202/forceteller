@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, User, Calendar, Clock, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { Heart, User, ChevronLeft, ChevronRight, Sparkles, Home, Calendar, Clock } from 'lucide-react';
 
 export interface PersonData {
   name: string;
@@ -22,6 +22,7 @@ export interface CompatibilityFormData {
 
 interface CompatibilityFormProps {
   onSubmit: (data: CompatibilityFormData) => void;
+  onBack?: () => void;
 }
 
 const currentYear = new Date().getFullYear();
@@ -48,9 +49,13 @@ const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month, 0).getDate();
 };
 
-export default function CompatibilityForm({ onSubmit }: CompatibilityFormProps) {
+export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFormProps) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [relationshipType, setRelationshipType] = useState<'lover' | 'spouse' | 'friend' | 'business'>('lover');
+
+  // 한글 입력을 위한 ref 사용
+  const nameRef1 = useRef<HTMLInputElement>(null);
+  const nameRef2 = useRef<HTMLInputElement>(null);
 
   const [person1, setPerson1] = useState<PersonData>({
     name: '',
@@ -75,7 +80,26 @@ export default function CompatibilityForm({ onSubmit }: CompatibilityFormProps) 
   const days1 = Array.from({ length: getDaysInMonth(person1.year, person1.month) }, (_, i) => i + 1);
   const days2 = Array.from({ length: getDaysInMonth(person2.year, person2.month) }, (_, i) => i + 1);
 
+  const handleGoToStep2 = () => {
+    if (nameRef1.current) {
+      const name = nameRef1.current.value.trim();
+      if (!name) return;
+      setPerson1(prev => ({ ...prev, name }));
+      setStep(2);
+    }
+  };
+
+  const handleGoToStep3 = () => {
+    if (nameRef2.current) {
+      const name = nameRef2.current.value.trim();
+      if (!name) return;
+      setPerson2(prev => ({ ...prev, name }));
+      setStep(3);
+    }
+  };
+
   const handleSubmit = () => {
+    // 이미 step2에서 names가 설정되어 있음
     onSubmit({
       person1,
       person2,
@@ -83,19 +107,18 @@ export default function CompatibilityForm({ onSubmit }: CompatibilityFormProps) 
     });
   };
 
-  const canProceedStep1 = person1.name.trim().length > 0;
-  const canProceedStep2 = person2.name.trim().length > 0;
-
   const PersonForm = ({
     person,
     setPerson,
     days,
     color,
+    nameRef,
   }: {
     person: PersonData;
     setPerson: React.Dispatch<React.SetStateAction<PersonData>>;
     days: number[];
     color: 'pink' | 'blue';
+    nameRef: React.RefObject<HTMLInputElement | null>;
   }) => {
     const colorClasses = color === 'pink'
       ? { bg: 'bg-pink-500', text: 'text-pink-400', border: 'border-pink-500/30', ring: 'ring-pink-500' }
@@ -109,9 +132,9 @@ export default function CompatibilityForm({ onSubmit }: CompatibilityFormProps) 
             이름
           </label>
           <input
+            ref={nameRef}
             type="text"
-            value={person.name}
-            onChange={(e) => setPerson({ ...person, name: e.target.value })}
+            defaultValue={person.name}
             placeholder="이름을 입력하세요"
             className={`w-full px-4 py-3 bg-slate-800/50 border ${colorClasses.border} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:${colorClasses.ring} focus:ring-2 transition-all`}
           />
@@ -226,6 +249,17 @@ export default function CompatibilityForm({ onSubmit }: CompatibilityFormProps) 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
+        {/* 홈으로 버튼 */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="mb-6 flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+          >
+            <Home className="w-5 h-5" />
+            <span>홈으로</span>
+          </button>
+        )}
+
         {/* 헤더 */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg mb-4">
@@ -273,12 +307,12 @@ export default function CompatibilityForm({ onSubmit }: CompatibilityFormProps) 
                   setPerson={setPerson1}
                   days={days1}
                   color="blue"
+                  nameRef={nameRef1}
                 />
 
                 <button
-                  onClick={() => setStep(2)}
-                  disabled={!canProceedStep1}
-                  className="w-full mt-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-bold hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  onClick={handleGoToStep2}
+                  className="w-full mt-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-bold hover:from-blue-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2"
                 >
                   다음
                   <ChevronRight className="w-5 h-5" />
@@ -309,6 +343,7 @@ export default function CompatibilityForm({ onSubmit }: CompatibilityFormProps) 
                   setPerson={setPerson2}
                   days={days2}
                   color="pink"
+                  nameRef={nameRef2}
                 />
 
                 <div className="flex gap-3 mt-6">
@@ -320,9 +355,8 @@ export default function CompatibilityForm({ onSubmit }: CompatibilityFormProps) 
                     이전
                   </button>
                   <button
-                    onClick={() => setStep(3)}
-                    disabled={!canProceedStep2}
-                    className="flex-1 py-4 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl text-white font-bold hover:from-pink-600 hover:to-rose-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    onClick={handleGoToStep3}
+                    className="flex-1 py-4 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl text-white font-bold hover:from-pink-600 hover:to-rose-600 transition-all flex items-center justify-center gap-2"
                   >
                     다음
                     <ChevronRight className="w-5 h-5" />
