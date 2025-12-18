@@ -15,6 +15,8 @@ import DailyFortuneForm, { DailyFortuneFormData } from '@/components/DailyFortun
 import DailyFortuneResult from '@/components/DailyFortuneResult';
 import RekindlingForm, { RekindlingFormData } from '@/components/RekindlingForm';
 import RekindlingResult from '@/components/RekindlingResult';
+import MonthlyFortuneForm, { MonthlyFortuneFormData } from '@/components/MonthlyFortuneForm';
+import MonthlyFortuneResult from '@/components/MonthlyFortuneResult';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
 
@@ -43,6 +45,9 @@ export default function Home() {
 
   // 재회 운세 관련 상태
   const [rekindlingData, setRekindlingData] = useState<RekindlingFormData | null>(null);
+
+  // 월별 운세 관련 상태
+  const [monthlyFortuneData, setMonthlyFortuneData] = useState<MonthlyFortuneFormData | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -86,6 +91,7 @@ export default function Home() {
     setDreamData(null);
     setDailyFortuneData(null);
     setRekindlingData(null);
+    setMonthlyFortuneData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -96,6 +102,7 @@ export default function Home() {
     setDreamData(null);
     setDailyFortuneData(null);
     setRekindlingData(null);
+    setMonthlyFortuneData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -138,6 +145,21 @@ export default function Home() {
     await new Promise(resolve => setTimeout(resolve, 2500));
 
     setRekindlingData(formData);
+    setIsLoading(false);
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  // 월별 운세 제출 핸들러
+  const handleMonthlyFortuneSubmit = async (formData: MonthlyFortuneFormData) => {
+    setIsLoading(true);
+
+    // 월별 운세 분석 시간
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    setMonthlyFortuneData(formData);
     setIsLoading(false);
 
     setTimeout(() => {
@@ -193,7 +215,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && (
+        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -286,6 +308,18 @@ export default function Home() {
         {menuSelection === 'rekindling' && rekindlingData && (
           <RekindlingResult
             formData={rekindlingData}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 월별 운세 플로우 */}
+        {menuSelection === 'monthly' && !monthlyFortuneData && (
+          <MonthlyFortuneForm onSubmit={handleMonthlyFortuneSubmit} onBack={handleBackToMenu} />
+        )}
+        {menuSelection === 'monthly' && monthlyFortuneData && (
+          <MonthlyFortuneResult
+            formData={monthlyFortuneData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />

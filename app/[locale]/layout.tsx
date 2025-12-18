@@ -44,12 +44,21 @@ export async function generateMetadata({
       url: "https://forceteller.nomadlab.kr",
       title: metadata.title,
       description: metadata.description,
-      siteName: locale === 'ko' ? "팔자왕 만세력" : "Paljawang",
+      siteName: locale === 'ko' ? "팔자왕" : "Paljawang",
+      images: [
+        {
+          url: "https://forceteller.nomadlab.kr/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: locale === 'ko' ? "팔자왕 - 무료 사주 운세 서비스" : "Paljawang - Free Fortune Telling",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: metadata.title,
       description: metadata.description,
+      images: ["https://forceteller.nomadlab.kr/opengraph-image"],
     },
     viewport: {
       width: "device-width",

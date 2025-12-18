@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sun, ArrowLeft, RefreshCw, Coins, Heart, Briefcase, Activity, Star, Compass, Palette, Sparkles, Clock, TrendingUp, AlertTriangle, CheckCircle, XCircle, Zap, Users, Moon, Sunrise, Sunset } from 'lucide-react';
+import { Sun, ArrowLeft, RefreshCw, Coins, Heart, Briefcase, Activity, Star, Compass, Palette, Sparkles, Clock, TrendingUp, AlertTriangle, CheckCircle, XCircle, Zap, Users, Moon, Sunrise } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { DailyFortuneFormData } from './DailyFortuneForm';
 
@@ -49,7 +49,6 @@ const elementFoods: Record<string, string[]> = {
 
 // 띠 정보
 const zodiacAnimals = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
-const zodiacElements = ['수', '토', '목', '목', '토', '화', '화', '토', '금', '금', '토', '수'];
 
 // 십성별 운세 해석 (더 상세하게)
 const tenGodFortunes: Record<string, {
