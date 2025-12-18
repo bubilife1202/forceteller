@@ -1,9 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Heart } from 'lucide-react';
+import { Sparkles, Heart, BookOpen } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026';
 
 interface MainMenuProps {
   onSelect: (option: MenuOption) => void;
@@ -31,7 +31,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
       </motion.div>
 
       {/* Menu Cards */}
-      <div className="grid md:grid-cols-3 gap-6 max-w-6xl w-full">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl w-full">
         {/* 만세력/사주 풀이 */}
         <motion.button
           onClick={() => onSelect('saju')}
@@ -146,6 +146,47 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
 
           <div className="flex items-center text-pink-400 group-hover:translate-x-2 transition-transform">
             <span className="text-sm font-medium">궁합 보러가기</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.button>
+
+        {/* 2026 토정비결 */}
+        <motion.button
+          onClick={() => onSelect('tojeong2026')}
+          className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          whileHover={{ boxShadow: '0 0 40px rgba(34, 197, 94, 0.2)' }}
+        >
+          {/* 전통 뱃지 */}
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-emerald-600 text-white text-xs font-bold rounded-full">
+            전통
+          </div>
+
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg">
+              <BookOpen className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">토정비결</h2>
+              <p className="text-emerald-400 text-sm">2026 병오년</p>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            조선시대 토정 이지함 선생의 전통 비결서.
+            월별 운세를 시(詩)로 풀어드립니다.
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded-full">전통 비결</span>
+            <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded-full">월별 시(詩)</span>
+            <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded-full">2026 운세</span>
+          </div>
+
+          <div className="flex items-center text-emerald-400 group-hover:translate-x-2 transition-transform">
+            <span className="text-sm font-medium">토정비결 보기</span>
             <span className="ml-2">→</span>
           </div>
         </motion.button>

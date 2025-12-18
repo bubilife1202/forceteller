@@ -6,6 +6,7 @@ import MainMenu, { MenuOption } from '@/components/MainMenu';
 import SajuFormFunnel, { FormData } from '@/components/SajuFormFunnel';
 import SajuResultPremium from '@/components/SajuResultPremium';
 import NewYearResult2026 from '@/components/NewYearResult2026';
+import TojeongResult2026 from '@/components/TojeongResult2026';
 import CompatibilityForm, { CompatibilityFormData } from '@/components/CompatibilityForm';
 import CompatibilityResult from '@/components/CompatibilityResult';
 import Loading from '@/components/ui/Loading';
@@ -150,6 +151,21 @@ export default function Home() {
         )}
         {menuSelection === 'newyear2026' && result && userData && (
           <NewYearResult2026
+            result={result}
+            name={userData.name}
+            gender={userData.gender}
+            birthDate={userData.birthDate}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 2026 토정비결 플로우 */}
+        {menuSelection === 'tojeong2026' && !result && (
+          <SajuFormFunnel onSubmit={handleSubmit} />
+        )}
+        {menuSelection === 'tojeong2026' && result && userData && (
+          <TojeongResult2026
             result={result}
             name={userData.name}
             gender={userData.gender}
