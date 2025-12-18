@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { SajuResult } from '@/lib/saju-calculator';
 import {
   Heart, Users, Home, Wallet, AlertTriangle,
-  ArrowLeft, ThumbsUp, Sun
+  ArrowLeft, ThumbsUp, Sun, Calendar, MapPin, MessageCircle, Gift, Star, Coffee, Sparkles, Target, Shield, Flame, Clock
 } from 'lucide-react';
 import { CompatibilityFormData } from './CompatibilityForm';
 
@@ -513,6 +513,98 @@ export default function CompatibilityResult({
 
   const { strengths, weaknesses } = getStrengthsAndWeaknesses();
 
+  // 월별 커플 운세
+  const getMonthlyCoupleFortune = () => {
+    const currentMonth = new Date().getMonth() + 1;
+    const fortunes = [
+      { month: 1, title: '새해 첫 달', fortune: '새로운 시작의 에너지가 가득합니다. 함께 새해 목표를 세워보세요.', activity: '새해 계획 세우기, 소원 빌기', lucky: '흰색, 금색' },
+      { month: 2, title: '사랑의 달', fortune: '로맨틱한 기운이 넘칩니다. 감정 표현에 적극적으로 임하세요.', activity: '발렌타인 데이트, 영화 관람', lucky: '빨간색, 분홍색' },
+      { month: 3, title: '봄의 시작', fortune: '새로운 활동을 시작하기 좋습니다. 야외 데이트가 행운을 가져옵니다.', activity: '봄꽃 구경, 피크닉', lucky: '연두색, 노란색' },
+      { month: 4, title: '성장의 달', fortune: '서로의 성장을 응원하세요. 배움을 함께하면 좋습니다.', activity: '전시회, 클래스 함께 듣기', lucky: '초록색, 하늘색' },
+      { month: 5, title: '가정의 달', fortune: '가족을 소개하기 좋은 시기입니다. 진지한 대화가 필요합니다.', activity: '가족 모임, 집에서 요리', lucky: '보라색, 주황색' },
+      { month: 6, title: '열정의 달', fortune: '에너지가 넘치는 시기입니다. 액티비티 데이트를 추천합니다.', activity: '수상 스포츠, 등산', lucky: '파란색, 흰색' },
+      { month: 7, title: '휴식의 달', fortune: '함께 쉬는 시간이 필요합니다. 여행을 계획해보세요.', activity: '휴가 여행, 바다 데이트', lucky: '청록색, 은색' },
+      { month: 8, title: '추억의 달', fortune: '특별한 추억을 만들기 좋습니다. 사진을 많이 찍어두세요.', activity: '포토존 방문, 축제 참여', lucky: '금색, 노란색' },
+      { month: 9, title: '안정의 달', fortune: '관계가 안정되는 시기입니다. 미래를 함께 계획하세요.', activity: '가을 나들이, 단풍 구경', lucky: '갈색, 빨간색' },
+      { month: 10, title: '수확의 달', fortune: '그동안의 노력이 결실을 맺습니다. 서로에게 감사를 표현하세요.', activity: '와인 데이트, 맛집 탐방', lucky: '주황색, 갈색' },
+      { month: 11, title: '감사의 달', fortune: '서로에 대한 감사함을 느끼는 시기입니다. 작은 선물이 큰 기쁨을 줍니다.', activity: '카페 데이트, 선물 교환', lucky: '보라색, 분홍색' },
+      { month: 12, title: '마무리의 달', fortune: '한 해를 함께 마무리하세요. 내년 계획을 세우기 좋습니다.', activity: '연말 파티, 크리스마스 데이트', lucky: '빨간색, 초록색' },
+    ];
+    return fortunes[currentMonth - 1];
+  };
+
+  // 데이트 장소 추천
+  const getDateRecommendations = () => {
+    const element1 = stem1.element;
+    const element2 = stem2.element;
+
+    const recommendations: { place: string; reason: string; icon: string }[] = [];
+
+    if (element1 === '목' || element2 === '목') {
+      recommendations.push({ place: '숲, 공원, 식물원', reason: '목 기운이 있어 자연 속에서 힐링되는 관계입니다.', icon: '🌲' });
+    }
+    if (element1 === '화' || element2 === '화') {
+      recommendations.push({ place: '영화관, 공연장, 클럽', reason: '화 기운이 있어 열정적인 활동을 함께하면 좋습니다.', icon: '🔥' });
+    }
+    if (element1 === '토' || element2 === '토') {
+      recommendations.push({ place: '카페, 맛집, 집', reason: '토 기운이 있어 편안하고 안정적인 공간이 잘 맞습니다.', icon: '🏠' });
+    }
+    if (element1 === '금' || element2 === '금') {
+      recommendations.push({ place: '미술관, 쇼핑몰, 고급 레스토랑', reason: '금 기운이 있어 세련되고 품격 있는 장소가 어울립니다.', icon: '✨' });
+    }
+    if (element1 === '수' || element2 === '수') {
+      recommendations.push({ place: '바다, 수족관, 스파', reason: '수 기운이 있어 물과 관련된 장소에서 좋은 기운을 받습니다.', icon: '💧' });
+    }
+
+    // 공통 추천
+    recommendations.push({ place: '여행', reason: '새로운 경험을 함께 하면 관계가 더욱 깊어집니다.', icon: '✈️' });
+    recommendations.push({ place: '요리 클래스', reason: '함께 무언가를 만드는 경험이 유대감을 높여줍니다.', icon: '👨‍🍳' });
+
+    return recommendations;
+  };
+
+  // 관계 강화 비법
+  const getRelationshipTips = () => {
+    return [
+      { icon: '💬', title: '매일 대화하기', desc: '하루에 최소 15분은 서로의 하루에 대해 이야기하세요. 작은 대화가 큰 신뢰를 쌓습니다.' },
+      { icon: '🎁', title: '깜짝 선물하기', desc: '특별한 날이 아니어도 작은 선물이 큰 감동을 줍니다. 상대방이 좋아하는 것을 기억하세요.' },
+      { icon: '🤗', title: '스킨십 유지하기', desc: '손잡기, 포옹 등 일상적인 스킨십이 친밀감을 높여줍니다.' },
+      { icon: '👂', title: '경청하기', desc: '상대방의 이야기를 끝까지 듣고, 공감을 표현하세요. 조언보다 공감이 먼저입니다.' },
+      { icon: '🙏', title: '감사 표현하기', desc: '당연하게 여기지 말고, 작은 것에도 감사를 표현하세요. "고마워"라는 말의 힘은 큽니다.' },
+      { icon: '🎯', title: '공동 목표 세우기', desc: '함께 이루고 싶은 목표를 정하고 함께 노력하세요. 여행, 저축, 취미 등 무엇이든 좋습니다.' },
+      { icon: '⏰', title: '데이트 정기화하기', desc: '바쁘더라도 정기적인 데이트 시간을 확보하세요. 일주일에 한 번은 꼭 만나세요.' },
+      { icon: '🔄', title: '싸운 후 화해하기', desc: '갈등 후에는 반드시 대화로 해결하세요. 하루를 넘기지 마세요.' },
+    ];
+  };
+
+  // 갈등 해결 방법
+  const getConflictResolution = () => {
+    const stemScore = stemAnalysis.score;
+    const branchScore = branchAnalysis.score;
+
+    const tips: string[] = [];
+
+    if (stemScore < 60 || stemAnalysis.type === '천간충') {
+      tips.push('의견이 다를 때는 바로 반박하지 말고, 먼저 상대방의 말을 요약해서 되물어보세요.');
+      tips.push('중요한 결정은 감정이 격해졌을 때 하지 말고, 하루 정도 시간을 두고 다시 이야기하세요.');
+    }
+    if (branchScore < 50 || branchAnalysis.type === '지지충') {
+      tips.push('생활 습관이 다를 수 있습니다. 서로의 방식을 존중하고, 타협점을 찾으세요.');
+      tips.push('같은 문제로 반복해서 싸운다면, 근본적인 해결책을 함께 찾아보세요.');
+    }
+    if (branchAnalysis.type === '형') {
+      tips.push('말이 의도와 다르게 전달될 수 있습니다. 중요한 이야기는 천천히, 명확하게 하세요.');
+      tips.push('화가 났을 때는 바로 말하지 말고, 마음을 가라앉힌 후 대화하세요.');
+    }
+
+    // 공통 조언
+    tips.push('싸움의 목적은 이기는 것이 아니라 문제를 해결하는 것임을 기억하세요.');
+    tips.push('"항상", "절대" 같은 극단적인 표현은 피하세요.');
+    tips.push('과거의 잘못을 반복해서 언급하지 마세요. 현재 문제에 집중하세요.');
+
+    return tips.slice(0, 6);
+  };
+
   // 종합 조언
   const getOverallAdvice = () => {
     if (overallScore >= 85) {
@@ -767,6 +859,133 @@ export default function CompatibilityResult({
           </h3>
           <div className="bg-slate-800/50 rounded-2xl p-6 border border-pink-500/20">
             <p className="text-slate-200 leading-relaxed">{getOverallAdvice()}</p>
+          </div>
+        </motion.div>
+
+        {/* 이달의 커플 운세 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-100">{new Date().getMonth() + 1}월 커플 운세</h3>
+              <p className="text-purple-400 text-sm">{getMonthlyCoupleFortune().title}</p>
+            </div>
+          </div>
+
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-2xl p-5 mb-4">
+            <p className="text-slate-200 leading-relaxed mb-4">{getMonthlyCoupleFortune().fortune}</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-slate-800/50 rounded-xl p-3">
+                <p className="text-slate-400 text-xs mb-1">추천 활동</p>
+                <p className="text-purple-300 text-sm">{getMonthlyCoupleFortune().activity}</p>
+              </div>
+              <div className="bg-slate-800/50 rounded-xl p-3">
+                <p className="text-slate-400 text-xs mb-1">행운의 색</p>
+                <p className="text-purple-300 text-sm">{getMonthlyCoupleFortune().lucky}</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 데이트 장소 추천 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-400 to-orange-500 flex items-center justify-center">
+              <MapPin className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">추천 데이트 장소</h3>
+          </div>
+
+          <div className="grid gap-3">
+            {getDateRecommendations().slice(0, 5).map((rec, i) => (
+              <div key={i} className="bg-slate-800/50 rounded-xl p-4 flex items-start gap-3">
+                <span className="text-2xl">{rec.icon}</span>
+                <div>
+                  <p className="text-slate-100 font-medium">{rec.place}</p>
+                  <p className="text-slate-400 text-sm">{rec.reason}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 관계 강화 비법 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+              <Heart className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">관계 강화 비법</h3>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-3">
+            {getRelationshipTips().map((tip, i) => (
+              <div key={i} className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">{tip.icon}</span>
+                  <span className="text-emerald-400 font-medium">{tip.title}</span>
+                </div>
+                <p className="text-slate-300 text-sm">{tip.desc}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 갈등 해결 방법 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">갈등 해결 방법</h3>
+          </div>
+
+          <div className="space-y-3">
+            {getConflictResolution().map((tip, i) => (
+              <div key={i} className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-3">
+                <span className="text-amber-400 font-bold">{i + 1}</span>
+                <p className="text-slate-300 text-sm">{tip}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 응원 메시지 */}
+        <motion.div
+          className="bg-gradient-to-br from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="text-center">
+            <Sparkles className="w-8 h-8 text-pink-400 mx-auto mb-4" />
+            <p className="text-white text-lg leading-relaxed">
+              {person1.name}님과 {person2.name}님,<br />
+              <span className="text-pink-400 font-bold">사주는 참고일 뿐, 운명은 만들어가는 것입니다.</span><br />
+              서로를 향한 진심이 가장 중요합니다. 💕
+            </p>
           </div>
         </motion.div>
 
