@@ -61,6 +61,7 @@ const tenGodFortunes: Record<string, {
   health: { score: number; detail: string; tip: string };
   social: { score: number; detail: string };
   advice: string;
+  prediction: string; // 임팩트 있는 오늘의 한마디
   luckyTime: string;
   unluckyTime: string;
   doList: string[];
@@ -75,6 +76,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 70, detail: '적당한 운동으로 활력을 유지하세요. 친구와 함께 운동하면 더 효과적입니다.', tip: '그룹 운동, 산책' },
     social: { score: 80, detail: '같은 관심사를 가진 사람들과 좋은 교류가 있습니다.' },
     advice: '나누면 더 커지는 날입니다. 독식하려 하지 마세요.',
+    prediction: '🤝 오늘 만난 동료가 미래의 귀인이 될 수 있습니다. 연락처를 교환해두세요!',
     luckyTime: '오전 9시~11시',
     unluckyTime: '오후 3시~5시',
     doList: ['친구와 식사하기', '팀 프로젝트 진행', '네트워킹 모임 참석'],
@@ -89,6 +91,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 50, detail: '과로와 스트레스에 주의하세요. 무리한 운동도 피하세요.', tip: '충분한 휴식, 가벼운 스트레칭' },
     social: { score: 45, detail: '주변 사람들과 갈등이 생길 수 있으니 말을 아끼세요.' },
     advice: '욕심을 버리고 내 것을 지키는 데 집중하세요.',
+    prediction: '⚡ 지금 참으면 3일 안에 상황이 반전됩니다. 충동적인 결정은 금물!',
     luckyTime: '오전 7시~9시',
     unluckyTime: '오후 1시~3시',
     doList: ['기존 일에 집중', '저축하기', '혼자만의 시간 갖기'],
@@ -103,6 +106,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 85, detail: '건강 상태 양호합니다. 맛있는 음식으로 기분 전환하세요.', tip: '영양가 있는 식사, 디저트' },
     social: { score: 90, detail: '사교 운이 좋습니다. 새로운 사람들과의 만남이 즐겁습니다.' },
     advice: '여유롭게 인생을 즐기는 하루입니다. 행복은 가까이 있어요.',
+    prediction: '🎁 뜻밖의 선물이나 대접을 받을 수 있습니다. 거절하지 말고 감사히 받으세요!',
     luckyTime: '오후 12시~2시',
     unluckyTime: '오후 9시~11시',
     doList: ['맛집 가기', '창작 활동', '취미 생활', '소개팅'],
@@ -117,6 +121,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 60, detail: '스트레스 관리가 필요합니다. 감정 조절에 신경 쓰세요.', tip: '명상, 깊은 호흡' },
     social: { score: 55, detail: '말실수에 주의하세요. 유머가 오해를 살 수 있습니다.' },
     advice: '말 한마디에 천 냥 빚을 갚기도 하고, 천 냥 빚을 지기도 합니다.',
+    prediction: '💡 오늘 떠오른 아이디어를 메모해두세요. 나중에 큰 돈이 될 수 있습니다!',
     luckyTime: '오전 10시~12시',
     unluckyTime: '오후 6시~8시',
     doList: ['창의적 발상', '글쓰기', '예술 활동'],
@@ -131,6 +136,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 75, detail: '활력이 넘칩니다. 에너지를 긍정적으로 사용하세요.', tip: '활동적인 취미, 스포츠' },
     social: { score: 85, detail: '사교 활동에서 좋은 기회를 만날 수 있습니다.' },
     advice: '기회는 준비된 자에게 옵니다. 오늘이 그 날일 수 있어요!',
+    prediction: '💰 예상치 못한 금전 소식이 올 수 있습니다! 로또나 복권 한 장 사보세요!',
     luckyTime: '오후 2시~4시',
     unluckyTime: '오전 6시~8시',
     doList: ['투자 결정', '사업 미팅', '새 인연 만들기'],
@@ -145,6 +151,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 85, detail: '규칙적인 생활이 건강을 지켜줍니다. 루틴을 유지하세요.', tip: '정시 식사, 충분한 수면' },
     social: { score: 80, detail: '신뢰받는 인간관계가 강화됩니다.' },
     advice: '성실함이 보상받는 날입니다. 당신의 노력은 빛을 발합니다.',
+    prediction: '🏆 오늘 중요한 소식이 도착합니다! 승진, 합격, 계약 성사를 기대하세요!',
     luckyTime: '오전 9시~11시',
     unluckyTime: '자정~새벽 2시',
     doList: ['중요 업무 처리', '계약 체결', '재무 정리'],
@@ -159,6 +166,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 55, detail: '스트레스성 증상에 주의하세요. 긴장을 풀어주세요.', tip: '마사지, 반신욕' },
     social: { score: 50, detail: '불필요한 갈등을 피하세요. 한 발 물러서는 지혜가 필요합니다.' },
     advice: '참고 인내하면 반드시 좋은 결과가 옵니다. 이 또한 지나갑니다.',
+    prediction: '🛡️ 오늘의 시련은 다음 주 성공의 밑거름! 포기하지 마세요, 반전이 옵니다!',
     luckyTime: '오후 4시~6시',
     unluckyTime: '오전 8시~10시',
     doList: ['서류 정리', '건강 검진', '명상'],
@@ -173,6 +181,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 75, detail: '규칙적인 생활이 건강을 지켜줍니다.', tip: '정시 기상, 루틴 유지' },
     social: { score: 75, detail: '공식적인 자리에서 좋은 인상을 줄 수 있습니다.' },
     advice: '원칙을 지키면 좋은 하루가 됩니다. 정도를 걸으세요.',
+    prediction: '📋 오늘 처리하는 서류나 계약이 대박 기회로 연결됩니다! 꼼꼼히 확인하세요!',
     luckyTime: '오전 11시~오후 1시',
     unluckyTime: '오후 11시~새벽 1시',
     doList: ['공식 업무', '계약 검토', '면접'],
@@ -187,6 +196,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 65, detail: '정신 건강에 신경 쓰세요. 생각이 많아질 수 있습니다.', tip: '독서, 명상, 산책' },
     social: { score: 70, detail: '지적인 모임이나 스터디에 참여하면 좋습니다.' },
     advice: '배움에 끝은 없습니다. 오늘 배운 것이 내일의 자산이 됩니다.',
+    prediction: '📚 오늘 우연히 본 정보가 인생을 바꿀 수 있습니다! 눈과 귀를 열어두세요!',
     luckyTime: '오후 8시~10시',
     unluckyTime: '오후 2시~4시',
     doList: ['공부', '독서', '온라인 강의'],
@@ -201,6 +211,7 @@ const tenGodFortunes: Record<string, {
     health: { score: 85, detail: '심신이 안정되는 날입니다. 편안한 휴식을 취하세요.', tip: '충분한 수면, 따뜻한 차' },
     social: { score: 85, detail: '어머니, 은사님 등 어른과의 관계가 좋습니다.' },
     advice: '감사하는 마음이 복을 부릅니다. 받은 만큼 돌려주세요.',
+    prediction: '👼 귀인이 나타납니다! 오늘 만나는 나이 많은 분의 조언을 새겨들으세요!',
     luckyTime: '오전 6시~8시',
     unluckyTime: '오후 5시~7시',
     doList: ['부모님 안부', '은사님 연락', '감사 편지'],
@@ -412,6 +423,11 @@ export default function DailyFortuneResult({ formData, onReset, onBack }: DailyF
         </div>
       </div>
 
+      <div class="advice-box" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(245, 158, 11, 0.4) 100%); border: 2px solid rgba(251, 191, 36, 0.5);">
+        <div class="advice-title">✨ 오늘의 한마디</div>
+        <div class="advice-text" style="font-size: 18px; font-weight: bold;">${fortune.prediction}</div>
+      </div>
+
       <div class="advice-box">
         <div class="advice-title">⭐ 오늘의 메시지</div>
         <div class="advice-text">"${fortune.advice}"</div>
@@ -530,6 +546,27 @@ export default function DailyFortuneResult({ formData, onReset, onBack }: DailyF
           <p className="text-slate-300 text-sm text-center mt-3">
             {elementRelation.description}
           </p>
+        </motion.div>
+
+        {/* 오늘의 한마디 - 임팩트 있는 예언 */}
+        <motion.div
+          variants={itemVariants}
+          className="relative overflow-hidden rounded-3xl p-5 mb-4"
+          style={{
+            background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(245, 158, 11, 0.3) 50%, rgba(217, 119, 6, 0.2) 100%)',
+            border: '2px solid rgba(251, 191, 36, 0.4)',
+          }}
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-6 h-6 text-amber-400" />
+              <span className="text-amber-400 font-bold text-lg">오늘의 한마디</span>
+            </div>
+            <p className="text-white text-xl font-bold leading-relaxed">
+              {fortune.prediction}
+            </p>
+          </div>
         </motion.div>
 
         {/* 시간대별 운세 */}
