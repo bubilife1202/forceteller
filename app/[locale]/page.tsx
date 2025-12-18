@@ -13,6 +13,8 @@ import DreamForm, { DreamFormData } from '@/components/DreamForm';
 import DreamResult from '@/components/DreamResult';
 import DailyFortuneForm, { DailyFortuneFormData } from '@/components/DailyFortuneForm';
 import DailyFortuneResult from '@/components/DailyFortuneResult';
+import RekindlingForm, { RekindlingFormData } from '@/components/RekindlingForm';
+import RekindlingResult from '@/components/RekindlingResult';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
 
@@ -38,6 +40,9 @@ export default function Home() {
 
   // 오늘의 운세 관련 상태
   const [dailyFortuneData, setDailyFortuneData] = useState<DailyFortuneFormData | null>(null);
+
+  // 재회 운세 관련 상태
+  const [rekindlingData, setRekindlingData] = useState<RekindlingFormData | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -80,6 +85,7 @@ export default function Home() {
     setCompatibilityData(null);
     setDreamData(null);
     setDailyFortuneData(null);
+    setRekindlingData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -89,6 +95,7 @@ export default function Home() {
     setCompatibilityData(null);
     setDreamData(null);
     setDailyFortuneData(null);
+    setRekindlingData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -116,6 +123,21 @@ export default function Home() {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     setDailyFortuneData(formData);
+    setIsLoading(false);
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  // 재회 운세 제출 핸들러
+  const handleRekindlingSubmit = async (formData: RekindlingFormData) => {
+    setIsLoading(true);
+
+    // 재회 운세 분석 시간
+    await new Promise(resolve => setTimeout(resolve, 2500));
+
+    setRekindlingData(formData);
     setIsLoading(false);
 
     setTimeout(() => {
@@ -171,7 +193,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && (
+        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -252,6 +274,18 @@ export default function Home() {
         {menuSelection === 'daily' && dailyFortuneData && (
           <DailyFortuneResult
             formData={dailyFortuneData}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 재회 운세 플로우 */}
+        {menuSelection === 'rekindling' && !rekindlingData && (
+          <RekindlingForm onSubmit={handleRekindlingSubmit} onBack={handleBackToMenu} />
+        )}
+        {menuSelection === 'rekindling' && rekindlingData && (
+          <RekindlingResult
+            formData={rekindlingData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />
