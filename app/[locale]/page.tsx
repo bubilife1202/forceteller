@@ -11,6 +11,8 @@ import CompatibilityForm, { CompatibilityFormData } from '@/components/Compatibi
 import CompatibilityResult from '@/components/CompatibilityResult';
 import DreamForm, { DreamFormData } from '@/components/DreamForm';
 import DreamResult from '@/components/DreamResult';
+import DailyFortuneForm, { DailyFortuneFormData } from '@/components/DailyFortuneForm';
+import DailyFortuneResult from '@/components/DailyFortuneResult';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
 
@@ -33,6 +35,9 @@ export default function Home() {
 
   // 꿈해몽 관련 상태
   const [dreamData, setDreamData] = useState<DreamFormData | null>(null);
+
+  // 오늘의 운세 관련 상태
+  const [dailyFortuneData, setDailyFortuneData] = useState<DailyFortuneFormData | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -74,6 +79,7 @@ export default function Home() {
     setUserData(null);
     setCompatibilityData(null);
     setDreamData(null);
+    setDailyFortuneData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -82,6 +88,7 @@ export default function Home() {
     setUserData(null);
     setCompatibilityData(null);
     setDreamData(null);
+    setDailyFortuneData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -94,6 +101,21 @@ export default function Home() {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     setDreamData(formData);
+    setIsLoading(false);
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  // 오늘의 운세 제출 핸들러
+  const handleDailyFortuneSubmit = async (formData: DailyFortuneFormData) => {
+    setIsLoading(true);
+
+    // 운세 계산 시간
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    setDailyFortuneData(formData);
     setIsLoading(false);
 
     setTimeout(() => {
@@ -149,7 +171,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && !compatibilityData && !dreamData && (
+        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -218,6 +240,18 @@ export default function Home() {
         {menuSelection === 'dream' && dreamData && (
           <DreamResult
             formData={dreamData}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 오늘의 운세 플로우 */}
+        {menuSelection === 'daily' && !dailyFortuneData && (
+          <DailyFortuneForm onSubmit={handleDailyFortuneSubmit} onBack={handleBackToMenu} />
+        )}
+        {menuSelection === 'daily' && dailyFortuneData && (
+          <DailyFortuneResult
+            formData={dailyFortuneData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />

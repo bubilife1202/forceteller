@@ -1,9 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Heart, BookOpen, Cloud } from 'lucide-react';
+import { Sparkles, Heart, BookOpen, Cloud, Sun } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream' | 'daily';
 
 interface MainMenuProps {
   onSelect: (option: MenuOption) => void;
@@ -31,7 +31,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
       </motion.div>
 
       {/* Menu Cards */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 max-w-7xl w-full">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl w-full">
         {/* 만세력/사주 풀이 */}
         <motion.button
           onClick={() => onSelect('saju')}
@@ -223,6 +223,47 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
 
           <div className="flex items-center text-violet-400 group-hover:translate-x-2 transition-transform">
             <span className="text-sm font-medium">꿈 풀이하기</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.button>
+
+        {/* 오늘의 운세 */}
+        <motion.button
+          onClick={() => onSelect('daily')}
+          className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          whileHover={{ boxShadow: '0 0 40px rgba(251, 146, 60, 0.2)' }}
+        >
+          {/* 매일 뱃지 */}
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-orange-500 text-white text-xs font-bold rounded-full">
+            매일
+          </div>
+
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-lg">
+              <Sun className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">오늘의 운세</h2>
+              <p className="text-orange-400 text-sm">일간 운세</p>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            생년월일만 입력하면 오늘 하루의 운세를 알려드립니다.
+            매일매일 변하는 나의 운세!
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded-full">재물운</span>
+            <span className="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded-full">애정운</span>
+            <span className="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded-full">행운 아이템</span>
+          </div>
+
+          <div className="flex items-center text-orange-400 group-hover:translate-x-2 transition-transform">
+            <span className="text-sm font-medium">오늘의 운세 보기</span>
             <span className="ml-2">→</span>
           </div>
         </motion.button>
