@@ -1,14 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { SajuResult } from '@/lib/saju-calculator';
 import {
   Calendar, Star, Heart, Wallet,
   Briefcase, Activity, Sparkles, ArrowLeft,
   Sun, Compass, Gem, Users, GraduationCap,
-  Home, Crown
+  Home, Crown, Mail
 } from 'lucide-react';
 import MonthlyForecast2026 from './premium/MonthlyForecast2026';
+import EmailModal from './ui/EmailModal';
 
 interface NewYearResult2026Props {
   result: SajuResult;
@@ -27,6 +29,7 @@ export default function NewYearResult2026({
   onReset,
   onBack
 }: NewYearResult2026Props) {
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const dayElement = result.day.stem.element;
 
   // 일간과 병오년(화화)의 관계 분석
@@ -547,6 +550,52 @@ export default function NewYearResult2026({
     </motion.div>
   );
 
+  // 이메일용 HTML 콘텐츠 생성
+  const getEmailContent = () => {
+    return `
+      <div style="background: #1e293b; border-radius: 16px; padding: 24px; margin-bottom: 16px; text-align: center;">
+        <h2 style="color: #fbbf24; font-size: 28px; margin: 0 0 8px 0;">🐴 2026 신년운세</h2>
+        <p style="color: #f87171; margin: 0 0 16px 0;">丙午年 · 붉은 말의 해</p>
+        <p style="color: white; font-size: 20px; margin: 0;">${name}님</p>
+      </div>
+
+      <div style="background: #1e293b; border-radius: 16px; padding: 24px; margin-bottom: 16px;">
+        <h3 style="color: white; margin: 0 0 16px 0;">📊 2026년 총운</h3>
+        <div style="text-align: center; margin-bottom: 16px;">
+          <span style="color: #fbbf24; font-size: 48px; font-weight: bold;">${overallScore}점</span>
+        </div>
+        <p style="color: #94a3b8; margin: 0;">${yearRelation.summary}</p>
+      </div>
+
+      <div style="background: #1e293b; border-radius: 16px; padding: 24px; margin-bottom: 16px;">
+        <h3 style="color: white; margin: 0 0 16px 0;">🎯 분야별 운세</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div style="background: #0f172a; padding: 12px; border-radius: 8px; text-align: center;">
+            <p style="color: #94a3b8; font-size: 12px; margin: 0;">💰 재물운</p>
+            <p style="color: #fbbf24; font-size: 20px; font-weight: bold; margin: 4px 0 0 0;">${fortuneCategories.wealth}점</p>
+          </div>
+          <div style="background: #0f172a; padding: 12px; border-radius: 8px; text-align: center;">
+            <p style="color: #94a3b8; font-size: 12px; margin: 0;">💕 애정운</p>
+            <p style="color: #ec4899; font-size: 20px; font-weight: bold; margin: 4px 0 0 0;">${fortuneCategories.love}점</p>
+          </div>
+          <div style="background: #0f172a; padding: 12px; border-radius: 8px; text-align: center;">
+            <p style="color: #94a3b8; font-size: 12px; margin: 0;">💼 직장운</p>
+            <p style="color: #3b82f6; font-size: 20px; font-weight: bold; margin: 4px 0 0 0;">${fortuneCategories.career}점</p>
+          </div>
+          <div style="background: #0f172a; padding: 12px; border-radius: 8px; text-align: center;">
+            <p style="color: #94a3b8; font-size: 12px; margin: 0;">💪 건강운</p>
+            <p style="color: #22c55e; font-size: 20px; font-weight: bold; margin: 4px 0 0 0;">${fortuneCategories.health}점</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(245, 158, 11, 0.4) 100%); border: 2px solid rgba(251, 191, 36, 0.5); border-radius: 16px; padding: 24px;">
+        <h3 style="color: #fcd34d; font-size: 16px; margin: 0 0 12px 0;">✨ 2026년 총평</h3>
+        <p style="color: white; font-size: 16px; margin: 0; line-height: 1.6;">${yearRelation.detail.substring(0, 200)}...</p>
+      </div>
+    `;
+  };
+
   return (
     <div className="min-h-screen px-4 py-8 md:py-12">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -888,7 +937,7 @@ export default function NewYearResult2026({
         </div>
 
         {/* 버튼 */}
-        <div className="flex justify-center gap-4 pt-4">
+        <div className="flex flex-wrap justify-center gap-4 pt-4">
           <motion.button
             onClick={onBack}
             className="px-6 py-3 glass rounded-2xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all flex items-center gap-2"
@@ -896,7 +945,16 @@ export default function NewYearResult2026({
             whileTap={{ scale: 0.98 }}
           >
             <ArrowLeft className="w-4 h-4" />
-            메뉴로 돌아가기
+            메뉴로
+          </motion.button>
+          <motion.button
+            onClick={() => setIsEmailModalOpen(true)}
+            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all flex items-center gap-2"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Mail className="w-4 h-4" />
+            이메일로 받기
           </motion.button>
           <motion.button
             onClick={onReset}
@@ -908,6 +966,15 @@ export default function NewYearResult2026({
           </motion.button>
         </div>
       </div>
+
+      {/* 이메일 모달 */}
+      <EmailModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        htmlContent={getEmailContent()}
+        fortuneType="newyear"
+        title={`[팔자왕] 2026 신년운세 - ${name}`}
+      />
     </div>
   );
 }

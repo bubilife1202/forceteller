@@ -3,16 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Sparkles, Share2, RotateCcw, Heart, Briefcase, Wallet, Activity, Star } from 'lucide-react';
-
-declare global {
-  interface Window {
-    Kakao?: {
-      Link: {
-        sendDefault: (options: object) => void;
-      };
-    };
-  }
-}
 import { TarotFormData } from './TarotForm';
 
 interface TarotResultProps {
@@ -428,8 +418,10 @@ export default function TarotResult({ formData, onReset, onBack }: TarotResultPr
     const shareText = `🃏 오늘의 타로: ${selectedCard.name}\n\n"${selectedCard.advice}"\n\n나도 타로 보러가기 👉`;
 
     // 카카오톡 공유 링크 생성
-    if (typeof window !== 'undefined' && window.Kakao) {
-      window.Kakao.Link.sendDefault({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const kakao = (window as any).Kakao;
+    if (typeof window !== 'undefined' && kakao) {
+      kakao.Link.sendDefault({
         objectType: 'feed',
         content: {
           title: `🃏 오늘의 타로: ${selectedCard.name}`,
