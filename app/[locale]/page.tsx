@@ -17,6 +17,8 @@ import RekindlingForm, { RekindlingFormData } from '@/components/RekindlingForm'
 import RekindlingResult from '@/components/RekindlingResult';
 import MonthlyFortuneForm, { MonthlyFortuneFormData } from '@/components/MonthlyFortuneForm';
 import MonthlyFortuneResult from '@/components/MonthlyFortuneResult';
+import TarotForm, { TarotFormData } from '@/components/TarotForm';
+import TarotResult from '@/components/TarotResult';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
 
@@ -48,6 +50,9 @@ export default function Home() {
 
   // 월별 운세 관련 상태
   const [monthlyFortuneData, setMonthlyFortuneData] = useState<MonthlyFortuneFormData | null>(null);
+
+  // 타로 관련 상태
+  const [tarotData, setTarotData] = useState<TarotFormData | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -92,6 +97,7 @@ export default function Home() {
     setDailyFortuneData(null);
     setRekindlingData(null);
     setMonthlyFortuneData(null);
+    setTarotData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -103,6 +109,7 @@ export default function Home() {
     setDailyFortuneData(null);
     setRekindlingData(null);
     setMonthlyFortuneData(null);
+    setTarotData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -167,6 +174,14 @@ export default function Home() {
     }, 100);
   };
 
+  // 타로 제출 핸들러
+  const handleTarotSubmit = async (formData: TarotFormData) => {
+    setTarotData(formData);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   // 궁합 제출 핸들러
   const handleCompatibilitySubmit = async (formData: CompatibilityFormData) => {
     setIsLoading(true);
@@ -215,7 +230,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && (
+        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && !tarotData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -320,6 +335,18 @@ export default function Home() {
         {menuSelection === 'monthly' && monthlyFortuneData && (
           <MonthlyFortuneResult
             formData={monthlyFortuneData}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 타로 플로우 */}
+        {menuSelection === 'tarot' && !tarotData && (
+          <TarotForm onSubmit={handleTarotSubmit} onBack={handleBackToMenu} />
+        )}
+        {menuSelection === 'tarot' && tarotData && (
+          <TarotResult
+            formData={tarotData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />

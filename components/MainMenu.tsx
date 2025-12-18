@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Sparkles, Heart, BookOpen, Cloud, Sun, Calendar } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream' | 'daily' | 'rekindling' | 'monthly';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot';
 
 interface MainMenuProps {
   onSelect: (option: MenuOption) => void;
@@ -32,6 +32,47 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
 
       {/* Menu Cards - 인기순 정렬 */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl w-full">
+
+        {/* 0. 타로 한장 (바이럴 최고) */}
+        <motion.button
+          onClick={() => onSelect('tarot')}
+          className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          whileHover={{ boxShadow: '0 0 40px rgba(168, 85, 247, 0.3)' }}
+        >
+          {/* 바이럴 뱃지 */}
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded-full animate-pulse">
+            🔥 바이럴
+          </div>
+
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center shadow-lg">
+              <span className="text-2xl">🃏</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">오늘의 타로</h2>
+              <p className="text-purple-400 text-sm">카드 한장 뽑기</p>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            22장의 메이저 아르카나 중 오늘 당신에게 전하는 카드 한 장.
+            직관으로 선택하세요!
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">연애운</span>
+            <span className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">재물운</span>
+            <span className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">직장운</span>
+          </div>
+
+          <div className="flex items-center text-purple-400 group-hover:translate-x-2 transition-transform">
+            <span className="text-sm font-medium">타로 뽑기</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.button>
 
         {/* 1. 오늘의 운세 (가장 인기) */}
         <motion.button
