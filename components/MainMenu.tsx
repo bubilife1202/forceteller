@@ -235,7 +235,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        포스텔러 - 전통 명리학 기반 종합 운세 서비스
+        팔자왕 - 전통 명리학 기반 종합 운세 서비스
       </motion.p>
     </div>
   );

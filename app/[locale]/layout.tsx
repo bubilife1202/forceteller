@@ -24,9 +24,9 @@ export async function generateMetadata({
     title: metadata.title,
     description: metadata.description,
     keywords: metadata.keywords.split(', '),
-    authors: [{ name: "Forceteller" }],
-    creator: "Forceteller",
-    publisher: "Forceteller",
+    authors: [{ name: "Paljawang" }],
+    creator: "Paljawang",
+    publisher: "Paljawang",
     robots: {
       index: true,
       follow: true,
@@ -44,7 +44,7 @@ export async function generateMetadata({
       url: "https://forceteller.nomadlab.kr",
       title: metadata.title,
       description: metadata.description,
-      siteName: locale === 'ko' ? "포스텔러 만세력" : "Forceteller",
+      siteName: locale === 'ko' ? "팔자왕 만세력" : "Paljawang",
     },
     twitter: {
       card: "summary_large_image",
@@ -99,7 +99,7 @@ export default async function LocaleLayout({
     },
     author: {
       '@type': 'Organization',
-      name: 'Forceteller',
+      name: 'Paljawang',
     },
     inLanguage: [locale === 'ko' ? 'ko-KR' : 'en-US'],
   };

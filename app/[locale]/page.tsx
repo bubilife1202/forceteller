@@ -228,7 +228,7 @@ export default function Home() {
           <footer className="text-center pb-12">
             <div className="inline-block px-6 py-3 glass rounded-2xl">
               <p className="text-xs text-slate-400">
-                © 2025 Forceteller. All rights reserved.
+                © 2025 Paljawang. All rights reserved.
               </p>
             </div>
           </footer>

@@ -94,12 +94,6 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
           >
             {t('guideLink')}
           </Link>
-          <Link
-            href={`/${locale}/chatgpt-prompt`}
-            className="inline-block px-6 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full font-medium hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition"
-          >
-            {t('chatgptLink')}
-          </Link>
         </div>
       </div>
 

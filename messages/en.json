@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "Forceteller - Free Saju (Four Pillars) Analysis, Great Fortune, Special Stars",
+    "title": "Paljawang - Free Saju (Four Pillars) Analysis, Great Fortune, Special Stars",
     "description": "Accurate Saju (Four Pillars of Destiny) analysis service with precise time adjustments. Free analysis of Four Pillars, Ten Gods, Great Fortune, Twelve Life Cycles, Special Stars, and Combinations. Supports both Solar and Lunar calendars.",
     "keywords": "saju, four pillars, destiny, bazi, ten gods, five elements, fortune, special stars, lunar, solar, fortune telling, chinese astrology"
   },
@@ -8,12 +8,12 @@
     "language": "Language",
     "korean": "한국어",
     "english": "English",
-    "version": "Forceteller v2.4.1",
+    "version": "Paljawang v2.5.0",
     "backToHome": "← Back",
     "goToHome": "Get Your Reading"
   },
   "form": {
-    "title": "Forceteller",
+    "title": "Paljawang",
     "subtitle": "Four Pillars Reading for Everyone",
     "accuracyNote": "Accurate time corrections including daylight saving time and regional timezone offsets (1-2 minutes)",
     "guideLink": "📖 Saju Terminology Guide",
@@ -343,10 +343,10 @@
   },
   "chatgpt": {
     "title": "ChatGPT Saju Analysis Prompt",
-    "subtitle": "Analyze your Forceteller results more deeply with ChatGPT",
+    "subtitle": "Analyze your Paljawang results more deeply with ChatGPT",
     "howToUse": {
       "title": "📖 How to Use",
-      "step1": "Complete your Saju reading on Forceteller and save the result image using the <strong>\"Download Image\"</strong> button",
+      "step1": "Complete your Saju reading on Paljawang and save the result image using the <strong>\"Download Image\"</strong> button",
       "step2": "Click the <strong>\"Copy Prompt\"</strong> button below",
       "step3": "<strong>Attach your Saju result image</strong> to ChatGPT and paste the prompt",
       "step4": "ChatGPT will analyze the image and provide professional-level detailed analysis!"
