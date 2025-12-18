@@ -9,6 +9,8 @@ import NewYearResult2026 from '@/components/NewYearResult2026';
 import TojeongResult2026 from '@/components/TojeongResult2026';
 import CompatibilityForm, { CompatibilityFormData } from '@/components/CompatibilityForm';
 import CompatibilityResult from '@/components/CompatibilityResult';
+import DreamForm, { DreamFormData } from '@/components/DreamForm';
+import DreamResult from '@/components/DreamResult';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
 
@@ -28,6 +30,9 @@ export default function Home() {
     result2: SajuResultType;
     formData: CompatibilityFormData;
   } | null>(null);
+
+  // 꿈해몽 관련 상태
+  const [dreamData, setDreamData] = useState<DreamFormData | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -68,6 +73,7 @@ export default function Home() {
     setResult(null);
     setUserData(null);
     setCompatibilityData(null);
+    setDreamData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -75,8 +81,24 @@ export default function Home() {
     setResult(null);
     setUserData(null);
     setCompatibilityData(null);
+    setDreamData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 꿈해몽 제출 핸들러
+  const handleDreamSubmit = async (formData: DreamFormData) => {
+    setIsLoading(true);
+
+    // 신비로운 해몽 시간
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    setDreamData(formData);
+    setIsLoading(false);
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   // 궁합 제출 핸들러
@@ -127,7 +149,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && !compatibilityData && (
+        {!menuSelection && !result && !compatibilityData && !dreamData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -184,6 +206,18 @@ export default function Home() {
             result1={compatibilityData.result1}
             result2={compatibilityData.result2}
             formData={compatibilityData.formData}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 꿈해몽 플로우 */}
+        {menuSelection === 'dream' && !dreamData && (
+          <DreamForm onSubmit={handleDreamSubmit} onBack={handleBackToMenu} />
+        )}
+        {menuSelection === 'dream' && dreamData && (
+          <DreamResult
+            formData={dreamData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />

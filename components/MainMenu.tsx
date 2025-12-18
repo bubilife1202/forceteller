@@ -1,9 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Heart, BookOpen } from 'lucide-react';
+import { Sparkles, Heart, BookOpen, Cloud } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream';
 
 interface MainMenuProps {
   onSelect: (option: MenuOption) => void;
@@ -31,7 +31,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
       </motion.div>
 
       {/* Menu Cards */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl w-full">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 max-w-7xl w-full">
         {/* 만세력/사주 풀이 */}
         <motion.button
           onClick={() => onSelect('saju')}
@@ -187,6 +187,42 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
 
           <div className="flex items-center text-emerald-400 group-hover:translate-x-2 transition-transform">
             <span className="text-sm font-medium">토정비결 보기</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.button>
+
+        {/* 꿈해몽 */}
+        <motion.button
+          onClick={() => onSelect('dream')}
+          className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          whileHover={{ boxShadow: '0 0 40px rgba(139, 92, 246, 0.2)' }}
+        >
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-lg">
+              <Cloud className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">꿈해몽</h2>
+              <p className="text-violet-400 text-sm">꿈 풀이</p>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            간밤에 꾼 꿈이 궁금하신가요?
+            전통 해몽으로 꿈의 의미를 알려드립니다.
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="px-2 py-1 bg-violet-500/20 text-violet-300 text-xs rounded-full">길몽/흉몽</span>
+            <span className="px-2 py-1 bg-violet-500/20 text-violet-300 text-xs rounded-full">상징 해석</span>
+            <span className="px-2 py-1 bg-violet-500/20 text-violet-300 text-xs rounded-full">행운 예측</span>
+          </div>
+
+          <div className="flex items-center text-violet-400 group-hover:translate-x-2 transition-transform">
+            <span className="text-sm font-medium">꿈 풀이하기</span>
             <span className="ml-2">→</span>
           </div>
         </motion.button>
