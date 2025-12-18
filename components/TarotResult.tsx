@@ -830,25 +830,6 @@ export default function TarotResult({ formData, onReset, onBack }: TarotResultPr
               </button>
             </motion.div>
 
-            {/* 푸터 - 면책 조항 */}
-            <motion.div
-              className="glass rounded-2xl p-6 text-center space-y-3 mt-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-              <p className="text-slate-300 text-sm">
-                ⚠️ 타로 카드는 <strong className="text-amber-400">현재의 에너지를 읽는 도구</strong>입니다.
-                미래는 당신의 선택에 달려 있습니다.
-              </p>
-              <p className="text-slate-400 text-xs">
-                본 타로 해석은 재미와 참고용으로 활용해 주세요.<br />
-                인생의 중요한 결정은 본인의 판단과 노력이 가장 중요합니다.
-              </p>
-              <div className="pt-3 border-t border-slate-700/50">
-                <p className="font-semibold text-amber-400 text-sm">🃏 오늘의 타로 - 팔자왕</p>
-              </div>
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

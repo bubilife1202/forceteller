@@ -4,8 +4,6 @@ import { motion } from 'framer-motion';
 import { Calendar, ArrowLeft, RefreshCw, Star, TrendingUp, TrendingDown, Coins, Heart, Briefcase, Activity, Sparkles, Sun, Moon, Clock, Lightbulb, AlertTriangle, CheckCircle } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { MonthlyFortuneFormData } from './MonthlyFortuneForm';
-import { generateStyledHTML, downloadHTML } from '@/lib/html-download';
-import DownloadButton from './ui/DownloadButton';
 
 interface MonthlyFortuneResultProps {
   formData: MonthlyFortuneFormData;
@@ -377,80 +375,6 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack }: Mont
 
   const scoreColor = getScoreColor(finalScore);
 
-  // HTML 다운로드 함수
-  const handleDownload = async () => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const content = `
-      <div class="section">
-        <div class="score-box">
-          <div class="score-value">${finalScore}점</div>
-          <div class="score-label">2026년 ${targetMonth}월 • ${fortune.keyword}</div>
-        </div>
-        <p style="text-align: center; color: white; font-size: 16px; margin-top: 16px;">${fortune.summary}</p>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">💰</span> 재물운 ${fortune.money.score}점</div>
-        <div class="stat-card">
-          <p style="color: #e2e8f0; margin-bottom: 8px;">${fortune.money.detail}</p>
-          ${fortune.money.action.map(a => `<div class="list-item"><span class="bullet" style="color: #fbbf24;">•</span> ${a}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">💕</span> 애정운 ${fortune.love.score}점</div>
-        <div class="stat-card">
-          <p style="color: #e2e8f0; margin-bottom: 8px;">${fortune.love.detail}</p>
-          ${fortune.love.action.map(a => `<div class="list-item"><span class="bullet" style="color: #ec4899;">•</span> ${a}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">💼</span> 직장/학업운 ${fortune.work.score}점</div>
-        <div class="stat-card">
-          <p style="color: #e2e8f0; margin-bottom: 8px;">${fortune.work.detail}</p>
-          ${fortune.work.action.map(a => `<div class="list-item"><span class="bullet" style="color: #3b82f6;">•</span> ${a}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">💪</span> 건강운 ${fortune.health.score}점</div>
-        <div class="stat-card">
-          <p style="color: #e2e8f0; margin-bottom: 8px;">${fortune.health.detail}</p>
-          ${fortune.health.action.map(a => `<div class="list-item"><span class="bullet" style="color: #22c55e;">•</span> ${a}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="grid-2">
-          <div class="stat-card">
-            <div style="color: #22c55e; font-weight: 700; margin-bottom: 8px;">✨ 행운의 날</div>
-            ${fortune.luckyDays.map(d => `<span style="display: inline-block; background: rgba(34, 197, 94, 0.2); color: #22c55e; padding: 4px 12px; border-radius: 20px; margin: 2px; font-size: 12px;">${d}</span>`).join('')}
-          </div>
-          <div class="stat-card">
-            <div style="color: #f97316; font-weight: 700; margin-bottom: 8px;">⚠️ 주의할 날</div>
-            ${fortune.unluckyDays.map(d => `<span style="display: inline-block; background: rgba(249, 115, 22, 0.2); color: #f97316; padding: 4px 12px; border-radius: 20px; margin: 2px; font-size: 12px;">${d}</span>`).join('')}
-          </div>
-        </div>
-      </div>
-
-      <div class="advice-box">
-        <div class="advice-title">💫 ${targetMonth}월의 조언</div>
-        ${fortune.advice.map(a => `<p style="color: white; margin-bottom: 4px;">"${a}"</p>`).join('')}
-      </div>
-    `;
-
-    const html = generateStyledHTML({
-      title: `2026년 ${targetMonth}월 운세`,
-      date: `${userDayStem.ko}일간 • ${userElement} 오행`,
-      content,
-      primaryColor: '#a855f7',
-    });
-
-    downloadHTML(`2026년_${targetMonth}월_운세.html`, html);
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -721,7 +645,6 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack }: Mont
             <RefreshCw className="w-5 h-5" />
             다른 달 보기
           </button>
-          <DownloadButton onDownload={handleDownload} label="결과 저장하기" />
           <button
             onClick={onBack}
             className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"
@@ -729,11 +652,6 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack }: Mont
             메뉴로
           </button>
         </motion.div>
-
-        {/* 안내 */}
-        <motion.p variants={itemVariants} className="text-slate-600 text-xs text-center mt-6">
-          사주명리학의 십성 원리에 기반한 월별 운세입니다.
-        </motion.p>
       </div>
     </motion.div>
   );

@@ -4,8 +4,6 @@ import { motion } from 'framer-motion';
 import { Heart, ArrowLeft, RefreshCw, Star, AlertTriangle, Sparkles, TrendingUp, Clock, MessageCircle, Lightbulb, Target, Shield, Flame, Moon, Sun } from 'lucide-react';
 import { RekindlingFormData } from './RekindlingForm';
 import { getDayPillar } from '@/lib/saju-calculator';
-import { generateStyledHTML, downloadHTML } from '@/lib/html-download';
-import DownloadButton from './ui/DownloadButton';
 
 interface RekindlingResultProps {
   formData: RekindlingFormData;
@@ -257,101 +255,6 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
     });
 
     return steps;
-  };
-
-  // HTML 다운로드 함수
-  const handleDownload = async () => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const compatibilityItems = getDetailedCompatibility();
-    const stepItems = getStepByStepAdvice();
-
-    const content = `
-      <div class="section">
-        <div class="score-box">
-          <div style="font-size: 48px; margin-bottom: 8px;">${interpretation.emoji}</div>
-          <div class="score-value">${rekindlingScore}%</div>
-          <div class="score-label">재회 가능성: ${interpretation.level}</div>
-        </div>
-        <p style="text-align: center; color: white; font-size: 16px; margin-top: 16px;">${interpretation.desc}</p>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">👤</span> ${myName}님과 ${partnerName}님</div>
-        <div class="grid-2">
-          <div class="stat-card">
-            <div class="stat-label">${myName}님의 일주</div>
-            <div class="stat-value pink">${myDayPillar.stem.ko}${myDayPillar.branch.ko}</div>
-            <div style="font-size: 12px; color: #94a3b8;">${myElement} 오행</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">${partnerName}님의 일주</div>
-            <div class="stat-value purple">${partnerDayPillar.stem.ko}${partnerDayPillar.branch.ko}</div>
-            <div style="font-size: 12px; color: #94a3b8;">${partnerElement} 오행</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">💕</span> 두 사람의 궁합</div>
-        ${compatibilityItems.map(item => `
-          <div class="stat-card" style="margin-bottom: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="font-size: 20px;">${item.icon}</span>
-              <span style="color: #ec4899; font-weight: 700;">${item.title}</span>
-            </div>
-            <p style="color: #e2e8f0; font-size: 14px;">${item.text}</p>
-          </div>
-        `).join('')}
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">💔</span> 이별 원인 분석</div>
-        <div class="stat-card">
-          <p style="color: white; font-size: 16px; margin-bottom: 8px;">${separationAnalysis.healing}</p>
-          <p style="color: #f97316; font-size: 12px;">${separationAnalysis.timeline}</p>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">💭</span> ${feelingMessage.title}</div>
-        <div class="advice-box" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(219, 39, 119, 0.2)); border-color: rgba(236, 72, 153, 0.3);">
-          <p style="color: white; margin-bottom: 8px;">${feelingMessage.message}</p>
-          <p style="color: #f9a8d4; font-size: 14px;">💡 ${feelingMessage.advice}</p>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">📋</span> 재회를 위한 단계별 조언</div>
-        ${stepItems.map(step => `
-          <div class="stat-card" style="margin-bottom: 8px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(236, 72, 153, 0.2); display: flex; align-items: center; justify-content: center; color: #ec4899; font-weight: 700;">${step.step}</div>
-              <div>
-                <div style="color: white; font-weight: 700;">${step.title}</div>
-                <div style="color: #94a3b8; font-size: 12px;">${step.desc}</div>
-              </div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-
-      <div class="section">
-        <div class="section-title"><span class="icon">⚠️</span> 주의사항</div>
-        ${separationAnalysis.advice.map(advice => `
-          <div class="list-item"><span class="bullet" style="color: #f97316;">•</span> ${advice}</div>
-        `).join('')}
-      </div>
-    `;
-
-    const html = generateStyledHTML({
-      title: `${myName}님과 ${partnerName}님의 재회 운세`,
-      date: `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`,
-      content,
-      primaryColor: '#ec4899',
-    });
-
-    downloadHTML(`재회운세_${myName}_${partnerName}.html`, html);
   };
 
   const containerVariants = {
@@ -625,7 +528,6 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
             <RefreshCw className="w-5 h-5" />
             다시 보기
           </button>
-          <DownloadButton onDownload={handleDownload} label="결과 저장하기" />
           <button
             onClick={onBack}
             className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"
@@ -633,12 +535,6 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
             메뉴로
           </button>
         </motion.div>
-
-        {/* 면책 */}
-        <motion.p variants={itemVariants} className="text-slate-600 text-xs text-center mt-6">
-          본 운세는 재미와 참고용이며, 실제 결과와 다를 수 있습니다.<br />
-          사주명리학의 오행 상생상극 원리에 기반합니다.
-        </motion.p>
       </div>
     </motion.div>
   );

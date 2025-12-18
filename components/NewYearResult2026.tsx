@@ -1367,14 +1367,6 @@ export default function NewYearResult2026({
           </div>
         </motion.div>
 
-        {/* 면책 조항 */}
-        <div className="glass rounded-2xl p-6 text-center space-y-3">
-          <p className="text-slate-300 text-sm">
-            ⚠️ 본 신년운세는 <strong className="text-amber-400">전통 명리학 이론과 전문가 자문</strong>을 바탕으로
-            제작되었으며, 재미와 참고용으로 활용해 주세요.
-          </p>
-        </div>
-
         {/* 버튼 */}
         <div className="flex flex-wrap justify-center gap-4 pt-4">
           <motion.button

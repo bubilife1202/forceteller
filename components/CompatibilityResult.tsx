@@ -770,14 +770,6 @@ export default function CompatibilityResult({
           </div>
         </motion.div>
 
-        {/* 면책 조항 */}
-        <div className="glass rounded-2xl p-6 text-center">
-          <p className="text-slate-300 text-sm">
-            ⚠️ 본 궁합 분석은 <strong className="text-amber-400">전통 명리학 이론</strong>을 바탕으로
-            제작되었으며, 재미와 참고용으로 활용해 주세요.
-          </p>
-        </div>
-
         {/* 버튼 */}
         <div className="flex justify-center gap-4 pt-4">
           <motion.button
