@@ -18,6 +18,7 @@ import TarotForm, { TarotFormData } from '@/components/TarotForm';
 import WealthFortuneForm, { WealthFortuneFormData } from '@/components/WealthFortuneForm';
 import DaeunForm, { DaeunFormData } from '@/components/DaeunForm';
 import CareerForm, { CareerFormData } from '@/components/CareerForm';
+import GuiinForm, { GuiinFormData } from '@/components/GuiinForm';
 
 // 결과 컴포넌트 (무거움 - 동적 import로 필요할 때만 로드)
 const SajuResultPremium = dynamic(() => import('@/components/SajuResultPremium'), {
@@ -54,6 +55,9 @@ const DaeunResult = dynamic(() => import('@/components/DaeunResult'), {
   loading: () => <Loading />,
 });
 const CareerResult = dynamic(() => import('@/components/CareerResult'), {
+  loading: () => <Loading />,
+});
+const GuiinResult = dynamic(() => import('@/components/GuiinResult'), {
   loading: () => <Loading />,
 });
 
@@ -97,6 +101,9 @@ export default function Home() {
 
   // 직업운 관련 상태
   const [careerData, setCareerData] = useState<CareerFormData | null>(null);
+
+  // 귀인/악연 관련 상태
+  const [guiinData, setGuiinData] = useState<GuiinFormData | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -145,6 +152,7 @@ export default function Home() {
     setWealthData(null);
     setDaeunData(null);
     setCareerData(null);
+    setGuiinData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -160,6 +168,7 @@ export default function Home() {
     setWealthData(null);
     setDaeunData(null);
     setCareerData(null);
+    setGuiinData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -270,6 +279,21 @@ export default function Home() {
     }, 100);
   };
 
+  // 귀인/악연 제출 핸들러
+  const handleGuiinSubmit = async (formData: GuiinFormData) => {
+    setIsLoading(true);
+
+    // 인연 분석 시간
+    await new Promise(resolve => setTimeout(resolve, 2500));
+
+    setGuiinData(formData);
+    setIsLoading(false);
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   // 궁합 제출 핸들러
   const handleCompatibilitySubmit = async (formData: CompatibilityFormData) => {
     setIsLoading(true);
@@ -318,7 +342,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && !tarotData && !wealthData && !daeunData && !careerData && (
+        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && !tarotData && !wealthData && !daeunData && !careerData && !guiinData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -471,6 +495,18 @@ export default function Home() {
         {menuSelection === 'career' && careerData && (
           <CareerResult
             formData={careerData}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 귀인/악연 플로우 */}
+        {menuSelection === 'guiin' && !guiinData && (
+          <GuiinForm onSubmit={handleGuiinSubmit} onBack={handleBackToMenu} />
+        )}
+        {menuSelection === 'guiin' && guiinData && (
+          <GuiinResult
+            formData={guiinData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />
