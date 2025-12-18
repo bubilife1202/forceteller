@@ -99,7 +99,6 @@ export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFor
   };
 
   const handleSubmit = () => {
-    // 이미 step2에서 names가 설정되어 있음
     onSubmit({
       person1,
       person2,
@@ -107,140 +106,9 @@ export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFor
     });
   };
 
-  const PersonForm = ({
-    person,
-    setPerson,
-    days,
-    color,
-    nameRef,
-  }: {
-    person: PersonData;
-    setPerson: React.Dispatch<React.SetStateAction<PersonData>>;
-    days: number[];
-    color: 'pink' | 'blue';
-    nameRef: React.RefObject<HTMLInputElement | null>;
-  }) => {
-    const colorClasses = color === 'pink'
-      ? { bg: 'bg-pink-500', text: 'text-pink-400', border: 'border-pink-500/30', ring: 'ring-pink-500' }
-      : { bg: 'bg-blue-500', text: 'text-blue-400', border: 'border-blue-500/30', ring: 'ring-blue-500' };
-
-    return (
-      <div className="space-y-6">
-        {/* 이름 */}
-        <div>
-          <label className={`block text-sm font-medium ${colorClasses.text} mb-2`}>
-            이름
-          </label>
-          <input
-            ref={nameRef}
-            type="text"
-            defaultValue={person.name}
-            placeholder="이름을 입력하세요"
-            className={`w-full px-4 py-3 bg-slate-800/50 border ${colorClasses.border} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:${colorClasses.ring} focus:ring-2 transition-all`}
-          />
-        </div>
-
-        {/* 성별 */}
-        <div>
-          <label className={`block text-sm font-medium ${colorClasses.text} mb-2`}>
-            성별
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => setPerson({ ...person, gender: 'male' })}
-              className={`py-3 rounded-xl font-medium transition-all ${
-                person.gender === 'male'
-                  ? `${colorClasses.bg} text-white`
-                  : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
-              }`}
-            >
-              남성
-            </button>
-            <button
-              type="button"
-              onClick={() => setPerson({ ...person, gender: 'female' })}
-              className={`py-3 rounded-xl font-medium transition-all ${
-                person.gender === 'female'
-                  ? `${colorClasses.bg} text-white`
-                  : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
-              }`}
-            >
-              여성
-            </button>
-          </div>
-        </div>
-
-        {/* 생년월일 */}
-        <div>
-          <label className={`block text-sm font-medium ${colorClasses.text} mb-2`}>
-            <Calendar className="w-4 h-4 inline mr-1" />
-            생년월일
-          </label>
-          <div className="grid grid-cols-3 gap-2">
-            <select
-              value={person.year}
-              onChange={(e) => setPerson({ ...person, year: Number(e.target.value) })}
-              className={`px-3 py-3 bg-slate-800/50 border ${colorClasses.border} rounded-xl text-white focus:outline-none focus:${colorClasses.ring} focus:ring-2`}
-            >
-              {years.map((y) => (
-                <option key={y} value={y}>{y}년</option>
-              ))}
-            </select>
-            <select
-              value={person.month}
-              onChange={(e) => setPerson({ ...person, month: Number(e.target.value) })}
-              className={`px-3 py-3 bg-slate-800/50 border ${colorClasses.border} rounded-xl text-white focus:outline-none focus:${colorClasses.ring} focus:ring-2`}
-            >
-              {months.map((m) => (
-                <option key={m} value={m}>{m}월</option>
-              ))}
-            </select>
-            <select
-              value={person.day}
-              onChange={(e) => setPerson({ ...person, day: Number(e.target.value) })}
-              className={`px-3 py-3 bg-slate-800/50 border ${colorClasses.border} rounded-xl text-white focus:outline-none focus:${colorClasses.ring} focus:ring-2`}
-            >
-              {days.map((d) => (
-                <option key={d} value={d}>{d}일</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* 태어난 시간 */}
-        <div>
-          <label className={`block text-sm font-medium ${colorClasses.text} mb-2`}>
-            <Clock className="w-4 h-4 inline mr-1" />
-            태어난 시간
-          </label>
-          <div className="space-y-2">
-            <select
-              value={person.hour}
-              onChange={(e) => setPerson({ ...person, hour: Number(e.target.value) })}
-              disabled={person.timeUnknown}
-              className={`w-full px-3 py-3 bg-slate-800/50 border ${colorClasses.border} rounded-xl text-white focus:outline-none focus:${colorClasses.ring} focus:ring-2 disabled:opacity-50`}
-            >
-              {hours.map((h) => (
-                <option key={h} value={h}>
-                  {h}시 {hourLabels[h] ? `(${hourLabels[h].split(' ')[0]})` : ''}
-                </option>
-              ))}
-            </select>
-            <label className="flex items-center gap-2 text-slate-400 text-sm cursor-pointer">
-              <input
-                type="checkbox"
-                checked={person.timeUnknown}
-                onChange={(e) => setPerson({ ...person, timeUnknown: e.target.checked })}
-                className="rounded border-slate-600"
-              />
-              시간을 모르겠어요
-            </label>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  // 색상 클래스
+  const blueClasses = { bg: 'bg-blue-500', text: 'text-blue-400', border: 'border-blue-500/30', ring: 'ring-blue-500' };
+  const pinkClasses = { bg: 'bg-pink-500', text: 'text-pink-400', border: 'border-pink-500/30', ring: 'ring-pink-500' };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12">
@@ -302,13 +170,121 @@ export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFor
                   </div>
                 </div>
 
-                <PersonForm
-                  person={person1}
-                  setPerson={setPerson1}
-                  days={days1}
-                  color="blue"
-                  nameRef={nameRef1}
-                />
+                {/* Person 1 Form - 인라인 */}
+                <div className="space-y-6">
+                  {/* 이름 */}
+                  <div>
+                    <label className={`block text-sm font-medium ${blueClasses.text} mb-2`}>
+                      이름
+                    </label>
+                    <input
+                      ref={nameRef1}
+                      type="text"
+                      defaultValue={person1.name}
+                      placeholder="이름을 입력하세요"
+                      className={`w-full px-4 py-3 bg-slate-800/50 border ${blueClasses.border} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all`}
+                    />
+                  </div>
+
+                  {/* 성별 */}
+                  <div>
+                    <label className={`block text-sm font-medium ${blueClasses.text} mb-2`}>
+                      성별
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPerson1({ ...person1, gender: 'male' })}
+                        className={`py-3 rounded-xl font-medium transition-all ${
+                          person1.gender === 'male'
+                            ? `${blueClasses.bg} text-white`
+                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                        }`}
+                      >
+                        남성
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPerson1({ ...person1, gender: 'female' })}
+                        className={`py-3 rounded-xl font-medium transition-all ${
+                          person1.gender === 'female'
+                            ? `${blueClasses.bg} text-white`
+                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                        }`}
+                      >
+                        여성
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 생년월일 */}
+                  <div>
+                    <label className={`block text-sm font-medium ${blueClasses.text} mb-2`}>
+                      <Calendar className="w-4 h-4 inline mr-1" />
+                      생년월일
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <select
+                        value={person1.year}
+                        onChange={(e) => setPerson1({ ...person1, year: Number(e.target.value) })}
+                        className={`px-3 py-3 bg-slate-800/50 border ${blueClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      >
+                        {years.map((y) => (
+                          <option key={y} value={y}>{y}년</option>
+                        ))}
+                      </select>
+                      <select
+                        value={person1.month}
+                        onChange={(e) => setPerson1({ ...person1, month: Number(e.target.value) })}
+                        className={`px-3 py-3 bg-slate-800/50 border ${blueClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      >
+                        {months.map((m) => (
+                          <option key={m} value={m}>{m}월</option>
+                        ))}
+                      </select>
+                      <select
+                        value={person1.day}
+                        onChange={(e) => setPerson1({ ...person1, day: Number(e.target.value) })}
+                        className={`px-3 py-3 bg-slate-800/50 border ${blueClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      >
+                        {days1.map((d) => (
+                          <option key={d} value={d}>{d}일</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* 태어난 시간 */}
+                  <div>
+                    <label className={`block text-sm font-medium ${blueClasses.text} mb-2`}>
+                      <Clock className="w-4 h-4 inline mr-1" />
+                      태어난 시간
+                    </label>
+                    <div className="space-y-2">
+                      <select
+                        value={person1.hour}
+                        onChange={(e) => setPerson1({ ...person1, hour: Number(e.target.value) })}
+                        disabled={person1.timeUnknown}
+                        className={`w-full px-3 py-3 bg-slate-800/50 border ${blueClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50`}
+                      >
+                        {hours.map((h) => (
+                          <option key={h} value={h}>
+                            {h}시 {hourLabels[h] ? `(${hourLabels[h].split(' ')[0]})` : ''}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="flex items-center gap-2 text-slate-400 text-sm cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={person1.timeUnknown}
+                          onChange={(e) => setPerson1({ ...person1, timeUnknown: e.target.checked })}
+                          className="rounded border-slate-600"
+                        />
+                        시간을 모르겠어요
+                      </label>
+                    </div>
+                  </div>
+                </div>
 
                 <button
                   onClick={handleGoToStep2}
@@ -338,13 +314,121 @@ export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFor
                   </div>
                 </div>
 
-                <PersonForm
-                  person={person2}
-                  setPerson={setPerson2}
-                  days={days2}
-                  color="pink"
-                  nameRef={nameRef2}
-                />
+                {/* Person 2 Form - 인라인 */}
+                <div className="space-y-6">
+                  {/* 이름 */}
+                  <div>
+                    <label className={`block text-sm font-medium ${pinkClasses.text} mb-2`}>
+                      이름
+                    </label>
+                    <input
+                      ref={nameRef2}
+                      type="text"
+                      defaultValue={person2.name}
+                      placeholder="이름을 입력하세요"
+                      className={`w-full px-4 py-3 bg-slate-800/50 border ${pinkClasses.border} rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all`}
+                    />
+                  </div>
+
+                  {/* 성별 */}
+                  <div>
+                    <label className={`block text-sm font-medium ${pinkClasses.text} mb-2`}>
+                      성별
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPerson2({ ...person2, gender: 'male' })}
+                        className={`py-3 rounded-xl font-medium transition-all ${
+                          person2.gender === 'male'
+                            ? `${pinkClasses.bg} text-white`
+                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                        }`}
+                      >
+                        남성
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPerson2({ ...person2, gender: 'female' })}
+                        className={`py-3 rounded-xl font-medium transition-all ${
+                          person2.gender === 'female'
+                            ? `${pinkClasses.bg} text-white`
+                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                        }`}
+                      >
+                        여성
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 생년월일 */}
+                  <div>
+                    <label className={`block text-sm font-medium ${pinkClasses.text} mb-2`}>
+                      <Calendar className="w-4 h-4 inline mr-1" />
+                      생년월일
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <select
+                        value={person2.year}
+                        onChange={(e) => setPerson2({ ...person2, year: Number(e.target.value) })}
+                        className={`px-3 py-3 bg-slate-800/50 border ${pinkClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                      >
+                        {years.map((y) => (
+                          <option key={y} value={y}>{y}년</option>
+                        ))}
+                      </select>
+                      <select
+                        value={person2.month}
+                        onChange={(e) => setPerson2({ ...person2, month: Number(e.target.value) })}
+                        className={`px-3 py-3 bg-slate-800/50 border ${pinkClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                      >
+                        {months.map((m) => (
+                          <option key={m} value={m}>{m}월</option>
+                        ))}
+                      </select>
+                      <select
+                        value={person2.day}
+                        onChange={(e) => setPerson2({ ...person2, day: Number(e.target.value) })}
+                        className={`px-3 py-3 bg-slate-800/50 border ${pinkClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                      >
+                        {days2.map((d) => (
+                          <option key={d} value={d}>{d}일</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* 태어난 시간 */}
+                  <div>
+                    <label className={`block text-sm font-medium ${pinkClasses.text} mb-2`}>
+                      <Clock className="w-4 h-4 inline mr-1" />
+                      태어난 시간
+                    </label>
+                    <div className="space-y-2">
+                      <select
+                        value={person2.hour}
+                        onChange={(e) => setPerson2({ ...person2, hour: Number(e.target.value) })}
+                        disabled={person2.timeUnknown}
+                        className={`w-full px-3 py-3 bg-slate-800/50 border ${pinkClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50`}
+                      >
+                        {hours.map((h) => (
+                          <option key={h} value={h}>
+                            {h}시 {hourLabels[h] ? `(${hourLabels[h].split(' ')[0]})` : ''}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="flex items-center gap-2 text-slate-400 text-sm cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={person2.timeUnknown}
+                          onChange={(e) => setPerson2({ ...person2, timeUnknown: e.target.checked })}
+                          className="rounded border-slate-600"
+                        />
+                        시간을 모르겠어요
+                      </label>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="flex gap-3 mt-6">
                   <button
