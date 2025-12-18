@@ -27,9 +27,6 @@ const SajuResultPremium = dynamic(() => import('@/components/SajuResultPremium')
 const NewYearResult2026 = dynamic(() => import('@/components/NewYearResult2026'), {
   loading: () => <Loading />,
 });
-const TojeongResult2026 = dynamic(() => import('@/components/TojeongResult2026'), {
-  loading: () => <Loading />,
-});
 const CompatibilityResult = dynamic(() => import('@/components/CompatibilityResult'), {
   loading: () => <Loading />,
 });
@@ -366,21 +363,6 @@ export default function Home() {
         )}
         {menuSelection === 'newyear2026' && result && userData && (
           <NewYearResult2026
-            result={result}
-            name={userData.name}
-            gender={userData.gender}
-            birthDate={userData.birthDate}
-            onReset={handleReset}
-            onBack={handleBackToMenu}
-          />
-        )}
-
-        {/* 2026 토정비결 플로우 */}
-        {menuSelection === 'tojeong2026' && !result && (
-          <SajuFormFunnel onSubmit={handleSubmit} onBack={handleBackToMenu} />
-        )}
-        {menuSelection === 'tojeong2026' && result && userData && (
-          <TojeongResult2026
             result={result}
             name={userData.name}
             gender={userData.gender}
