@@ -6,6 +6,8 @@ import MainMenu, { MenuOption } from '@/components/MainMenu';
 import SajuFormFunnel, { FormData } from '@/components/SajuFormFunnel';
 import SajuResultPremium from '@/components/SajuResultPremium';
 import NewYearResult2026 from '@/components/NewYearResult2026';
+import CompatibilityForm, { CompatibilityFormData } from '@/components/CompatibilityForm';
+import CompatibilityResult from '@/components/CompatibilityResult';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
 
@@ -18,6 +20,13 @@ export default function Home() {
     birthDate: { year: number; month: number; day: number };
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // 궁합 관련 상태
+  const [compatibilityData, setCompatibilityData] = useState<{
+    result1: SajuResultType;
+    result2: SajuResultType;
+    formData: CompatibilityFormData;
+  } | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -57,14 +66,51 @@ export default function Home() {
   const handleReset = () => {
     setResult(null);
     setUserData(null);
+    setCompatibilityData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToMenu = () => {
     setResult(null);
     setUserData(null);
+    setCompatibilityData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 궁합 제출 핸들러
+  const handleCompatibilitySubmit = async (formData: CompatibilityFormData) => {
+    setIsLoading(true);
+
+    // 신비로운 계산 시간
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // 두 사람의 사주 계산
+    const result1 = calculateSaju({
+      year: formData.person1.year,
+      month: formData.person1.month,
+      day: formData.person1.day,
+      hour: formData.person1.timeUnknown ? 12 : formData.person1.hour,
+    }, formData.person1.gender);
+
+    const result2 = calculateSaju({
+      year: formData.person2.year,
+      month: formData.person2.month,
+      day: formData.person2.day,
+      hour: formData.person2.timeUnknown ? 12 : formData.person2.hour,
+    }, formData.person2.gender);
+
+    setCompatibilityData({
+      result1,
+      result2,
+      formData,
+    });
+
+    setIsLoading(false);
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   return (
@@ -80,7 +126,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && (
+        {!menuSelection && !result && !compatibilityData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -108,6 +154,20 @@ export default function Home() {
             name={userData.name}
             gender={userData.gender}
             birthDate={userData.birthDate}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 궁합 보기 플로우 */}
+        {menuSelection === 'compatibility' && !compatibilityData && (
+          <CompatibilityForm onSubmit={handleCompatibilitySubmit} />
+        )}
+        {menuSelection === 'compatibility' && compatibilityData && (
+          <CompatibilityResult
+            result1={compatibilityData.result1}
+            result2={compatibilityData.result2}
+            formData={compatibilityData.formData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />
