@@ -331,10 +331,11 @@ function calculateYongsin(
   const generates: { [key: string]: string } = {
     '목': '수', '화': '목', '토': '화', '금': '토', '수': '금'
   };
-  // 상극 관계: 나를 극하는 오행 (관성)
-  const controls: { [key: string]: string } = {
+  // 상극 관계: 나를 극하는 오행 (관성) - 향후 확장용
+  const _controls: { [key: string]: string } = {
     '목': '금', '화': '수', '토': '목', '금': '화', '수': '토'
   };
+  void _controls; // 미사용 경고 방지
   // 내가 생하는 오행 (식상)
   const iGenerate: { [key: string]: string } = {
     '목': '화', '화': '토', '토': '금', '금': '수', '수': '목'

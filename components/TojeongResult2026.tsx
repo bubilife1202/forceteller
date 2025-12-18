@@ -619,8 +619,8 @@ export default function TojeongResult2026({
           <div className="space-y-4">
             <div className="bg-slate-800/50 rounded-xl p-4">
               <p className="text-emerald-300 text-center mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
-                "운명은 정해진 것이 아니라 스스로 만들어가는 것이니,<br />
-                좋은 운에 안주하지 말고, 나쁜 운에 좌절하지 말라."
+                &ldquo;운명은 정해진 것이 아니라 스스로 만들어가는 것이니,<br />
+                좋은 운에 안주하지 말고, 나쁜 운에 좌절하지 말라.&rdquo;
               </p>
               <p className="text-slate-400 text-sm text-center">- 토정비결 서문 中</p>
             </div>
