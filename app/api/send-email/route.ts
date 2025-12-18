@@ -21,12 +21,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Gmail SMTP 설정
+    // Naver SMTP 설정
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.naver.com',
+      port: 465,
+      secure: true,
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
+        user: process.env.NAVER_USER,
+        pass: process.env.NAVER_PASSWORD,
       },
     });
 
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     // 이메일 발송
     await transporter.sendMail({
-      from: `"팔자왕" <${process.env.GMAIL_USER}>`,
+      from: `"팔자왕" <${process.env.NAVER_USER}>`,
       to,
       subject: emailSubject,
       html: `
