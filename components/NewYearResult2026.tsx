@@ -7,7 +7,8 @@ import {
   Calendar, Star, Heart, Wallet,
   Briefcase, Activity, Sparkles, ArrowLeft,
   Sun, Compass, Gem, Users, GraduationCap,
-  Home, Crown, Mail
+  Home, Crown, Mail, TrendingUp, Truck,
+  Plane, Scale
 } from 'lucide-react';
 import MonthlyForecast2026 from './premium/MonthlyForecast2026';
 import EmailModal from './ui/EmailModal';
@@ -146,7 +147,36 @@ export default function NewYearResult2026({
       dayElement === '수' ? base - 5 : base
     , 30), 100);
 
-    return { wealth, love, health, career, marriage, study, family, social };
+    // 새로운 카테고리 추가
+    const investment = Math.min(Math.max(
+      dayElement === '토' ? base + 12 :
+      dayElement === '금' ? base - 15 :
+      dayElement === '화' ? base + 8 :
+      dayElement === '수' ? base + 5 : base
+    , 30), 100);
+
+    const moving = Math.min(Math.max(
+      dayElement === '목' ? base + 15 :
+      dayElement === '화' ? base + 10 :
+      dayElement === '금' ? base - 12 :
+      dayElement === '토' ? base - 5 : base
+    , 30), 100);
+
+    const travel = Math.min(Math.max(
+      dayElement === '화' ? base + 18 :
+      dayElement === '목' ? base + 12 :
+      dayElement === '수' ? base + 8 :
+      dayElement === '금' ? base - 10 : base
+    , 30), 100);
+
+    const legal = Math.min(Math.max(
+      dayElement === '금' ? base + 10 :
+      dayElement === '수' ? base + 15 :
+      dayElement === '화' ? base - 10 :
+      dayElement === '목' ? base - 5 : base
+    , 30), 100);
+
+    return { wealth, love, health, career, marriage, study, family, social, investment, moving, travel, legal };
   };
 
   const fortuneCategories = getFortuneCategories();
@@ -425,6 +455,148 @@ export default function NewYearResult2026({
     }
   };
 
+  // ===== 투자운 =====
+  const getInvestmentFortune = () => {
+    const score = fortuneCategories.investment;
+
+    if (score >= 80) {
+      return {
+        grade: '대길',
+        summary: '투자에 좋은 기운이 있는 해입니다.',
+        detail: `2026년은 ${name}님에게 투자의 기회가 열리는 해입니다. 병오년의 활발한 화기가 재물의 증식과 사업 확장을 상징합니다. 부동산, 주식, 펀드 등 다양한 투자처에서 좋은 수익을 기대할 수 있습니다. 특히 상반기에 좋은 투자 기회가 찾아올 수 있으니 평소 관심 있던 분야를 주시하세요. 다만 화기가 강하므로 충동적인 투자나 한 곳에 모든 자금을 집중하는 것은 피하세요. 분산 투자와 장기적인 관점을 유지하면 안정적인 수익을 올릴 수 있습니다. 전문가의 조언을 참고하되 최종 결정은 본인이 충분히 공부한 후 내리세요.`,
+        advice: '3월, 5월에 좋은 투자 기회가 있습니다. 자금의 50% 이상은 안전자산에 배분하고, 나머지로 적극 투자하세요.',
+        luckyMonths: '3월, 5월, 9월',
+        unluckyMonths: '7월, 8월'
+      };
+    } else if (score >= 60) {
+      return {
+        grade: '평길',
+        summary: '신중한 투자가 필요한 해입니다.',
+        detail: `2026년 ${name}님의 투자운은 큰 행운보다는 안정적인 흐름이 예상됩니다. 공격적인 투자보다는 원금 보전을 우선으로 하고, 안정적인 배당주나 적금, 예금 등 안전자산 위주로 포트폴리오를 구성하는 것이 좋습니다. 새로운 투자처보다 기존에 보유한 자산을 잘 관리하는 데 집중하세요. 지인의 투자 권유나 고수익을 미끼로 한 투자 제안은 신중히 검토하세요. 하반기 10월 이후에 좋은 기회가 올 수 있으니 그때를 위해 자금을 모아두는 것도 전략입니다. 투자 공부를 꾸준히 하면 내년에 좋은 결과로 이어집니다.`,
+        advice: '안전자산 70%, 투자자산 30% 비율을 유지하세요. 10월 이후에 투자 기회를 노려보세요.',
+        luckyMonths: '6월, 10월, 12월',
+        unluckyMonths: '3월, 8월'
+      };
+    } else {
+      return {
+        grade: '소흉',
+        summary: '투자에 신중을 기해야 하는 해입니다.',
+        detail: `2026년은 ${name}님에게 투자 면에서 주의가 필요한 해입니다. 병오년의 강한 화기가 재물의 손실이나 투자 실패를 암시합니다. 올해는 새로운 투자를 시작하기보다 현재 자산을 지키는 데 집중하세요. 주식, 코인, 부동산 등 변동성이 큰 자산에 대한 투자는 최소화하고, 확실한 수익이 보장되는 안전자산 위주로 운용하세요. 지인에게 빌려주거나 보증을 서는 것도 피하세요. 고수익을 약속하는 투자 제안은 100% 사기라고 생각하고 거절하세요. 올해 투자하지 않는 것이 가장 좋은 투자 전략입니다.`,
+        advice: '신규 투자는 전면 보류하세요. 원금 보전이 최우선입니다. 고수익 투자 제안은 모두 거절하세요.',
+        luckyMonths: '11월, 12월',
+        unluckyMonths: '3월, 5월, 7월'
+      };
+    }
+  };
+
+  // ===== 이사/이동운 =====
+  const getMovingFortune = () => {
+    const score = fortuneCategories.moving;
+
+    if (score >= 80) {
+      return {
+        grade: '대길',
+        summary: '이사와 변화에 좋은 기운이 있는 해입니다.',
+        detail: `2026년은 ${name}님에게 이사나 거주지 변경에 좋은 해입니다. 병오년의 활발한 기운이 새로운 공간에서의 성공과 발전을 상징합니다. 더 좋은 집으로 이사하거나 독립, 분가를 계획하고 있다면 올해가 적기입니다. 특히 봄(3-5월)이나 가을(9-10월)에 이사하면 좋은 기운을 받을 수 있습니다. 새 집을 구할 때는 남향이나 동남향을 선택하면 화기와 조화를 이루어 길합니다. 직장 이동, 부서 이동도 긍정적인 결과를 가져올 수 있으니 적극적으로 고려해보세요.`,
+        advice: '3월, 5월, 9월에 이사하면 길합니다. 남향이나 동남향 집을 선택하세요.',
+        luckyMonths: '3월, 5월, 9월',
+        unluckyMonths: '7월, 8월',
+        luckyDirection: '남쪽, 동남쪽'
+      };
+    } else if (score >= 60) {
+      return {
+        grade: '평길',
+        summary: '신중한 이사 계획이 필요합니다.',
+        detail: `2026년 ${name}님의 이사운은 급격한 변화보다 신중한 계획이 필요한 흐름입니다. 꼭 이사해야 할 이유가 있다면 진행해도 무방하나, 단순히 기분 전환을 위한 이사는 미루는 것이 좋습니다. 이사를 결정했다면 충분한 시간을 두고 여러 매물을 비교하고, 계약 조건을 꼼꼼히 살펴보세요. 이사 날짜는 손 없는 날을 선택하고, 가능하면 전문가의 조언을 받으세요. 직장 내 부서 이동은 본인이 원하지 않는다면 굳이 나서지 마세요.`,
+        advice: '급한 이사는 피하고, 6월이나 10월로 미루세요. 계약 전 꼼꼼히 확인하세요.',
+        luckyMonths: '6월, 10월',
+        unluckyMonths: '4월, 8월',
+        luckyDirection: '동쪽, 북쪽'
+      };
+    } else {
+      return {
+        grade: '소흉',
+        summary: '이사와 이동을 자제해야 하는 해입니다.',
+        detail: `2026년은 ${name}님에게 이사나 큰 변화를 피해야 하는 해입니다. 병오년의 강한 화기가 이동과 변화에 부정적인 영향을 미칠 수 있습니다. 가능하다면 올해는 현재 거주지에서 안정을 취하고, 이사는 내년으로 미루세요. 부득이하게 이사해야 한다면 반드시 전문가의 조언을 받고, 날짜와 방향을 신중히 선택하세요. 직장 이동이나 전근도 가급적 피하는 것이 좋습니다. 현재 환경에서 최선을 다하다 보면 때가 올 것입니다.`,
+        advice: '이사는 내년으로 미루세요. 불가피하면 11월, 12월에 진행하세요.',
+        luckyMonths: '11월, 12월',
+        unluckyMonths: '3월, 5월, 7월',
+        luckyDirection: '북쪽'
+      };
+    }
+  };
+
+  // ===== 여행운 =====
+  const getTravelFortune = () => {
+    const score = fortuneCategories.travel;
+
+    if (score >= 80) {
+      return {
+        grade: '대길',
+        summary: '여행과 해외운이 좋은 해입니다.',
+        detail: `2026년은 ${name}님에게 여행과 해외 활동에 최고의 해입니다. 병오년의 화기가 활발한 이동과 새로운 경험을 상징하여, 국내외 여행에서 좋은 기운을 받을 수 있습니다. 그동안 가고 싶었던 여행지가 있다면 올해 방문하세요. 해외여행, 유학, 어학연수, 해외 출장 등도 좋은 결과를 기대할 수 있습니다. 여행 중 좋은 인연을 만나거나 인생에 도움이 되는 깨달음을 얻을 수 있습니다. 특히 동남아시아, 호주 등 따뜻한 지역이 길방입니다.`,
+        advice: '3월, 5월, 9월 여행이 최고입니다. 동남아시아나 따뜻한 지역으로 가세요.',
+        luckyMonths: '3월, 5월, 9월',
+        unluckyMonths: '7월',
+        luckyDestination: '동남아시아, 호주, 제주도, 남쪽 방향'
+      };
+    } else if (score >= 60) {
+      return {
+        grade: '평길',
+        summary: '가벼운 여행은 무난합니다.',
+        detail: `2026년 ${name}님의 여행운은 무난한 흐름입니다. 가까운 국내 여행이나 짧은 휴가는 좋은 리프레시가 될 수 있습니다. 다만 무리한 장거리 여행이나 위험한 지역 방문은 피하세요. 해외여행을 계획한다면 안전한 지역 위주로 선택하고, 여행자 보험에 꼭 가입하세요. 출장이나 업무 목적의 여행은 좋은 성과를 거둘 수 있습니다. 혼자보다 가족이나 친구와 함께하는 여행이 더 즐거운 추억이 될 것입니다.`,
+        advice: '국내 여행은 언제든 무난합니다. 해외는 6월, 10월에 가세요.',
+        luckyMonths: '6월, 10월, 11월',
+        unluckyMonths: '4월, 8월',
+        luckyDestination: '국내 여행, 일본, 가까운 아시아 지역'
+      };
+    } else {
+      return {
+        grade: '소흉',
+        summary: '여행에 주의가 필요한 해입니다.',
+        detail: `2026년은 ${name}님에게 여행 면에서 주의가 필요한 해입니다. 특히 장거리 해외여행이나 위험 지역 방문은 피하는 것이 좋습니다. 여행 중 사고, 분실, 건강 문제가 발생할 수 있으니 각별히 조심하세요. 꼭 여행해야 한다면 안전을 최우선으로 하고, 무리한 일정은 피하세요. 여행자 보험은 필수이며, 현지 상황을 미리 파악하세요. 올해는 멀리 가기보다 가까운 곳에서 휴식을 취하는 것이 현명합니다.`,
+        advice: '장거리 여행은 자제하세요. 필수라면 11월, 12월에 가세요. 보험 필수 가입.',
+        luckyMonths: '11월, 12월',
+        unluckyMonths: '3월, 5월, 7월, 8월',
+        luckyDestination: '가까운 국내 여행, 익숙한 지역'
+      };
+    }
+  };
+
+  // ===== 소송/법률운 =====
+  const getLegalFortune = () => {
+    const score = fortuneCategories.legal;
+
+    if (score >= 80) {
+      return {
+        grade: '대길',
+        summary: '법적 문제에 유리한 해입니다.',
+        detail: `2026년은 ${name}님에게 법적 분쟁이나 계약 문제에서 유리한 결과를 기대할 수 있는 해입니다. 진행 중인 소송이 있다면 올해 좋은 결과를 얻을 가능성이 높습니다. 억울한 일이 있었다면 법적 절차를 통해 해결하기 좋은 시기입니다. 중요한 계약(부동산, 사업, 고용 등)도 꼼꼼히 검토하고 진행하면 좋은 조건을 얻을 수 있습니다. 다만 본인이 정당하지 않은 경우에는 해당되지 않으니, 항상 정직하게 행동하세요.`,
+        advice: '3월, 5월에 법적 문제 해결에 좋습니다. 계약 전 전문가 검토를 받으세요.',
+        luckyMonths: '3월, 5월, 9월',
+        unluckyMonths: '7월'
+      };
+    } else if (score >= 60) {
+      return {
+        grade: '평길',
+        summary: '법적 문제는 신중하게 처리하세요.',
+        detail: `2026년 ${name}님의 법률운은 큰 변화 없이 무난한 흐름입니다. 진행 중인 법적 문제가 있다면 시간이 걸리더라도 순리대로 처리하세요. 새로운 소송을 제기하거나 법적 분쟁에 휘말리는 것은 피하는 것이 좋습니다. 계약 시에는 모든 조항을 꼼꼼히 읽고, 불분명한 부분은 명확히 해두세요. 구두 약속보다 서면 계약을 원칙으로 하고, 중요한 결정은 전문가의 조언을 받으세요.`,
+        advice: '새로운 소송은 피하고, 계약 시 서면으로 명확히 하세요.',
+        luckyMonths: '6월, 10월, 12월',
+        unluckyMonths: '4월, 8월'
+      };
+    } else {
+      return {
+        grade: '소흉',
+        summary: '법적 분쟁에 휘말리지 않도록 주의하세요.',
+        detail: `2026년은 ${name}님에게 법적 문제나 계약 분쟁에 주의가 필요한 해입니다. 가능하면 소송이나 법적 분쟁에 관여하지 않는 것이 최선입니다. 진행 중인 사건이 있다면 무리하게 밀어붙이기보다 합의나 중재를 모색하세요. 계약 체결 시에는 매우 신중해야 하며, 조금이라도 의심스러운 부분이 있으면 보류하세요. 보증이나 연대책임은 절대 지지 마세요. 분쟁의 소지가 있는 상황에서는 먼저 한 발 물러서는 지혜가 필요합니다.`,
+        advice: '모든 법적 문제는 피하거나 미루세요. 보증은 절대 금물. 합의 위주로 해결하세요.',
+        luckyMonths: '11월, 12월',
+        unluckyMonths: '3월, 5월, 7월, 8월'
+      };
+    }
+  };
+
   const wealthFortune = getWealthFortune();
   const loveFortune = getLoveFortune();
   const marriageFortune = getMarriageFortune();
@@ -433,6 +605,10 @@ export default function NewYearResult2026({
   const studyFortune = getStudyFortune();
   const familyFortune = getFamilyFortune();
   const socialFortune = getSocialFortune();
+  const investmentFortune = getInvestmentFortune();
+  const movingFortune = getMovingFortune();
+  const travelFortune = getTravelFortune();
+  const legalFortune = getLegalFortune();
 
   // 행운 아이템
   const getLuckyItems = () => {
@@ -822,6 +998,58 @@ export default function NewYearResult2026({
               luckyMonths={socialFortune.luckyMonths}
               unluckyMonths={socialFortune.unluckyMonths}
             />
+
+            <FortuneCard
+              icon={TrendingUp}
+              iconColor="from-emerald-400 to-green-500"
+              title="투자운"
+              score={fortuneCategories.investment}
+              grade={investmentFortune.grade}
+              summary={investmentFortune.summary}
+              detail={investmentFortune.detail}
+              advice={investmentFortune.advice}
+              luckyMonths={investmentFortune.luckyMonths}
+              unluckyMonths={investmentFortune.unluckyMonths}
+            />
+
+            <FortuneCard
+              icon={Truck}
+              iconColor="from-slate-400 to-gray-500"
+              title="이사/이동운"
+              score={fortuneCategories.moving}
+              grade={movingFortune.grade}
+              summary={movingFortune.summary}
+              detail={movingFortune.detail}
+              advice={movingFortune.advice}
+              luckyMonths={movingFortune.luckyMonths}
+              unluckyMonths={movingFortune.unluckyMonths}
+            />
+
+            <FortuneCard
+              icon={Plane}
+              iconColor="from-sky-400 to-blue-500"
+              title="여행운"
+              score={fortuneCategories.travel}
+              grade={travelFortune.grade}
+              summary={travelFortune.summary}
+              detail={travelFortune.detail}
+              advice={travelFortune.advice}
+              luckyMonths={travelFortune.luckyMonths}
+              unluckyMonths={travelFortune.unluckyMonths}
+            />
+
+            <FortuneCard
+              icon={Scale}
+              iconColor="from-amber-400 to-yellow-500"
+              title="소송/법률운"
+              score={fortuneCategories.legal}
+              grade={legalFortune.grade}
+              summary={legalFortune.summary}
+              detail={legalFortune.detail}
+              advice={legalFortune.advice}
+              luckyMonths={legalFortune.luckyMonths}
+              unluckyMonths={legalFortune.unluckyMonths}
+            />
           </div>
         </motion.div>
 
@@ -873,6 +1101,217 @@ export default function NewYearResult2026({
 
         {/* 월별 운세 */}
         <MonthlyForecast2026 result={result} />
+
+        {/* 분기별 상세 분석 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8 md:p-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 gradient-text" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+            📅 2026년 분기별 상세 분석
+          </h2>
+
+          <div className="space-y-6">
+            {/* 1분기 */}
+            <div className="glass rounded-2xl p-6 border border-green-500/30">
+              <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center gap-2">
+                <span className="text-2xl">🌱</span> 1분기 (1월 ~ 3월) - 새로운 시작의 계절
+              </h3>
+              <div className="space-y-3 text-slate-300 leading-relaxed">
+                <p>
+                  2026년의 첫 분기는 <strong className="text-amber-400">{name}님</strong>에게 새로운 계획을 세우고 기반을 다지는 시기입니다.
+                  {dayElement === '목' && ' 특히 목(木) 일간이신 분은 봄기운과 함께 활력이 넘치고, 새로운 프로젝트를 시작하기 좋습니다.'}
+                  {dayElement === '화' && ' 화(火) 일간이신 분은 아직 화기가 약한 시기이므로 무리하지 말고 준비에 집중하세요.'}
+                  {dayElement === '토' && ' 토(土) 일간이신 분은 안정적인 기반 위에서 계획을 세우기 좋은 시기입니다.'}
+                  {dayElement === '금' && ' 금(金) 일간이신 분은 목기의 극을 받을 수 있으니 건강에 유의하세요.'}
+                  {dayElement === '수' && ' 수(水) 일간이신 분은 목을 생하므로 에너지 소모가 있을 수 있습니다. 컨디션 관리가 중요합니다.'}
+                </p>
+                <p>
+                  <strong className="text-green-400">핵심 포인트:</strong> 연초 계획 수립, 건강 관리 시작, 인간관계 정리
+                </p>
+                <p>
+                  <strong className="text-amber-400">행운의 날:</strong> 1월 15일, 2월 8일, 3월 12일 (중요한 결정에 좋은 날)
+                </p>
+                <p>
+                  <strong className="text-red-400">주의할 날:</strong> 1월 28일, 2월 22일, 3월 7일 (큰 결정 피하기)
+                </p>
+              </div>
+            </div>
+
+            {/* 2분기 */}
+            <div className="glass rounded-2xl p-6 border border-yellow-500/30">
+              <h3 className="text-xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
+                <span className="text-2xl">☀️</span> 2분기 (4월 ~ 6월) - 성장과 도약의 계절
+              </h3>
+              <div className="space-y-3 text-slate-300 leading-relaxed">
+                <p>
+                  병오년의 화기가 본격적으로 강해지는 시기입니다. <strong className="text-amber-400">{name}님</strong>에게는
+                  {dayElement === '목' && ' 목생화(木生火)의 관계로 당신의 노력이 빛을 발하는 시기입니다. 적극적으로 도전하세요!'}
+                  {dayElement === '화' && ' 비겁운이 강해지는 시기로, 열정이 폭발합니다. 하지만 과열에 주의하세요.'}
+                  {dayElement === '토' && ' 화생토(火生土)로 풍요의 기운을 받습니다. 재물운과 건강운 모두 상승합니다.'}
+                  {dayElement === '금' && ' 화극금(火克金)의 극을 받는 시기입니다. 무리하지 말고 안전을 최우선으로 하세요.'}
+                  {dayElement === '수' && ' 수극화(水克火)로 상황을 제어할 수 있지만, 갈등도 생길 수 있습니다.'}
+                </p>
+                <p>
+                  <strong className="text-green-400">핵심 포인트:</strong> 적극적인 도전, 승진/이직 기회, 연애운 상승
+                </p>
+                <p>
+                  <strong className="text-amber-400">행운의 날:</strong> 4월 18일, 5월 5일, 6월 21일 (대길일)
+                </p>
+                <p>
+                  <strong className="text-red-400">주의할 날:</strong> 4월 7일, 5월 20일, 6월 14일 (충돌 주의)
+                </p>
+              </div>
+            </div>
+
+            {/* 3분기 */}
+            <div className="glass rounded-2xl p-6 border border-red-500/30">
+              <h3 className="text-xl font-bold text-red-400 mb-4 flex items-center gap-2">
+                <span className="text-2xl">🔥</span> 3분기 (7월 ~ 9월) - 화기가 정점에 달하는 계절
+              </h3>
+              <div className="space-y-3 text-slate-300 leading-relaxed">
+                <p>
+                  병오년의 화기가 가장 강해지는 시기입니다. 열정과 활력이 넘치지만, 과열과 충돌에도 주의해야 합니다.
+                  <strong className="text-amber-400">{name}님</strong>은
+                  {dayElement === '목' && ' 에너지 소모가 심할 수 있습니다. 충분한 휴식을 취하세요.'}
+                  {dayElement === '화' && ' 가장 강한 시기이지만 과열에 주의! 감정 조절이 중요합니다.'}
+                  {dayElement === '토' && ' 화생토로 가장 좋은 시기입니다. 중요한 결정을 내리기 좋습니다.'}
+                  {dayElement === '금' && ' 가장 힘든 시기입니다. 건강과 안전에 각별히 유의하세요.'}
+                  {dayElement === '수' && ' 화를 제어할 수 있지만 무리하면 역효과가 납니다.'}
+                </p>
+                <p>
+                  <strong className="text-green-400">핵심 포인트:</strong> 건강 관리, 감정 조절, 중요 결정은 9월로 미루기
+                </p>
+                <p>
+                  <strong className="text-amber-400">행운의 날:</strong> 7월 26일, 8월 15일, 9월 9일
+                </p>
+                <p>
+                  <strong className="text-red-400">주의할 날:</strong> 7월 12일, 8월 3일, 8월 28일 (충 조심)
+                </p>
+              </div>
+            </div>
+
+            {/* 4분기 */}
+            <div className="glass rounded-2xl p-6 border border-blue-500/30">
+              <h3 className="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+                <span className="text-2xl">❄️</span> 4분기 (10월 ~ 12월) - 결실과 마무리의 계절
+              </h3>
+              <div className="space-y-3 text-slate-300 leading-relaxed">
+                <p>
+                  화기가 점차 약해지고 금수(金水)의 기운이 강해지는 시기입니다. 한 해를 정리하고 다음 해를 준비하는 시간입니다.
+                  <strong className="text-amber-400">{name}님</strong>에게는
+                  {dayElement === '목' && ' 금의 극을 받지만, 수의 생을 받아 균형을 이룹니다.'}
+                  {dayElement === '화' && ' 화기가 약해지므로 무리하지 말고 정리에 집중하세요.'}
+                  {dayElement === '토' && ' 안정적인 마무리가 가능합니다. 내년 계획을 세우세요.'}
+                  {dayElement === '금' && ' 드디어 숨통이 트이는 시기! 하반기 결실을 거두세요.'}
+                  {dayElement === '수' && ' 가장 편안한 시기입니다. 충전하고 재정비하세요.'}
+                </p>
+                <p>
+                  <strong className="text-green-400">핵심 포인트:</strong> 한 해 마무리, 재정 정리, 내년 계획 수립
+                </p>
+                <p>
+                  <strong className="text-amber-400">행운의 날:</strong> 10월 10일, 11월 11일, 12월 25일
+                </p>
+                <p>
+                  <strong className="text-red-400">주의할 날:</strong> 10월 22일, 11월 5일, 12월 8일
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 2026년 특별 길일/흉일 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8 md:p-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 gradient-text" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+            📆 2026년 특별한 날짜 추천
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* 대길일 */}
+            <div className="glass rounded-2xl p-6 border border-green-500/30">
+              <h3 className="text-lg font-bold text-green-400 mb-4">🌟 2026년 대길일 (중요한 일에 좋은 날)</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
+                  <span className="text-2xl">💒</span>
+                  <div>
+                    <p className="font-bold text-slate-100">결혼/약혼</p>
+                    <p className="text-sm text-green-400">3월 15일, 5월 18일, 9월 20일, 10월 11일</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
+                  <span className="text-2xl">🏠</span>
+                  <div>
+                    <p className="font-bold text-slate-100">이사/입주</p>
+                    <p className="text-sm text-green-400">2월 28일, 4월 12일, 6월 8일, 10월 15일</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
+                  <span className="text-2xl">💼</span>
+                  <div>
+                    <p className="font-bold text-slate-100">개업/계약</p>
+                    <p className="text-sm text-green-400">3월 8일, 5월 5일, 9월 9일, 11월 11일</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg">
+                  <span className="text-2xl">📝</span>
+                  <div>
+                    <p className="font-bold text-slate-100">시험/면접</p>
+                    <p className="text-sm text-green-400">2월 15일, 4월 22일, 6월 18일, 9월 12일</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 흉일 */}
+            <div className="glass rounded-2xl p-6 border border-red-500/30">
+              <h3 className="text-lg font-bold text-red-400 mb-4">⚠️ 2026년 주의해야 할 날</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-red-500/10 rounded-lg">
+                  <span className="text-2xl">🔴</span>
+                  <div>
+                    <p className="font-bold text-slate-100">삼재일 (큰 결정 금지)</p>
+                    <p className="text-sm text-red-400">1월 7일, 4월 15일, 7월 23일, 10월 31일</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-red-500/10 rounded-lg">
+                  <span className="text-2xl">⚡</span>
+                  <div>
+                    <p className="font-bold text-slate-100">천충일 (이동/여행 피하기)</p>
+                    <p className="text-sm text-red-400">2월 13일, 5월 21일, 8월 29일, 11월 6일</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-red-500/10 rounded-lg">
+                  <span className="text-2xl">💔</span>
+                  <div>
+                    <p className="font-bold text-slate-100">파일 (계약/약속 금지)</p>
+                    <p className="text-sm text-red-400">3월 3일, 6월 11일, 9월 19일, 12월 27일</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-red-500/10 rounded-lg">
+                  <span className="text-2xl">🌑</span>
+                  <div>
+                    <p className="font-bold text-slate-100">월파일 (재물 거래 피하기)</p>
+                    <p className="text-sm text-red-400">1월 21일, 4월 29일, 8월 6일, 11월 14일</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-slate-800/50 rounded-xl text-center">
+            <p className="text-sm text-slate-400">
+              ※ 위 날짜는 일반적인 참고용이며, 개인의 사주에 따라 길흉이 다를 수 있습니다.
+              중요한 결정 전에는 전문가와 상담하시기 바랍니다.
+            </p>
+          </div>
+        </motion.div>
 
         {/* 종합 조언 */}
         <motion.div

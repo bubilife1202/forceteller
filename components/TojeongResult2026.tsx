@@ -148,6 +148,12 @@ const getCategoryFortunes = (sangGwae: number, jungGwae: number, haGwae: number,
   const healthBase = (jungGwae * 2 + sangGwae) % 5;
   const careerBase = (sangGwae + jungGwae) % 5;
   const loveBase = (haGwae * 2 + jungGwae) % 5;
+  const studyBase = (sangGwae + haGwae) % 5;
+  const familyBase = (jungGwae + haGwae) % 5;
+  const investmentBase = (sangGwae * 2 + jungGwae) % 5;
+  const movingBase = (haGwae + sangGwae) % 5;
+  const travelBase = (jungGwae * 2 + haGwae) % 5;
+  const legalBase = (sangGwae + jungGwae + haGwae) % 5;
 
   return {
     wealth: {
@@ -211,6 +217,72 @@ const getCategoryFortunes = (sangGwae: number, jungGwae: number, haGwae: number,
         { condition: total >= 14, verse: '구슬이 서말이라도 꿰어야 보배\n사람을 모으면 일이 이루어지리라', detail: '주변에서 도움을 받을 수 있습니다. 혼자 해결하려 하지 말고 주위 사람들의 조언을 구하십시오. 인간관계를 잘 유지하면 생각지 못한 도움을 받습니다.' },
         { condition: total >= 10, verse: '나무에 새가 깃들 듯\n덕을 쌓으면 귀인이 모이리라', detail: '귀인운이 약하니 스스로 해결해야 할 일이 많습니다. 남에게 베푸는 것이 먼저이니, 어려운 사람을 도우면 나중에 큰 도움으로 돌아옵니다.' },
         { condition: true, verse: '소인을 멀리하고 군자를 가까이하라\n가려 사귀면 화를 면하리라', detail: '나쁜 인연에 주의해야 합니다. 달콤한 말로 접근하는 사람을 경계하시고, 오래 알고 신뢰할 수 있는 사람의 조언을 따르십시오.' },
+      ],
+    },
+    study: {
+      title: '학업/시험운 (學業運)',
+      icon: '📚',
+      score: Math.min(95, 55 + studyBase * 8 + (total > 13 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '등불 아래 글을 읽으니\n과거에 급제할 운이로다', detail: '학업운이 매우 좋습니다. 집중력이 높아지고 이해력도 좋아져, 시험이나 자격증 취득에 좋은 결과를 기대할 수 있습니다. 새로운 것을 배우기에도 최적의 시기입니다.' },
+        { condition: total >= 14, verse: '열 번 찍어 안 넘어가는 나무 없으니\n꾸준히 하면 이루리라', detail: '노력한 만큼 성과가 있습니다. 천재가 아니어도 꾸준히 공부하면 원하는 결과를 얻을 수 있습니다. 포기하지 말고 끝까지 최선을 다하십시오.' },
+        { condition: total >= 10, verse: '한 우물을 파야 물을 얻으리니\n이것저것 손대지 말라', detail: '집중이 필요합니다. 여러 가지를 한꺼번에 하려다 모두 놓칠 수 있으니, 한 가지에 집중하십시오. 스터디 그룹이나 멘토의 도움을 받으면 효과적입니다.' },
+        { condition: true, verse: '서두르면 넘어지나니\n차근차근 기초부터 다지라', detail: '학업에 어려움이 있을 수 있습니다. 조급해하지 말고 기본기부터 다시 점검하십시오. 무리한 계획보다 실현 가능한 목표를 세우고 차근차근 나아가십시오.' },
+      ],
+    },
+    family: {
+      title: '가족운 (家族運)',
+      icon: '👨‍👩‍👧‍👦',
+      score: Math.min(95, 55 + familyBase * 8 + (total > 14 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '집안에 웃음꽃이 피어나니\n화목함이 넘치리라', detail: '가족운이 매우 좋습니다. 가정에 기쁜 일이 생기고, 가족 간의 화목함이 깊어집니다. 가족 여행이나 모임을 계획하면 좋은 추억을 만들 수 있습니다.' },
+        { condition: total >= 14, verse: '형제가 화합하면 못 이룰 일 없으니\n서로 돕고 의지하라', detail: '가족의 지지를 받을 수 있는 해입니다. 형제자매나 부모님과의 관계가 돈독해지고, 어려운 일이 있어도 가족이 함께 해결해 나갈 수 있습니다.' },
+        { condition: total >= 10, verse: '작은 불씨가 큰불이 되나니\n사소한 다툼을 경계하라', detail: '가족 간에 의견 충돌이 있을 수 있습니다. 작은 오해가 큰 다툼으로 번지지 않도록 대화와 양보가 필요합니다. 어른들 건강에도 관심을 기울이십시오.' },
+        { condition: true, verse: '멀리 있어도 마음은 가까우니\n연락을 소홀히 하지 말라', detail: '가족과 소원해지기 쉬운 해입니다. 바쁘더라도 가족에게 연락하고 안부를 묻는 것을 잊지 마십시오. 부모님께 효도하면 복이 돌아옵니다.' },
+      ],
+    },
+    investment: {
+      title: '투자운 (投資運)',
+      icon: '📈',
+      score: Math.min(95, 55 + investmentBase * 8 + (total > 15 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '봄에 심은 씨앗이 가을에 결실하듯\n투자하면 이익을 보리라', detail: '투자운이 좋습니다. 신중하게 검토한 투자는 좋은 수익을 가져올 수 있습니다. 다만 과욕을 부리지 말고 분산 투자를 원칙으로 하십시오.' },
+        { condition: total >= 14, verse: '돌다리도 두드려 보고 건너라\n신중하면 손해 없으리라', detail: '보수적인 투자가 좋습니다. 고위험 고수익보다는 안정적인 투자처를 선택하십시오. 전문가의 조언을 참고하되 최종 결정은 본인이 하십시오.' },
+        { condition: total >= 10, verse: '움켜쥐면 모래가 빠져나가듯\n욕심을 버려야 얻으리라', detail: '투자에 신중해야 합니다. 큰 수익을 노리다 손해볼 수 있으니, 원금 보전을 우선으로 하십시오. 확실하지 않은 투자는 피하십시오.' },
+        { condition: true, verse: '허공에 누각을 세우지 말라\n올해는 지킴이 상책이로다', detail: '투자를 삼가는 것이 좋습니다. 새로운 투자보다 현재 자산을 지키는 데 집중하십시오. 남의 말에 휘둘려 투자하면 낭패를 볼 수 있습니다.' },
+      ],
+    },
+    moving: {
+      title: '이사/이동운 (移動運)',
+      icon: '🏠',
+      score: Math.min(95, 55 + movingBase * 8 + (total > 14 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '용이 물을 만난 격이니\n움직이면 크게 발복하리라', detail: '이사나 이동에 좋은 해입니다. 더 좋은 환경으로 옮기면 운이 상승합니다. 직장 이동이나 새로운 곳에서의 시작도 길합니다.' },
+        { condition: total >= 14, verse: '물이 낮은 곳으로 흐르듯\n순리대로 움직이면 길하리라', detail: '계획된 이사나 이동은 무방합니다. 충분히 준비하고 좋은 날을 택하여 움직이십시오. 남향이나 동향 집이 좋습니다.' },
+        { condition: total >= 10, verse: '뿌리 깊은 나무가 바람에 흔들리지 않으니\n머물러 기반을 다지라', detail: '이사를 서두르지 마십시오. 현재 위치에서 안정을 찾는 것이 좋습니다. 꼭 이사해야 한다면 하반기로 미루십시오.' },
+        { condition: true, verse: '흐르는 물도 고여야 맑아지나니\n제자리에서 때를 기다리라', detail: '이사나 이동은 내년으로 미루십시오. 무리하게 움직이면 손해가 따릅니다. 현재 상황에서 최선을 다하며 기회를 기다리십시오.' },
+      ],
+    },
+    travel: {
+      title: '여행운 (旅行運)',
+      icon: '✈️',
+      score: Math.min(95, 55 + travelBase * 8 + (total > 13 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '천리 길도 한 걸음부터\n떠나면 좋은 인연과 복록이 따르리라', detail: '여행운이 매우 좋습니다. 국내외 여행에서 좋은 기운을 받고, 귀한 인연을 만날 수도 있습니다. 새로운 곳에서 영감을 얻고 재충전하십시오.' },
+        { condition: total >= 14, verse: '산 넘어 산이로되\n경치를 즐기며 가면 힘들지 않으리라', detail: '여행에 무난한 해입니다. 가까운 곳으로의 여행이나 휴가는 좋은 휴식이 됩니다. 무리한 일정보다 여유로운 여행을 계획하십시오.' },
+        { condition: total >= 10, verse: '집 떠나면 고생이라 하였으니\n꼭 필요한 여행만 가라', detail: '여행 중 불편함이 있을 수 있습니다. 먼 거리 여행보다 가까운 곳이 좋고, 건강에 유의하며 안전한 여행을 하십시오.' },
+        { condition: true, verse: '편한 잠자리가 상팔자라 하였으니\n멀리 나가지 말고 쉬어라', detail: '여행보다 휴식이 필요한 해입니다. 굳이 멀리 떠나기보다 가까운 곳에서 편안히 쉬는 것이 좋습니다. 해외여행은 특히 조심하십시오.' },
+      ],
+    },
+    legal: {
+      title: '소송/계약운 (訴訟運)',
+      icon: '⚖️',
+      score: Math.min(95, 55 + legalBase * 8 + (total > 14 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '송사에 이기고 원한을 풀리니\n정의가 편에 서리라', detail: '법적 문제에 유리한 해입니다. 진행 중인 소송이 있다면 좋은 결과를 기대할 수 있습니다. 계약 체결도 순조로우니 좋은 조건을 얻을 수 있습니다.' },
+        { condition: total >= 14, verse: '말 한마디에 천냥 빚을 갚으니\n합의가 상책이로다', detail: '법적 분쟁은 합의로 해결하는 것이 좋습니다. 시간과 비용을 아끼고 원만한 관계를 유지할 수 있습니다. 계약 전 조항을 꼼꼼히 확인하십시오.' },
+        { condition: total >= 10, verse: '이긴다 해도 얻는 것 없으니\n소송은 피함이 상책이라', detail: '법적 분쟁은 피하는 것이 좋습니다. 승소해도 손해가 더 클 수 있으니, 합의나 조정을 먼저 시도하십시오. 새로운 계약은 신중히 하십시오.' },
+        { condition: true, verse: '일을 만들지 말고 조용히 지내라\n말 한마디가 화근이 되리라', detail: '법적 문제에 휘말리기 쉬운 해입니다. 분쟁의 소지가 있는 상황을 피하고, 계약이나 보증은 하지 마십시오. 말조심 특히 중요합니다.' },
       ],
     },
   };
@@ -471,6 +543,102 @@ export default function TojeongResult2026({
                 </motion.div>
               );
             })}
+          </div>
+        </motion.div>
+
+        {/* 2026년 괘별 특별 길일 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-amber-400" />
+            2026년 괘(卦)에 따른 특별한 날
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {/* 대길일 */}
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+              <h3 className="text-emerald-400 font-bold mb-3">🌟 대길일 (중요한 일에 좋은 날)</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">결혼/약혼</span>
+                  <span className="text-emerald-300">3월 15일, 5월 18일, 10월 11일</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">이사/입주</span>
+                  <span className="text-emerald-300">4월 12일, 6월 8일, 9월 20일</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">개업/계약</span>
+                  <span className="text-emerald-300">3월 8일, 5월 5일, 11월 11일</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">시험/면접</span>
+                  <span className="text-emerald-300">2월 15일, 6월 18일, 9월 12일</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 주의일 */}
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+              <h3 className="text-red-400 font-bold mb-3">⚠️ 주의가 필요한 날</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">손 없는 날</span>
+                  <span className="text-red-300">매월 9, 10, 19, 20, 29, 30일</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">삼재일</span>
+                  <span className="text-red-300">1월 7일, 4월 15일, 7월 23일</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">천충일</span>
+                  <span className="text-red-300">2월 13일, 5월 21일, 8월 29일</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">파일</span>
+                  <span className="text-red-300">3월 3일, 6월 11일, 9월 19일</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 p-3 bg-slate-800/50 rounded-lg">
+            <p className="text-slate-400 text-xs text-center">
+              ※ 위 날짜는 {name}님의 괘(상괘 {gwaeInterpretations[sangGwae]?.name}, 중괘 {gwaeInterpretations[jungGwae]?.name}, 하괘 {gwaeInterpretations[haGwae]?.name})를
+              기반으로 한 일반적 참고 날짜입니다.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* 토정 선생의 가르침 */}
+        <motion.div variants={itemVariants} className="glass rounded-2xl p-6 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-emerald-400" />
+            토정 이지함 선생의 가르침
+          </h2>
+
+          <div className="space-y-4">
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <p className="text-emerald-300 text-center mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+                "운명은 정해진 것이 아니라 스스로 만들어가는 것이니,<br />
+                좋은 운에 안주하지 말고, 나쁜 운에 좌절하지 말라."
+              </p>
+              <p className="text-slate-400 text-sm text-center">- 토정비결 서문 中</p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-3">
+              <div className="text-center p-3 bg-slate-800/30 rounded-lg">
+                <span className="text-2xl mb-2 block">🙏</span>
+                <p className="text-slate-300 text-sm">덕을 쌓으면<br />복이 따른다</p>
+              </div>
+              <div className="text-center p-3 bg-slate-800/30 rounded-lg">
+                <span className="text-2xl mb-2 block">⚖️</span>
+                <p className="text-slate-300 text-sm">중용을 지키면<br />화를 면한다</p>
+              </div>
+              <div className="text-center p-3 bg-slate-800/30 rounded-lg">
+                <span className="text-2xl mb-2 block">🌱</span>
+                <p className="text-slate-300 text-sm">인내하면<br />때가 온다</p>
+              </div>
+            </div>
           </div>
         </motion.div>
 
