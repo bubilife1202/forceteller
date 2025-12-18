@@ -177,7 +177,7 @@ export default function Home() {
 
         {/* 만세력/사주 풀이 플로우 */}
         {menuSelection === 'saju' && !result && (
-          <SajuFormFunnel onSubmit={handleSubmit} />
+          <SajuFormFunnel onSubmit={handleSubmit} onBack={handleBackToMenu} />
         )}
         {menuSelection === 'saju' && result && userData && (
           <SajuResultPremium
@@ -191,7 +191,7 @@ export default function Home() {
 
         {/* 2026 신년운세 플로우 */}
         {menuSelection === 'newyear2026' && !result && (
-          <SajuFormFunnel onSubmit={handleSubmit} />
+          <SajuFormFunnel onSubmit={handleSubmit} onBack={handleBackToMenu} />
         )}
         {menuSelection === 'newyear2026' && result && userData && (
           <NewYearResult2026
@@ -206,7 +206,7 @@ export default function Home() {
 
         {/* 2026 토정비결 플로우 */}
         {menuSelection === 'tojeong2026' && !result && (
-          <SajuFormFunnel onSubmit={handleSubmit} />
+          <SajuFormFunnel onSubmit={handleSubmit} onBack={handleBackToMenu} />
         )}
         {menuSelection === 'tojeong2026' && result && userData && (
           <TojeongResult2026

@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GlassCard from './ui/glass-card';
-import { Sparkles, User, Calendar, Clock } from 'lucide-react';
+import { Sparkles, User, Calendar, Clock, ArrowLeft } from 'lucide-react';
 
 export interface FormData {
   name: string;
@@ -21,6 +21,7 @@ export interface FormData {
 
 interface SajuFormFunnelProps {
   onSubmit: (data: FormData) => void;
+  onBack?: () => void;
 }
 
 const pageVariants = {
@@ -35,7 +36,7 @@ const pageTransition = {
   duration: 0.5
 };
 
-export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
+export default function SajuFormFunnel({ onSubmit, onBack }: SajuFormFunnelProps) {
   const [step, setStep] = useState(0); // 0: intro, 1: name, 2: birth, 3: time
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -81,8 +82,22 @@ export default function SajuFormFunnel({ onSubmit }: SajuFormFunnelProps) {
       animate="animate"
       exit="exit"
       transition={pageTransition}
-      className="flex flex-col items-center justify-center min-h-[70vh] text-center"
+      className="flex flex-col items-center justify-center min-h-[70vh] text-center relative"
     >
+      {/* 뒤로가기 버튼 */}
+      {onBack && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          onClick={onBack}
+          className="absolute top-4 left-4 flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span>메뉴로 돌아가기</span>
+        </motion.button>
+      )}
+
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
