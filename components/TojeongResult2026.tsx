@@ -141,10 +141,112 @@ const getYearlyFortune = (sangGwae: number, jungGwae: number, haGwae: number) =>
   }
 };
 
+// 분야별 운세
+const getCategoryFortunes = (sangGwae: number, jungGwae: number, haGwae: number, gender: 'male' | 'female') => {
+  const total = sangGwae + jungGwae + haGwae;
+  const wealthBase = (sangGwae * 2 + haGwae) % 5;
+  const healthBase = (jungGwae * 2 + sangGwae) % 5;
+  const careerBase = (sangGwae + jungGwae) % 5;
+  const loveBase = (haGwae * 2 + jungGwae) % 5;
+
+  return {
+    wealth: {
+      title: '재물운 (財物運)',
+      icon: '💰',
+      score: Math.min(95, 55 + wealthBase * 8 + (total > 15 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '금은보화가 창고에 쌓이니\n구하지 않아도 재물이 모이리라', detail: '올해는 재물운이 크게 열리는 해입니다. 투자나 사업에서 큰 수익을 기대할 수 있으며, 뜻밖의 횡재수도 있습니다. 다만 과욕을 부리면 오히려 손해를 볼 수 있으니, 분수에 맞게 행동하십시오.' },
+        { condition: total >= 14, verse: '물이 흘러 바다에 이르듯\n꾸준히 모으면 부를 이루리라', detail: '재물이 조금씩 들어오는 운세입니다. 큰 한 방보다는 꾸준한 축적이 중요합니다. 불필요한 지출을 줄이고 저축에 힘쓰면 연말에는 상당한 자산을 모을 수 있습니다.' },
+        { condition: total >= 10, verse: '우물을 파되 한 곳을 파라\n여기저기 손대면 모두 놓치리라', detail: '재물운이 평이합니다. 여러 곳에 투자하기보다 한 곳에 집중하는 것이 좋습니다. 보증이나 빚은 피하시고, 무리한 사업 확장은 삼가십시오.' },
+        { condition: true, verse: '주머니에 구멍이 났으니\n새는 곳을 먼저 막으라', detail: '지출이 늘어나기 쉬운 해입니다. 계획에 없던 지출이 생기거나, 예상치 못한 손실이 있을 수 있습니다. 보수적인 재정 운영이 필요하며, 투기는 절대 금물입니다.' },
+      ],
+    },
+    health: {
+      title: '건강운 (健康運)',
+      icon: '💪',
+      score: Math.min(95, 55 + healthBase * 8 + (total > 12 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '송학이 천년을 살 듯\n건강하여 병이 침범치 못하리라', detail: '건강운이 매우 좋습니다. 활력이 넘치고 면역력도 강해집니다. 다만 과신하여 무리하면 탈이 날 수 있으니, 규칙적인 생활 습관을 유지하십시오.' },
+        { condition: total >= 14, verse: '산에 오르면 땀이 나듯\n운동으로 기운을 북돋우라', detail: '전반적으로 건강한 해이나, 관리가 필요합니다. 특히 환절기에 감기 조심하시고, 적당한 운동과 휴식의 균형을 맞추십시오. 정기 건강검진을 권합니다.' },
+        { condition: total >= 10, verse: '작은 병을 가볍게 여기지 말라\n싹이 작을 때 뽑아야 하느니라', detail: '소소한 건강 문제가 생길 수 있습니다. 증상이 가벼워도 무시하지 말고 조기에 치료하십시오. 과로를 피하고, 스트레스 관리에 신경 쓰십시오.' },
+        { condition: true, verse: '몸이 천냥이면 마음이 구백냥\n마음 편히 하면 병도 물러가리라', detail: '건강에 주의가 필요한 해입니다. 특히 소화기 계통과 호흡기에 유의하시고, 과음과 과식을 삼가십시오. 정신적 스트레스가 신체 증상으로 나타날 수 있으니 마음의 평화를 찾으십시오.' },
+      ],
+    },
+    career: {
+      title: '직장/사업운 (事業運)',
+      icon: '💼',
+      score: Math.min(95, 55 + careerBase * 8 + (total > 14 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '용이 구름을 타고 하늘에 오르니\n뜻한 바를 이루리라', detail: '직장인은 승진과 인정을 받을 가능성이 높고, 사업자는 사업이 크게 번창합니다. 새로운 프로젝트나 도전도 성공 가능성이 높으니 적극적으로 기회를 잡으십시오.' },
+        { condition: total >= 14, verse: '때를 만난 배가 순풍을 받으니\n순조롭게 목적지에 다다르리라', detail: '안정적인 직장 운입니다. 큰 성과는 아니더라도 꾸준히 인정받으며, 동료들과의 관계도 원만합니다. 사업자는 무리한 확장보다 내실을 다지는 것이 좋습니다.' },
+        { condition: total >= 10, verse: '농부가 밭을 가는 것처럼\n묵묵히 본업에 충실하라', detail: '현상 유지에 힘쓰는 것이 좋습니다. 이직이나 창업은 신중히 결정하시고, 지금 맡은 일에 최선을 다하십시오. 인내하면 다음 해에 기회가 옵니다.' },
+        { condition: true, verse: '바람 앞의 등불이니\n중심을 잘 잡아야 하리라', detail: '직장에서 어려움이 있을 수 있습니다. 인간관계에 신경 쓰시고, 구설수에 오르지 않도록 말조심하십시오. 사업자는 무리한 투자를 피하고 현금 흐름에 유의하십시오.' },
+      ],
+    },
+    love: {
+      title: gender === 'male' ? '애정운 (愛情運)' : '애정운 (愛情運)',
+      icon: '💕',
+      score: Math.min(95, 55 + loveBase * 8 + (total > 13 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '오작교에 까치가 모여들 듯\n좋은 인연이 찾아오리라', detail: gender === 'male'
+          ? '이성운이 매우 좋습니다. 미혼이라면 좋은 배필을 만날 가능성이 높고, 기혼자는 가정에 화목함이 가득합니다. 상대방을 배려하면 더욱 깊은 사랑을 나눌 수 있습니다.'
+          : '애정운이 매우 좋습니다. 미혼이라면 운명적인 만남이 기다리고 있고, 기혼자는 부부 금실이 좋아집니다. 예쁜 말 한마디가 사랑을 더욱 깊게 합니다.' },
+        { condition: total >= 14, verse: '꽃이 피면 나비가 찾아오듯\n자연스럽게 인연이 맺어지리라', detail: gender === 'male'
+          ? '좋은 만남의 기회가 있습니다. 억지로 찾지 않아도 자연스럽게 인연이 다가옵니다. 기혼자는 배우자와의 소통에 힘쓰면 관계가 더욱 돈독해집니다.'
+          : '연애운이 상승세입니다. 주변에서 소개를 받거나 자연스러운 만남이 있을 수 있습니다. 기혼자는 가정에 더 많은 관심을 기울이면 행복이 배가 됩니다.' },
+        { condition: total >= 10, verse: '물이 너무 급하면 흘러넘치나니\n천천히 다가가면 마음을 얻으리라', detail: gender === 'male'
+          ? '연애에 급하면 오히려 멀어집니다. 천천히 신뢰를 쌓아가면 좋은 결과가 있습니다. 기혼자는 작은 다툼에 주의하시고, 대화로 풀어가십시오.'
+          : '조급함을 버리면 좋은 인연이 옵니다. 외모보다 내면을 가꾸면 더 좋은 만남이 기다립니다. 기혼자는 가정 내 사소한 갈등에 지혜롭게 대처하십시오.' },
+        { condition: true, verse: '달이 구름에 가려도\n밝은 빛은 결국 드러나리라', detail: gender === 'male'
+          ? '애정운이 다소 부진합니다. 조급해하지 말고 자기계발에 힘쓰면 좋은 인연이 다가옵니다. 기혼자는 배우자와의 갈등을 대화로 풀어가십시오.'
+          : '인연이 늦게 올 수 있으나 걱정하지 마십시오. 진정한 사랑은 때가 되면 찾아옵니다. 기혼자는 서로에 대한 이해와 양보가 필요한 때입니다.' },
+      ],
+    },
+    benefactor: {
+      title: '귀인운 (貴人運)',
+      icon: '🤝',
+      score: Math.min(95, 55 + ((sangGwae + jungGwae + haGwae) % 5) * 8 + (total > 14 ? 10 : 0)),
+      verses: [
+        { condition: total >= 18, verse: '귀한 손님이 문을 두드리니\n맞이하면 복이 따르리라', detail: '귀인운이 매우 강합니다. 어려울 때 도와주는 사람이 나타나고, 좋은 조언을 해주는 멘토를 만날 수 있습니다. 인맥을 넓히고 인연을 소중히 하십시오.' },
+        { condition: total >= 14, verse: '구슬이 서말이라도 꿰어야 보배\n사람을 모으면 일이 이루어지리라', detail: '주변에서 도움을 받을 수 있습니다. 혼자 해결하려 하지 말고 주위 사람들의 조언을 구하십시오. 인간관계를 잘 유지하면 생각지 못한 도움을 받습니다.' },
+        { condition: total >= 10, verse: '나무에 새가 깃들 듯\n덕을 쌓으면 귀인이 모이리라', detail: '귀인운이 약하니 스스로 해결해야 할 일이 많습니다. 남에게 베푸는 것이 먼저이니, 어려운 사람을 도우면 나중에 큰 도움으로 돌아옵니다.' },
+        { condition: true, verse: '소인을 멀리하고 군자를 가까이하라\n가려 사귀면 화를 면하리라', detail: '나쁜 인연에 주의해야 합니다. 달콤한 말로 접근하는 사람을 경계하시고, 오래 알고 신뢰할 수 있는 사람의 조언을 따르십시오.' },
+      ],
+    },
+  };
+};
+
+// 사계절 운세
+const getSeasonalFortune = (totalGwae: number) => {
+  return {
+    spring: {
+      name: '봄 (1~3월)',
+      fortune: totalGwae >= 16 ? '새 출발에 좋은 시기. 씨앗을 뿌리면 결실을 보리라.' : totalGwae >= 12 ? '서서히 운이 트이니 인내하라.' : '아직 때가 아니니 준비에 힘쓰라.',
+      score: Math.min(90, 50 + (totalGwae % 5) * 8),
+    },
+    summer: {
+      name: '여름 (4~6월)',
+      fortune: totalGwae >= 15 ? '열정을 쏟으면 크게 이루리라. 기회를 놓치지 말라.' : totalGwae >= 11 ? '무더위 속 그늘을 찾듯, 휴식도 필요하다.' : '과로를 피하고 건강 관리에 힘쓰라.',
+      score: Math.min(90, 55 + (totalGwae % 4) * 8),
+    },
+    autumn: {
+      name: '가을 (7~9월)',
+      fortune: totalGwae >= 17 ? '풍성한 수확의 계절. 그동안의 노력이 빛을 보리라.' : totalGwae >= 13 ? '거둘 것을 거두되, 겸손함을 잃지 말라.' : '욕심을 버리면 마음이 편안해지리라.',
+      score: Math.min(90, 60 + (totalGwae % 4) * 7),
+    },
+    winter: {
+      name: '겨울 (10~12월)',
+      fortune: totalGwae >= 16 ? '한 해를 아름답게 마무리하라. 새해의 기쁨이 기다린다.' : totalGwae >= 12 ? '내실을 다지며 다음 해를 준비하라.' : '인내하면 봄이 오리니, 희망을 잃지 말라.',
+      score: Math.min(90, 50 + (totalGwae % 5) * 8),
+    },
+  };
+};
+
 export default function TojeongResult2026({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   result,
   name,
+  gender,
   birthDate,
   onReset,
   onBack,
@@ -152,8 +254,15 @@ export default function TojeongResult2026({
   const { sangGwae, jungGwae, haGwae } = calculateTojeongGwae(birthDate.year, birthDate.month, birthDate.day);
   const totalGwae = sangGwae + jungGwae + haGwae;
   const yearlyFortune = getYearlyFortune(sangGwae, jungGwae, haGwae);
+  const categoryFortunes = getCategoryFortunes(sangGwae, jungGwae, haGwae, gender);
+  const seasonalFortune = getSeasonalFortune(totalGwae);
 
   const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+  // 분야별 운세에서 해당하는 verse 가져오기
+  const getMatchingVerse = (category: typeof categoryFortunes.wealth) => {
+    return category.verses.find(v => v.condition)!;
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -259,6 +368,68 @@ export default function TojeongResult2026({
             <p className="text-slate-300 leading-relaxed text-center" style={{ fontFamily: "'Noto Serif KR', serif" }}>
               {yearlyFortune.description}
             </p>
+          </div>
+        </motion.div>
+
+        {/* 분야별 운세 */}
+        <motion.div variants={itemVariants} className="mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Star className="w-5 h-5 text-purple-400" />
+            분야별 상세 운세
+          </h2>
+
+          <div className="space-y-4">
+            {Object.entries(categoryFortunes).map(([key, category]) => {
+              const matchedVerse = getMatchingVerse(category);
+              return (
+                <motion.div
+                  key={key}
+                  variants={itemVariants}
+                  className="glass rounded-2xl p-5"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-white font-bold flex items-center gap-2">
+                      <span className="text-2xl">{category.icon}</span>
+                      {category.title}
+                    </h3>
+                    <div className={`px-3 py-1 rounded-full text-sm font-bold ${getLuckBg(category.score)} ${getLuckColor(category.score)}`}>
+                      {category.score}점
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-800/50 rounded-xl p-4 mb-4">
+                    <p className="text-emerald-300 text-sm whitespace-pre-line leading-relaxed text-center" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+                      {matchedVerse.verse}
+                    </p>
+                  </div>
+
+                  <p className="text-slate-300 text-sm leading-relaxed">
+                    {matchedVerse.detail}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* 사계절 운세 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-cyan-400" />
+            사계절 운세 흐름
+          </h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {Object.entries(seasonalFortune).map(([key, season]) => (
+              <div key={key} className="text-center p-4 bg-slate-800/50 rounded-xl">
+                <div className="text-2xl mb-2">
+                  {key === 'spring' ? '🌸' : key === 'summer' ? '☀️' : key === 'autumn' ? '🍂' : '❄️'}
+                </div>
+                <div className="text-emerald-400 text-sm font-medium mb-1">{season.name}</div>
+                <div className={`text-lg font-bold mb-2 ${getLuckColor(season.score)}`}>{season.score}점</div>
+                <p className="text-slate-400 text-xs leading-relaxed">{season.fortune}</p>
+              </div>
+            ))}
           </div>
         </motion.div>
 
