@@ -1,9 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Heart, BookOpen, Cloud, Sun, Calendar, Coins } from 'lucide-react';
+import { Sparkles, Heart, BookOpen, Cloud, Sun, Calendar, Coins, TrendingUp, Briefcase, Users } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth' | 'daeun' | 'career' | 'guiin';
 
 interface MainMenuProps {
   onSelect: (option: MenuOption) => void;
@@ -419,6 +419,129 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
 
           <div className="flex items-center text-emerald-400 group-hover:translate-x-2 transition-transform">
             <span className="text-sm font-medium">토정비결 보기</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.button>
+
+        {/* 9. 대운 분석 (인생 전성기) */}
+        <motion.button
+          onClick={() => onSelect('daeun')}
+          className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          whileHover={{ boxShadow: '0 0 40px rgba(6, 182, 212, 0.3)' }}
+        >
+          {/* NEW 뱃지 */}
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-cyan-500 text-white text-xs font-bold rounded-full animate-pulse">
+            📈 NEW
+          </div>
+
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg">
+              <TrendingUp className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">인생 전성기</h2>
+              <p className="text-cyan-400 text-sm">10년 대운 분석</p>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            내 인생 언제 피나요? 10년 단위 대운 분석으로
+            전성기 시기와 인생 그래프를 확인하세요.
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="px-2 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded-full">전성기 분석</span>
+            <span className="px-2 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded-full">인생 그래프</span>
+            <span className="px-2 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded-full">대운 흐름</span>
+          </div>
+
+          <div className="flex items-center text-cyan-400 group-hover:translate-x-2 transition-transform">
+            <span className="text-sm font-medium">전성기 확인하기</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.button>
+
+        {/* 10. 직업/이직운 */}
+        <motion.button
+          onClick={() => onSelect('career')}
+          className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.65 }}
+          whileHover={{ boxShadow: '0 0 40px rgba(59, 130, 246, 0.3)' }}
+        >
+          {/* NEW 뱃지 */}
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded-full animate-pulse">
+            💼 NEW
+          </div>
+
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center shadow-lg">
+              <Briefcase className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">퇴사/이직 타이밍</h2>
+              <p className="text-blue-400 text-sm">직업운 컨설팅</p>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            언제 퇴사하면 좋을까? 이직하면 연봉이 오를까?
+            사주로 보는 직장 생활 전략.
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">이직 타이밍</span>
+            <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">적성 분석</span>
+            <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">승진운</span>
+          </div>
+
+          <div className="flex items-center text-blue-400 group-hover:translate-x-2 transition-transform">
+            <span className="text-sm font-medium">직업운 보기</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.button>
+
+        {/* 11. 귀인/악연 찾기 */}
+        <motion.button
+          onClick={() => onSelect('guiin')}
+          className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          whileHover={{ boxShadow: '0 0 40px rgba(168, 85, 247, 0.3)' }}
+        >
+          {/* NEW 뱃지 */}
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-violet-500 text-white text-xs font-bold rounded-full animate-pulse">
+            🕵️ NEW
+          </div>
+
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-lg">
+              <Users className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">귀인/악연 찾기</h2>
+              <p className="text-violet-400 text-sm">인간관계 처방전</p>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            누가 내 편인가요? 피해야 할 사람은?
+            사주로 알아보는 귀인과 악연 분석.
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="px-2 py-1 bg-violet-500/20 text-violet-300 text-xs rounded-full">귀인 분석</span>
+            <span className="px-2 py-1 bg-violet-500/20 text-violet-300 text-xs rounded-full">악연 경고</span>
+            <span className="px-2 py-1 bg-violet-500/20 text-violet-300 text-xs rounded-full">인간관계</span>
+          </div>
+
+          <div className="flex items-center text-violet-400 group-hover:translate-x-2 transition-transform">
+            <span className="text-sm font-medium">귀인 찾기</span>
             <span className="ml-2">→</span>
           </div>
         </motion.button>
