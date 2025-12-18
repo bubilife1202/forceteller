@@ -100,8 +100,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, message: '이메일이 발송되었습니다!' });
   } catch (error) {
     console.error('이메일 발송 오류:', error);
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return NextResponse.json(
-      { error: '이메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.' },
+      { error: '이메일 발송에 실패했습니다.', detail: errorMessage },
       { status: 500 }
     );
   }
