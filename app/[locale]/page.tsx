@@ -1,26 +1,49 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { AnimatePresence } from 'framer-motion';
 import MainMenu, { MenuOption } from '@/components/MainMenu';
-import SajuFormFunnel, { FormData } from '@/components/SajuFormFunnel';
-import SajuResultPremium from '@/components/SajuResultPremium';
-import NewYearResult2026 from '@/components/NewYearResult2026';
-import TojeongResult2026 from '@/components/TojeongResult2026';
-import CompatibilityForm, { CompatibilityFormData } from '@/components/CompatibilityForm';
-import CompatibilityResult from '@/components/CompatibilityResult';
-import DreamForm, { DreamFormData } from '@/components/DreamForm';
-import DreamResult from '@/components/DreamResult';
-import DailyFortuneForm, { DailyFortuneFormData } from '@/components/DailyFortuneForm';
-import DailyFortuneResult from '@/components/DailyFortuneResult';
-import RekindlingForm, { RekindlingFormData } from '@/components/RekindlingForm';
-import RekindlingResult from '@/components/RekindlingResult';
-import MonthlyFortuneForm, { MonthlyFortuneFormData } from '@/components/MonthlyFortuneForm';
-import MonthlyFortuneResult from '@/components/MonthlyFortuneResult';
-import TarotForm, { TarotFormData } from '@/components/TarotForm';
-import TarotResult from '@/components/TarotResult';
 import Loading from '@/components/ui/Loading';
 import { calculateSaju, SajuResult as SajuResultType } from '@/lib/saju-calculator';
+
+// 폼 컴포넌트 (가벼움 - 일반 import)
+import SajuFormFunnel, { FormData } from '@/components/SajuFormFunnel';
+import CompatibilityForm, { CompatibilityFormData } from '@/components/CompatibilityForm';
+import DreamForm, { DreamFormData } from '@/components/DreamForm';
+import DailyFortuneForm, { DailyFortuneFormData } from '@/components/DailyFortuneForm';
+import RekindlingForm, { RekindlingFormData } from '@/components/RekindlingForm';
+import MonthlyFortuneForm, { MonthlyFortuneFormData } from '@/components/MonthlyFortuneForm';
+import TarotForm, { TarotFormData } from '@/components/TarotForm';
+
+// 결과 컴포넌트 (무거움 - 동적 import로 필요할 때만 로드)
+const SajuResultPremium = dynamic(() => import('@/components/SajuResultPremium'), {
+  loading: () => <Loading />,
+});
+const NewYearResult2026 = dynamic(() => import('@/components/NewYearResult2026'), {
+  loading: () => <Loading />,
+});
+const TojeongResult2026 = dynamic(() => import('@/components/TojeongResult2026'), {
+  loading: () => <Loading />,
+});
+const CompatibilityResult = dynamic(() => import('@/components/CompatibilityResult'), {
+  loading: () => <Loading />,
+});
+const DreamResult = dynamic(() => import('@/components/DreamResult'), {
+  loading: () => <Loading />,
+});
+const DailyFortuneResult = dynamic(() => import('@/components/DailyFortuneResult'), {
+  loading: () => <Loading />,
+});
+const RekindlingResult = dynamic(() => import('@/components/RekindlingResult'), {
+  loading: () => <Loading />,
+});
+const MonthlyFortuneResult = dynamic(() => import('@/components/MonthlyFortuneResult'), {
+  loading: () => <Loading />,
+});
+const TarotResult = dynamic(() => import('@/components/TarotResult'), {
+  loading: () => <Loading />,
+});
 
 export default function Home() {
   const [menuSelection, setMenuSelection] = useState<MenuOption | null>(null);
