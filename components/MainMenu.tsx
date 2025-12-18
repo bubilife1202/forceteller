@@ -235,7 +235,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        생년월일 정보를 바탕으로 운세를 분석합니다
+        포스텔러 - 전통 명리학 기반 종합 운세 서비스
       </motion.p>
     </div>
   );
