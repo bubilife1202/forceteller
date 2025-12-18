@@ -1,9 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Heart, BookOpen, Cloud, Sun, Calendar } from 'lucide-react';
+import { Sparkles, Heart, BookOpen, Cloud, Sun, Calendar, Coins } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'tojeong2026' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth';
 
 interface MainMenuProps {
   onSelect: (option: MenuOption) => void;
@@ -74,13 +74,54 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
           </div>
         </motion.button>
 
-        {/* 1. 오늘의 운세 (가장 인기) */}
+        {/* 1. 대박 재물운 (NEW) */}
+        <motion.button
+          onClick={() => onSelect('wealth')}
+          className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          whileHover={{ boxShadow: '0 0 40px rgba(234, 179, 8, 0.3)' }}
+        >
+          {/* NEW 뱃지 */}
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-yellow-500 text-black text-xs font-bold rounded-full animate-pulse">
+            💰 NEW
+          </div>
+
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center shadow-lg">
+              <Coins className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">대박 재물운</h2>
+              <p className="text-yellow-400 text-sm">평생 재물 팔자</p>
+            </div>
+          </div>
+
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            당신은 평생 얼마를 벌 팔자인가?
+            투자하기 좋은 날, 로또 행운 번호까지!
+          </p>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded-full">재물 팔자</span>
+            <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded-full">투자 길일</span>
+            <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded-full">행운 번호</span>
+          </div>
+
+          <div className="flex items-center text-yellow-400 group-hover:translate-x-2 transition-transform">
+            <span className="text-sm font-medium">재물운 확인하기</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.button>
+
+        {/* 2. 오늘의 운세 (가장 인기) */}
         <motion.button
           onClick={() => onSelect('daily')}
           className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
           whileHover={{ boxShadow: '0 0 40px rgba(251, 146, 60, 0.2)' }}
         >
           {/* 인기 뱃지 */}

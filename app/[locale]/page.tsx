@@ -15,6 +15,7 @@ import DailyFortuneForm, { DailyFortuneFormData } from '@/components/DailyFortun
 import RekindlingForm, { RekindlingFormData } from '@/components/RekindlingForm';
 import MonthlyFortuneForm, { MonthlyFortuneFormData } from '@/components/MonthlyFortuneForm';
 import TarotForm, { TarotFormData } from '@/components/TarotForm';
+import WealthFortuneForm, { WealthFortuneFormData } from '@/components/WealthFortuneForm';
 
 // 결과 컴포넌트 (무거움 - 동적 import로 필요할 때만 로드)
 const SajuResultPremium = dynamic(() => import('@/components/SajuResultPremium'), {
@@ -42,6 +43,9 @@ const MonthlyFortuneResult = dynamic(() => import('@/components/MonthlyFortuneRe
   loading: () => <Loading />,
 });
 const TarotResult = dynamic(() => import('@/components/TarotResult'), {
+  loading: () => <Loading />,
+});
+const WealthFortuneResult = dynamic(() => import('@/components/WealthFortuneResult'), {
   loading: () => <Loading />,
 });
 
@@ -76,6 +80,9 @@ export default function Home() {
 
   // 타로 관련 상태
   const [tarotData, setTarotData] = useState<TarotFormData | null>(null);
+
+  // 재물운 관련 상태
+  const [wealthData, setWealthData] = useState<WealthFortuneFormData | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -121,6 +128,7 @@ export default function Home() {
     setRekindlingData(null);
     setMonthlyFortuneData(null);
     setTarotData(null);
+    setWealthData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -133,6 +141,7 @@ export default function Home() {
     setRekindlingData(null);
     setMonthlyFortuneData(null);
     setTarotData(null);
+    setWealthData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -205,6 +214,14 @@ export default function Home() {
     }, 100);
   };
 
+  // 재물운 제출 핸들러
+  const handleWealthSubmit = async (formData: WealthFortuneFormData) => {
+    setWealthData(formData);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   // 궁합 제출 핸들러
   const handleCompatibilitySubmit = async (formData: CompatibilityFormData) => {
     setIsLoading(true);
@@ -253,7 +270,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && !tarotData && (
+        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && !tarotData && !wealthData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -370,6 +387,18 @@ export default function Home() {
         {menuSelection === 'tarot' && tarotData && (
           <TarotResult
             formData={tarotData}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 재물운 플로우 */}
+        {menuSelection === 'wealth' && !wealthData && (
+          <WealthFortuneForm onSubmit={handleWealthSubmit} onBack={handleBackToMenu} />
+        )}
+        {menuSelection === 'wealth' && wealthData && (
+          <WealthFortuneResult
+            formData={wealthData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />
