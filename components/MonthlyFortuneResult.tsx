@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, ArrowLeft, RefreshCw, Star, TrendingUp, TrendingDown, Coins, Heart, Briefcase, Activity, Sparkles, Sun, Moon, Clock, Lightbulb, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Calendar, ArrowLeft, RefreshCw, Star, TrendingUp, TrendingDown, Coins, Heart, Briefcase, Activity, Sparkles, Sun, Moon, Clock, Lightbulb, AlertTriangle, CheckCircle, Compass, Palette, Hash, Utensils, Target, Quote, Flame, Droplets, Leaf, Mountain, Zap } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { MonthlyFortuneFormData } from './MonthlyFortuneForm';
 
@@ -350,6 +350,305 @@ function getSeasonInfo(month: number) {
   return { name: '겨울', emoji: '❄️', modifier: -5, advice: '준비와 충전의 시기, 내면을 돌아보세요' };
 }
 
+// 십성별 주간 운세
+const TEN_GOD_WEEKLY: Record<string, {
+  week1: { theme: string; score: number; tip: string };
+  week2: { theme: string; score: number; tip: string };
+  week3: { theme: string; score: number; tip: string };
+  week4: { theme: string; score: number; tip: string };
+}> = {
+  '비견': {
+    week1: { theme: '준비', score: 65, tip: '이번 주는 혼자만의 시간으로 한 달을 계획하세요' },
+    week2: { theme: '협력', score: 80, tip: '동료와의 협업이 빛나는 주입니다' },
+    week3: { theme: '도전', score: 75, tip: '함께 새로운 도전을 시작하기 좋습니다' },
+    week4: { theme: '마무리', score: 70, tip: '공동 프로젝트 마무리에 집중하세요' },
+  },
+  '겁재': {
+    week1: { theme: '경계', score: 45, tip: '주변 상황을 잘 살피며 조심하세요' },
+    week2: { theme: '인내', score: 50, tip: '참을성이 필요한 시기입니다' },
+    week3: { theme: '전환', score: 55, tip: '어려움이 기회로 바뀔 수 있습니다' },
+    week4: { theme: '회복', score: 60, tip: '서서히 상황이 나아집니다' },
+  },
+  '식신': {
+    week1: { theme: '창작', score: 85, tip: '창의적인 아이디어가 샘솟는 주입니다' },
+    week2: { theme: '즐거움', score: 90, tip: '맛집 탐방, 취미 활동 최고의 시기' },
+    week3: { theme: '표현', score: 85, tip: '당신의 재능을 세상에 보여주세요' },
+    week4: { theme: '수확', score: 80, tip: '창작의 결실을 맺는 시기입니다' },
+  },
+  '상관': {
+    week1: { theme: '관찰', score: 55, tip: '말보다 행동으로 보여주는 주입니다' },
+    week2: { theme: '절제', score: 60, tip: '감정 조절이 중요한 시기입니다' },
+    week3: { theme: '소통', score: 65, tip: '부드러운 대화로 관계를 회복하세요' },
+    week4: { theme: '성찰', score: 60, tip: '한 달을 돌아보며 반성하세요' },
+  },
+  '편재': {
+    week1: { theme: '탐색', score: 75, tip: '새로운 투자 기회를 탐색하세요' },
+    week2: { theme: '실행', score: 85, tip: '기회를 잡아 적극적으로 실행하세요' },
+    week3: { theme: '확장', score: 90, tip: '횡재의 기운이 가장 강한 주입니다' },
+    week4: { theme: '정리', score: 75, tip: '수익을 정리하고 다음을 준비하세요' },
+  },
+  '정재': {
+    week1: { theme: '계획', score: 85, tip: '체계적인 재무 계획을 세우세요' },
+    week2: { theme: '실천', score: 90, tip: '계획을 실천에 옮기는 최적의 시기' },
+    week3: { theme: '성과', score: 95, tip: '노력의 결실이 맺어지는 주입니다' },
+    week4: { theme: '안정', score: 90, tip: '안정적인 수입이 보장됩니다' },
+  },
+  '편관': {
+    week1: { theme: '대비', score: 50, tip: '어려움에 대비해 준비하세요' },
+    week2: { theme: '시련', score: 45, tip: '가장 힘든 시기지만 버티세요' },
+    week3: { theme: '극복', score: 55, tip: '서서히 시련을 극복해나갑니다' },
+    week4: { theme: '성장', score: 65, tip: '시련 후 성장을 체감하게 됩니다' },
+  },
+  '정관': {
+    week1: { theme: '질서', score: 70, tip: '규칙적인 생활을 시작하세요' },
+    week2: { theme: '공식', score: 80, tip: '공식적인 업무에서 좋은 결과가 있습니다' },
+    week3: { theme: '인정', score: 85, tip: '노력이 인정받는 주입니다' },
+    week4: { theme: '유지', score: 75, tip: '현 상태를 잘 유지하세요' },
+  },
+  '편인': {
+    week1: { theme: '사색', score: 60, tip: '깊은 생각에 잠기기 좋은 주입니다' },
+    week2: { theme: '학습', score: 70, tip: '새로운 지식을 습득하세요' },
+    week3: { theme: '통찰', score: 75, tip: '직관이 예리해지는 시기입니다' },
+    week4: { theme: '적용', score: 65, tip: '배운 것을 실생활에 적용하세요' },
+  },
+  '정인': {
+    week1: { theme: '감사', score: 80, tip: '주변의 도움에 감사하는 주입니다' },
+    week2: { theme: '귀인', score: 90, tip: '귀인을 만날 가능성이 높습니다' },
+    week3: { theme: '성장', score: 85, tip: '멘토의 가르침으로 성장합니다' },
+    week4: { theme: '보답', score: 80, tip: '받은 은혜에 보답하는 시기입니다' },
+  },
+};
+
+// 오행별 행운 아이템
+const ELEMENT_LUCKY_ITEMS: Record<string, {
+  colors: string[];
+  numbers: number[];
+  directions: string[];
+  foods: string[];
+  activities: string[];
+}> = {
+  '목': {
+    colors: ['초록색', '청록색', '민트색', '연두색'],
+    numbers: [3, 8, 13, 18, 23, 28, 33, 38],
+    directions: ['동쪽', '동남쪽'],
+    foods: ['나물류', '샐러드', '시금치', '브로콜리', '녹차', '매실', '아보카도'],
+    activities: ['산책', '등산', '요가', '원예', '독서', '목공예'],
+  },
+  '화': {
+    colors: ['빨간색', '주황색', '보라색', '핑크색'],
+    numbers: [2, 7, 12, 17, 22, 27, 32, 37],
+    directions: ['남쪽', '남동쪽'],
+    foods: ['매운 음식', '고추', '토마토', '딸기', '수박', '석류', '홍차'],
+    activities: ['달리기', 'HIIT운동', '사우나', '명상', '촛불 켜기', '캠핑'],
+  },
+  '토': {
+    colors: ['노란색', '베이지색', '갈색', '황금색'],
+    numbers: [5, 10, 15, 20, 25, 30, 35, 40],
+    directions: ['중앙', '남서쪽', '북동쪽'],
+    foods: ['곡류', '감자', '고구마', '호박', '옥수수', '된장찌개', '누룽지'],
+    activities: ['도자기 만들기', '정원 가꾸기', '요리', '베이킹', '인테리어'],
+  },
+  '금': {
+    colors: ['흰색', '은색', '금색', '회색'],
+    numbers: [4, 9, 14, 19, 24, 29, 34, 39],
+    directions: ['서쪽', '북서쪽'],
+    foods: ['흰 살 생선', '두부', '콩나물', '백김치', '배', '무', '인삼'],
+    activities: ['악기 연주', '노래', '글쓰기', '명상', '폐 건강 운동'],
+  },
+  '수': {
+    colors: ['검은색', '남색', '진한 파란색', '네이비'],
+    numbers: [1, 6, 11, 16, 21, 26, 31, 36],
+    directions: ['북쪽', '북동쪽'],
+    foods: ['해산물', '검은콩', '미역', '다시마', '흑임자', '블루베리', '포도'],
+    activities: ['수영', '온천', '낚시', '명상', '족욕', '아쿠아로빅'],
+  },
+};
+
+// 십성별 명언/만트라
+const TEN_GOD_MANTRAS: Record<string, string[]> = {
+  '비견': [
+    '혼자가 아닌 함께일 때 우리는 더 강해진다',
+    '좋은 동료는 인생 최고의 자산이다',
+    '경쟁보다 협력이 더 큰 성과를 만든다',
+    '나눔의 기쁨이 곧 받음의 시작이다',
+    '함께 걸으면 먼 길도 즐거운 여행이 된다',
+  ],
+  '겁재': [
+    '시련은 성장의 또 다른 이름이다',
+    '잃는 것은 더 좋은 것을 위한 준비다',
+    '오늘의 어둠은 내일의 빛을 더 빛나게 한다',
+    '인내는 쓰지만 그 열매는 달다',
+    '지킬 줄 아는 자가 진정한 승자다',
+  ],
+  '식신': [
+    '창의력은 일상의 마법이다',
+    '즐거움 속에서 최고의 아이디어가 탄생한다',
+    '행복은 찾는 것이 아니라 만드는 것이다',
+    '당신의 재능이 세상을 더 아름답게 만든다',
+    '오늘 하루를 맛있게 즐겨라',
+  ],
+  '상관': [
+    '침묵은 때로 가장 강력한 대답이다',
+    '날카로운 칼은 잘 다루어야 빛난다',
+    '진정한 표현은 듣는 것에서 시작된다',
+    '말의 무게를 아는 자가 진정한 웅변가다',
+    '한 박자 쉬어가는 것도 지혜다',
+  ],
+  '편재': [
+    '기회는 용기 있는 자의 것이다',
+    '부는 흐르는 것, 움켜쥐지 말고 순환시켜라',
+    '행운은 준비된 자에게 찾아온다',
+    '도전하지 않으면 얻을 수 없다',
+    '대담함이 큰 보상을 가져온다',
+  ],
+  '정재': [
+    '성실함은 가장 확실한 투자다',
+    '꾸준함이 천재를 이긴다',
+    '작은 돌이 모여 큰 성을 만든다',
+    '정도를 걷는 자는 결코 넘어지지 않는다',
+    '노력은 절대 배신하지 않는다',
+  ],
+  '편관': [
+    '시련은 위대함으로 가는 관문이다',
+    '어둠 속에서 별이 더 빛난다',
+    '불꽃은 역경 속에서 더 강해진다',
+    '고난은 미래의 자산이 된다',
+    '오늘 견디면 내일 웃는다',
+  ],
+  '정관': [
+    '질서 속에 자유가 있다',
+    '원칙이 신뢰를 만든다',
+    '작은 약속이 큰 인격을 만든다',
+    '정직이 최고의 정책이다',
+    '법을 지키는 자가 법의 보호를 받는다',
+  ],
+  '편인': [
+    '배움에 끝이 없다',
+    '오늘의 공부가 내일의 자산이 된다',
+    '생각하는 사람이 세상을 바꾼다',
+    '지식은 무거워도 가장 가벼운 짐이다',
+    '깨달음은 조용한 곳에서 찾아온다',
+  ],
+  '정인': [
+    '감사하는 마음이 복을 부른다',
+    '좋은 스승을 만나는 것은 인생의 행운이다',
+    '받은 은혜를 갚는 것이 인생의 의무다',
+    '겸손이 성장의 열쇠다',
+    '귀인은 감사하는 자에게 찾아온다',
+  ],
+};
+
+// 오행별 월별 심화 조언
+const ELEMENT_MONTHLY_ADVICE: Record<string, {
+  health: string[];
+  relationship: string[];
+  career: string[];
+  mindset: string[];
+}> = {
+  '목': {
+    health: ['간 건강에 신경 쓰세요', '눈 피로를 풀어주세요', '스트레칭을 자주 하세요', '녹색 채소를 섭취하세요'],
+    relationship: ['새로운 인맥을 넓히세요', '소통을 활발히 하세요', '동료와 협력하세요', '멘토를 찾아보세요'],
+    career: ['새 프로젝트 시작에 좋습니다', '창의적 업무에서 두각을 나타내세요', '기획 업무가 빛납니다', '성장 기회를 잡으세요'],
+    mindset: ['유연한 사고를 유지하세요', '성장 마인드셋을 가지세요', '새로운 것에 도전하세요', '희망을 품으세요'],
+  },
+  '화': {
+    health: ['심장 건강을 챙기세요', '혈압 관리가 필요합니다', '과로를 피하세요', '열이 많으니 시원한 음식을 드세요'],
+    relationship: ['열정적인 만남이 있습니다', '적극적으로 다가가세요', '따뜻한 말 한마디가 관계를 살립니다', '칭찬을 아끼지 마세요'],
+    career: ['프레젠테이션에서 빛납니다', '리더십을 발휘하세요', '열정을 보여주세요', '도전적인 업무에 적합합니다'],
+    mindset: ['열정을 불태우세요', '자신감을 가지세요', '밝은 에너지를 퍼뜨리세요', '긍정적으로 생각하세요'],
+  },
+  '토': {
+    health: ['소화기 건강을 챙기세요', '위장 관리가 중요합니다', '규칙적인 식사를 하세요', '단 음식을 줄이세요'],
+    relationship: ['신뢰를 쌓는 시기입니다', '안정적인 관계가 발전합니다', '가족과의 시간을 늘리세요', '진심을 담아 대화하세요'],
+    career: ['중재자 역할에 적합합니다', '조율 능력이 빛납니다', '안정적인 업무 환경을 만드세요', '꾸준함이 인정받습니다'],
+    mindset: ['중심을 잡으세요', '조급해하지 마세요', '묵묵히 나아가세요', '균형을 유지하세요'],
+  },
+  '금': {
+    health: ['호흡기 건강에 주의하세요', '피부 관리가 필요합니다', '맑은 공기를 마시세요', '금연을 권합니다'],
+    relationship: ['진심 어린 대화가 필요합니다', '솔직함이 관계를 살립니다', '예의를 갖추세요', '질보다 양의 관계를 정리하세요'],
+    career: ['분석적 업무에서 빛납니다', '정밀한 작업이 좋습니다', '마무리 능력을 보여주세요', '전문성을 키우세요'],
+    mindset: ['결단력을 가지세요', '군더더기를 버리세요', '핵심에 집중하세요', '깔끔하게 정리하세요'],
+  },
+  '수': {
+    health: ['신장 건강을 챙기세요', '수분 섭취를 늘리세요', '하체 운동을 하세요', '냉한 음식을 줄이세요'],
+    relationship: ['깊은 교류가 있습니다', '비밀을 지켜주세요', '경청이 사랑입니다', '마음을 열어보세요'],
+    career: ['연구/분석 업무에 적합합니다', '창의적 아이디어가 샘솟습니다', '심층적인 작업이 좋습니다', '지혜를 발휘하세요'],
+    mindset: ['직관을 믿으세요', '내면의 소리에 귀 기울이세요', '깊이 생각하세요', '흐르듯이 살아가세요'],
+  },
+};
+
+// 일별 운세 흐름 (1~10일 주기)
+const DAILY_FORTUNE_CYCLE = [
+  { day: '1일', theme: '시작', tip: '새로운 일을 시작하기 좋은 날' },
+  { day: '2일', theme: '협력', tip: '사람들과 함께 일하면 좋은 날' },
+  { day: '3일', theme: '창조', tip: '창의적인 작업에 집중하세요' },
+  { day: '4일', theme: '안정', tip: '차분하게 기존 업무를 처리하세요' },
+  { day: '5일', theme: '변화', tip: '작은 변화를 시도해보세요' },
+  { day: '6일', theme: '조화', tip: '균형과 조화를 추구하세요' },
+  { day: '7일', theme: '성찰', tip: '한 주를 돌아보며 반성하세요' },
+  { day: '8일', theme: '행운', tip: '뜻밖의 행운이 찾아올 수 있습니다' },
+  { day: '9일', theme: '완성', tip: '미뤄둔 일을 마무리하세요' },
+  { day: '10일', theme: '재충전', tip: '휴식과 충전이 필요한 날입니다' },
+];
+
+// 십성별 이달의 목표
+const TEN_GOD_MONTHLY_GOALS: Record<string, {
+  mainGoal: string;
+  subGoals: string[];
+  avoidGoals: string[];
+}> = {
+  '비견': {
+    mainGoal: '함께 성장하는 한 달',
+    subGoals: ['동료와 협업 프로젝트 완수', '새로운 네트워크 3명 만들기', '팀 빌딩 활동 참여'],
+    avoidGoals: ['혼자 모든 것을 해결하려 하지 마세요', '경쟁심에 불타지 마세요'],
+  },
+  '겁재': {
+    mainGoal: '지키고 보존하는 한 달',
+    subGoals: ['비상금 10% 증액', '건강검진 받기', '스트레스 관리 루틴 만들기'],
+    avoidGoals: ['큰 투자나 도박 금지', '충동구매 자제'],
+  },
+  '식신': {
+    mainGoal: '창의력을 발휘하는 한 달',
+    subGoals: ['새로운 취미 하나 시작하기', '맛집 5곳 탐방', '창작물 하나 완성하기'],
+    avoidGoals: ['과식 주의', '산만해지지 않도록 주의'],
+  },
+  '상관': {
+    mainGoal: '표현을 절제하는 한 달',
+    subGoals: ['하루 10분 명상하기', '일기 쓰기', '듣기 연습하기'],
+    avoidGoals: ['논쟁 피하기', '음주 후 연락 금지'],
+  },
+  '편재': {
+    mainGoal: '기회를 포착하는 한 달',
+    subGoals: ['새 투자처 1개 발굴', '영업/세일즈 활동 강화', '재테크 공부하기'],
+    avoidGoals: ['도박성 투자 금지', '급하게 결정하지 않기'],
+  },
+  '정재': {
+    mainGoal: '성실하게 노력하는 한 달',
+    subGoals: ['계획표 세우고 실천하기', '저축액 목표 달성', '자격증이나 스킬 하나 완성'],
+    avoidGoals: ['게으름 피우지 않기', '편법 사용하지 않기'],
+  },
+  '편관': {
+    mainGoal: '인내하며 견디는 한 달',
+    subGoals: ['스트레스 관리법 3가지 실천', '체력 기르기', '멘탈 강화 훈련'],
+    avoidGoals: ['윗사람과 충돌하지 않기', '과로 금지'],
+  },
+  '정관': {
+    mainGoal: '원칙을 지키는 한 달',
+    subGoals: ['규칙적인 생활 습관 만들기', '공식 업무 완수', '서류 정리하기'],
+    avoidGoals: ['약속 어기지 않기', '편법 사용 금지'],
+  },
+  '편인': {
+    mainGoal: '배우고 성장하는 한 달',
+    subGoals: ['책 3권 읽기', '온라인 강의 수강', '새 기술 하나 배우기'],
+    avoidGoals: ['행동 미루지 않기', '공상에만 빠지지 않기'],
+  },
+  '정인': {
+    mainGoal: '감사하며 보답하는 한 달',
+    subGoals: ['부모님께 안부 전화', '은사에게 감사 인사', '멘토 만남 가지기'],
+    avoidGoals: ['은혜 잊지 않기', '교만하지 않기'],
+  },
+};
+
 export default function MonthlyFortuneResult({ formData, onReset, onBack }: MonthlyFortuneResultProps) {
   // 사용자의 일주 계산
   const userDayPillar = getDayPillar(formData.year, formData.month, formData.day);
@@ -374,6 +673,25 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack }: Mont
   };
 
   const scoreColor = getScoreColor(finalScore);
+
+  // 추가 데이터 가져오기
+  const weeklyFortune = TEN_GOD_WEEKLY[tenGod] || TEN_GOD_WEEKLY['비견'];
+  const luckyItems = ELEMENT_LUCKY_ITEMS[userElement] || ELEMENT_LUCKY_ITEMS['목'];
+  const mantras = TEN_GOD_MANTRAS[tenGod] || TEN_GOD_MANTRAS['비견'];
+  const elementAdvice = ELEMENT_MONTHLY_ADVICE[userElement] || ELEMENT_MONTHLY_ADVICE['목'];
+  const monthlyGoals = TEN_GOD_MONTHLY_GOALS[tenGod] || TEN_GOD_MONTHLY_GOALS['비견'];
+
+  // 오행 아이콘 가져오기
+  const getElementIcon = (element: string) => {
+    switch (element) {
+      case '목': return <Leaf className="w-5 h-5 text-green-400" />;
+      case '화': return <Flame className="w-5 h-5 text-red-400" />;
+      case '토': return <Mountain className="w-5 h-5 text-yellow-400" />;
+      case '금': return <Zap className="w-5 h-5 text-gray-300" />;
+      case '수': return <Droplets className="w-5 h-5 text-blue-400" />;
+      default: return <Star className="w-5 h-5 text-purple-400" />;
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -631,6 +949,263 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack }: Mont
             {fortune.advice.map((advice, i) => (
               <p key={i} className="text-white text-lg leading-relaxed">
                 &ldquo;{advice}&rdquo;
+              </p>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 주간별 운세 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-indigo-400" />
+            {targetMonth}월 주간별 운세
+          </h2>
+          <div className="space-y-3">
+            {[
+              { week: '1주차', data: weeklyFortune.week1 },
+              { week: '2주차', data: weeklyFortune.week2 },
+              { week: '3주차', data: weeklyFortune.week3 },
+              { week: '4주차', data: weeklyFortune.week4 },
+            ].map(({ week, data }, i) => (
+              <div key={i} className="bg-slate-800/50 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-indigo-300 font-medium">{week}</span>
+                    <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 text-xs rounded-full">
+                      #{data.theme}
+                    </span>
+                  </div>
+                  <span className={`font-bold ${getScoreColor(data.score).text}`}>{data.score}점</span>
+                </div>
+                <ProgressBar score={data.score} color={getScoreColor(data.score).fill} />
+                <p className="text-slate-400 text-sm mt-2">{data.tip}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 이달의 목표 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-emerald-400" />
+            이달의 목표
+          </h2>
+          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-4">
+            <p className="text-emerald-300 text-lg font-bold text-center">
+              &ldquo;{monthlyGoals.mainGoal}&rdquo;
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-3">
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <h4 className="text-emerald-400 font-medium text-sm mb-2 flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                달성 목표
+              </h4>
+              <ul className="space-y-1">
+                {monthlyGoals.subGoals.map((goal, i) => (
+                  <li key={i} className="text-slate-300 text-sm flex items-start gap-2">
+                    <span className="text-emerald-400">•</span>
+                    {goal}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <h4 className="text-red-400 font-medium text-sm mb-2 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" />
+                주의 사항
+              </h4>
+              <ul className="space-y-1">
+                {monthlyGoals.avoidGoals.map((goal, i) => (
+                  <li key={i} className="text-slate-300 text-sm flex items-start gap-2">
+                    <span className="text-red-400">•</span>
+                    {goal}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 행운 아이템 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            {getElementIcon(userElement)}
+            {userElement} 오행 행운 아이템
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            {/* 행운 색상 */}
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Palette className="w-4 h-4 text-pink-400" />
+                <span className="text-pink-400 font-medium text-sm">행운 색상</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {luckyItems.colors.slice(0, 3).map((color, i) => (
+                  <span key={i} className="px-2 py-1 bg-pink-500/20 text-pink-300 text-xs rounded-full">
+                    {color}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* 행운 숫자 */}
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Hash className="w-4 h-4 text-yellow-400" />
+                <span className="text-yellow-400 font-medium text-sm">행운 숫자</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {luckyItems.numbers.slice(0, 4).map((num, i) => (
+                  <span key={i} className="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded-full">
+                    {num}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* 행운 방향 */}
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Compass className="w-4 h-4 text-cyan-400" />
+                <span className="text-cyan-400 font-medium text-sm">행운 방향</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {luckyItems.directions.map((dir, i) => (
+                  <span key={i} className="px-2 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded-full">
+                    {dir}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* 행운 음식 */}
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Utensils className="w-4 h-4 text-orange-400" />
+                <span className="text-orange-400 font-medium text-sm">행운 음식</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {luckyItems.foods.slice(0, 3).map((food, i) => (
+                  <span key={i} className="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded-full">
+                    {food}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 추천 활동 */}
+          <div className="mt-4 bg-slate-800/50 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-violet-400" />
+              <span className="text-violet-400 font-medium text-sm">추천 활동</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {luckyItems.activities.map((activity, i) => (
+                <span key={i} className="px-3 py-1 bg-violet-500/20 text-violet-300 text-sm rounded-full">
+                  {activity}
+                </span>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 오행별 상세 조언 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            {getElementIcon(userElement)}
+            {userElement} 오행 {targetMonth}월 심화 조언
+          </h2>
+          <div className="space-y-4">
+            {/* 건강 */}
+            <div className="bg-green-500/10 rounded-xl p-4">
+              <h4 className="text-green-400 font-medium text-sm mb-2 flex items-center gap-2">
+                <Activity className="w-4 h-4" />
+                건강 관리
+              </h4>
+              <ul className="space-y-1">
+                {elementAdvice.health.map((advice, i) => (
+                  <li key={i} className="text-slate-300 text-sm">• {advice}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 인간관계 */}
+            <div className="bg-pink-500/10 rounded-xl p-4">
+              <h4 className="text-pink-400 font-medium text-sm mb-2 flex items-center gap-2">
+                <Heart className="w-4 h-4" />
+                인간관계
+              </h4>
+              <ul className="space-y-1">
+                {elementAdvice.relationship.map((advice, i) => (
+                  <li key={i} className="text-slate-300 text-sm">• {advice}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 직장/경력 */}
+            <div className="bg-blue-500/10 rounded-xl p-4">
+              <h4 className="text-blue-400 font-medium text-sm mb-2 flex items-center gap-2">
+                <Briefcase className="w-4 h-4" />
+                직장/경력
+              </h4>
+              <ul className="space-y-1">
+                {elementAdvice.career.map((advice, i) => (
+                  <li key={i} className="text-slate-300 text-sm">• {advice}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 마인드셋 */}
+            <div className="bg-purple-500/10 rounded-xl p-4">
+              <h4 className="text-purple-400 font-medium text-sm mb-2 flex items-center gap-2">
+                <Lightbulb className="w-4 h-4" />
+                마음가짐
+              </h4>
+              <ul className="space-y-1">
+                {elementAdvice.mindset.map((advice, i) => (
+                  <li key={i} className="text-slate-300 text-sm">• {advice}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 일별 운세 흐름 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-amber-400" />
+            일별 운세 흐름 (10일 주기)
+          </h2>
+          <div className="grid grid-cols-2 gap-2">
+            {DAILY_FORTUNE_CYCLE.map((item, i) => (
+              <div key={i} className="bg-slate-800/50 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-amber-300 font-medium text-sm">{item.day}</span>
+                  <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-xs rounded-full">
+                    {item.theme}
+                  </span>
+                </div>
+                <p className="text-slate-400 text-xs">{item.tip}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 이달의 명언 */}
+        <motion.div
+          variants={itemVariants}
+          className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-3xl p-6 mb-6"
+        >
+          <h2 className="text-lg font-bold text-amber-300 mb-4 flex items-center gap-2">
+            <Quote className="w-5 h-5" />
+            이달의 명언
+          </h2>
+          <div className="space-y-4">
+            {mantras.map((mantra, i) => (
+              <p key={i} className="text-white text-center leading-relaxed" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+                &ldquo;{mantra}&rdquo;
               </p>
             ))}
           </div>
