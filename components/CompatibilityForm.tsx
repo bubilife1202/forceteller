@@ -11,7 +11,9 @@ export interface PersonData {
   month: number;
   day: number;
   hour: number;
+  minute: number;
   timeUnknown: boolean;
+  timeInputType: 'exact' | 'branch' | 'unknown';
 }
 
 export interface CompatibilityFormData {
@@ -28,22 +30,22 @@ interface CompatibilityFormProps {
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
 const months = Array.from({ length: 12 }, (_, i) => i + 1);
-const hours = Array.from({ length: 24 }, (_, i) => i);
 
-const hourLabels: Record<number, string> = {
-  0: '자시 (23:30~01:30)',
-  1: '축시 (01:30~03:30)',
-  3: '인시 (03:30~05:30)',
-  5: '묘시 (05:30~07:30)',
-  7: '진시 (07:30~09:30)',
-  9: '사시 (09:30~11:30)',
-  11: '오시 (11:30~13:30)',
-  13: '미시 (13:30~15:30)',
-  15: '신시 (15:30~17:30)',
-  17: '유시 (17:30~19:30)',
-  19: '술시 (19:30~21:30)',
-  21: '해시 (21:30~23:30)',
-};
+// 시진 (12지지 시간대)
+const branchHours = [
+  { value: 0, label: '자시 (23:30~01:30)' },
+  { value: 2, label: '축시 (01:30~03:30)' },
+  { value: 4, label: '인시 (03:30~05:30)' },
+  { value: 6, label: '묘시 (05:30~07:30)' },
+  { value: 8, label: '진시 (07:30~09:30)' },
+  { value: 10, label: '사시 (09:30~11:30)' },
+  { value: 12, label: '오시 (11:30~13:30)' },
+  { value: 14, label: '미시 (13:30~15:30)' },
+  { value: 16, label: '신시 (15:30~17:30)' },
+  { value: 18, label: '유시 (17:30~19:30)' },
+  { value: 20, label: '술시 (19:30~21:30)' },
+  { value: 22, label: '해시 (21:30~23:30)' },
+];
 
 const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month, 0).getDate();
@@ -64,7 +66,9 @@ export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFor
     month: 1,
     day: 1,
     hour: 12,
+    minute: 0,
     timeUnknown: false,
+    timeInputType: 'exact',
   });
 
   const [person2, setPerson2] = useState<PersonData>({
@@ -74,7 +78,9 @@ export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFor
     month: 1,
     day: 1,
     hour: 12,
+    minute: 0,
     timeUnknown: false,
+    timeInputType: 'exact',
   });
 
   const days1 = Array.from({ length: getDaysInMonth(person1.year, person1.month) }, (_, i) => i + 1);
@@ -260,28 +266,80 @@ export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFor
                       <Clock className="w-4 h-4 inline mr-1" />
                       태어난 시간
                     </label>
-                    <div className="space-y-2">
-                      <select
-                        value={person1.hour}
-                        onChange={(e) => setPerson1({ ...person1, hour: Number(e.target.value) })}
-                        disabled={person1.timeUnknown}
-                        className={`w-full px-3 py-3 bg-slate-800/50 border ${blueClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50`}
-                      >
-                        {hours.map((h) => (
-                          <option key={h} value={h}>
-                            {h}시 {hourLabels[h] ? `(${hourLabels[h].split(' ')[0]})` : ''}
-                          </option>
-                        ))}
-                      </select>
-                      <label className="flex items-center gap-2 text-slate-400 text-sm cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={person1.timeUnknown}
-                          onChange={(e) => setPerson1({ ...person1, timeUnknown: e.target.checked })}
-                          className="rounded border-slate-600"
-                        />
-                        시간을 모르겠어요
-                      </label>
+                    <div className="space-y-3">
+                      {/* 시간 입력 방식 선택 */}
+                      <div className="grid grid-cols-1 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setPerson1({ ...person1, timeInputType: 'exact', timeUnknown: false })}
+                          className={`py-2 px-3 rounded-lg text-sm transition-all ${
+                            person1.timeInputType === 'exact'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                          }`}
+                        >
+                          ⏰ 정확한 시간을 알아요
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPerson1({ ...person1, timeInputType: 'branch', timeUnknown: false, hour: 12, minute: 0 })}
+                          className={`py-2 px-3 rounded-lg text-sm transition-all ${
+                            person1.timeInputType === 'branch'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                          }`}
+                        >
+                          🕐 대략적인 시간대만 알아요
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPerson1({ ...person1, timeInputType: 'unknown', timeUnknown: true, hour: 12, minute: 0 })}
+                          className={`py-2 px-3 rounded-lg text-sm transition-all ${
+                            person1.timeInputType === 'unknown'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                          }`}
+                        >
+                          ❓ 시간을 모르겠어요
+                        </button>
+                      </div>
+
+                      {/* 정확한 시간 입력 */}
+                      {person1.timeInputType === 'exact' && (
+                        <div className="grid grid-cols-2 gap-2">
+                          <select
+                            value={person1.hour}
+                            onChange={(e) => setPerson1({ ...person1, hour: Number(e.target.value) })}
+                            className={`px-3 py-2 bg-slate-800/50 border ${blueClasses.border} rounded-lg text-white text-sm`}
+                          >
+                            {Array.from({ length: 24 }, (_, i) => i).map((h) => (
+                              <option key={h} value={h}>{h}시</option>
+                            ))}
+                          </select>
+                          <select
+                            value={person1.minute}
+                            onChange={(e) => setPerson1({ ...person1, minute: Number(e.target.value) })}
+                            className={`px-3 py-2 bg-slate-800/50 border ${blueClasses.border} rounded-lg text-white text-sm`}
+                          >
+                            {Array.from({ length: 60 }, (_, i) => i).map((m) => (
+                              <option key={m} value={m}>{m}분</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      {/* 시진 선택 */}
+                      {person1.timeInputType === 'branch' && (
+                        <select
+                          value={person1.hour}
+                          onChange={(e) => setPerson1({ ...person1, hour: Number(e.target.value) })}
+                          className={`w-full px-3 py-2 bg-slate-800/50 border ${blueClasses.border} rounded-lg text-white text-sm`}
+                        >
+                          {branchHours.map((b) => (
+                            <option key={b.value} value={b.value}>{b.label}</option>
+                          ))}
+                        </select>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -404,28 +462,80 @@ export default function CompatibilityForm({ onSubmit, onBack }: CompatibilityFor
                       <Clock className="w-4 h-4 inline mr-1" />
                       태어난 시간
                     </label>
-                    <div className="space-y-2">
-                      <select
-                        value={person2.hour}
-                        onChange={(e) => setPerson2({ ...person2, hour: Number(e.target.value) })}
-                        disabled={person2.timeUnknown}
-                        className={`w-full px-3 py-3 bg-slate-800/50 border ${pinkClasses.border} rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50`}
-                      >
-                        {hours.map((h) => (
-                          <option key={h} value={h}>
-                            {h}시 {hourLabels[h] ? `(${hourLabels[h].split(' ')[0]})` : ''}
-                          </option>
-                        ))}
-                      </select>
-                      <label className="flex items-center gap-2 text-slate-400 text-sm cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={person2.timeUnknown}
-                          onChange={(e) => setPerson2({ ...person2, timeUnknown: e.target.checked })}
-                          className="rounded border-slate-600"
-                        />
-                        시간을 모르겠어요
-                      </label>
+                    <div className="space-y-3">
+                      {/* 시간 입력 방식 선택 */}
+                      <div className="grid grid-cols-1 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setPerson2({ ...person2, timeInputType: 'exact', timeUnknown: false })}
+                          className={`py-2 px-3 rounded-lg text-sm transition-all ${
+                            person2.timeInputType === 'exact'
+                              ? 'bg-pink-500 text-white'
+                              : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                          }`}
+                        >
+                          ⏰ 정확한 시간을 알아요
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPerson2({ ...person2, timeInputType: 'branch', timeUnknown: false, hour: 12, minute: 0 })}
+                          className={`py-2 px-3 rounded-lg text-sm transition-all ${
+                            person2.timeInputType === 'branch'
+                              ? 'bg-pink-500 text-white'
+                              : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                          }`}
+                        >
+                          🕐 대략적인 시간대만 알아요
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPerson2({ ...person2, timeInputType: 'unknown', timeUnknown: true, hour: 12, minute: 0 })}
+                          className={`py-2 px-3 rounded-lg text-sm transition-all ${
+                            person2.timeInputType === 'unknown'
+                              ? 'bg-pink-500 text-white'
+                              : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+                          }`}
+                        >
+                          ❓ 시간을 모르겠어요
+                        </button>
+                      </div>
+
+                      {/* 정확한 시간 입력 */}
+                      {person2.timeInputType === 'exact' && (
+                        <div className="grid grid-cols-2 gap-2">
+                          <select
+                            value={person2.hour}
+                            onChange={(e) => setPerson2({ ...person2, hour: Number(e.target.value) })}
+                            className={`px-3 py-2 bg-slate-800/50 border ${pinkClasses.border} rounded-lg text-white text-sm`}
+                          >
+                            {Array.from({ length: 24 }, (_, i) => i).map((h) => (
+                              <option key={h} value={h}>{h}시</option>
+                            ))}
+                          </select>
+                          <select
+                            value={person2.minute}
+                            onChange={(e) => setPerson2({ ...person2, minute: Number(e.target.value) })}
+                            className={`px-3 py-2 bg-slate-800/50 border ${pinkClasses.border} rounded-lg text-white text-sm`}
+                          >
+                            {Array.from({ length: 60 }, (_, i) => i).map((m) => (
+                              <option key={m} value={m}>{m}분</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      {/* 시진 선택 */}
+                      {person2.timeInputType === 'branch' && (
+                        <select
+                          value={person2.hour}
+                          onChange={(e) => setPerson2({ ...person2, hour: Number(e.target.value) })}
+                          className={`w-full px-3 py-2 bg-slate-800/50 border ${pinkClasses.border} rounded-lg text-white text-sm`}
+                        >
+                          {branchHours.map((b) => (
+                            <option key={b.value} value={b.value}>{b.label}</option>
+                          ))}
+                        </select>
+                      )}
                     </div>
                   </div>
                 </div>
