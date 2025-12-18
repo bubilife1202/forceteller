@@ -420,8 +420,7 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
 
       {/* 안내 문구 */}
       <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p className="font-semibold text-indigo-600 dark:text-indigo-400">{t('../common.version')}</p>
-        <p className="mt-1">{t('footer.note')}</p>
+        <p>{t('footer.note')}</p>
       </div>
     </div>
   );

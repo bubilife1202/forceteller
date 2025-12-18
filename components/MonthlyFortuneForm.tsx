@@ -8,6 +8,7 @@ export interface MonthlyFortuneFormData {
   year: number;
   month: number;
   day: number;
+  targetMonth: number; // 보고 싶은 월
 }
 
 interface MonthlyFortuneFormProps {
@@ -17,10 +18,12 @@ interface MonthlyFortuneFormProps {
 
 export default function MonthlyFortuneForm({ onSubmit, onBack }: MonthlyFortuneFormProps) {
   const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
   const [formData, setFormData] = useState<MonthlyFortuneFormData>({
     year: 1990,
     month: 1,
     day: 1,
+    targetMonth: currentMonth,
   });
 
   const handleSubmit = () => {
@@ -72,7 +75,7 @@ export default function MonthlyFortuneForm({ onSubmit, onBack }: MonthlyFortuneF
           <h1 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
             월별 운세
           </h1>
-          <p className="text-purple-400">12개월 상세 운세를 확인하세요</p>
+          <p className="text-purple-400">2026년 원하는 달의 상세 운세</p>
         </motion.div>
 
         {/* 입력 폼 */}
@@ -127,6 +130,31 @@ export default function MonthlyFortuneForm({ onSubmit, onBack }: MonthlyFortuneF
           </div>
         </motion.div>
 
+        {/* 보고 싶은 월 선택 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span className="text-xl">📅</span>
+            보고 싶은 월 (2026년)
+          </h2>
+
+          <div className="grid grid-cols-4 gap-2">
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+              <button
+                key={month}
+                onClick={() => setFormData({ ...formData, targetMonth: month })}
+                className={`py-3 rounded-xl border transition-all text-center ${
+                  formData.targetMonth === month
+                    ? 'bg-purple-500/30 border-purple-400 text-purple-300'
+                    : 'bg-slate-800/50 border-slate-600 text-slate-300 hover:border-slate-500'
+                }`}
+              >
+                <span className="text-lg font-bold">{month}</span>
+                <span className="text-xs">월</span>
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
         {/* 제출 버튼 */}
         <motion.div variants={itemVariants}>
           <button
@@ -134,10 +162,10 @@ export default function MonthlyFortuneForm({ onSubmit, onBack }: MonthlyFortuneF
             className="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl text-white font-bold text-lg hover:from-indigo-600 hover:to-purple-700 transition-all flex items-center justify-center gap-2 shadow-lg"
           >
             <Sparkles className="w-5 h-5" />
-            월별 운세 보기
+            {formData.targetMonth}월 운세 보기
           </button>
           <p className="text-slate-500 text-xs text-center mt-3">
-            2025년 12개월 운세를 분석합니다
+            2026년 {formData.targetMonth}월의 상세 운세를 분석합니다
           </p>
         </motion.div>
       </div>

@@ -161,8 +161,7 @@ export default function ChatGPTPromptPage() {
 
           {/* 하단 정보 */}
           <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-            <p>팔자왕 만세력 v2.5.0</p>
-            <p className="mt-2">
+            <p>
               <Link href={`/${locale}`} className="text-indigo-600 dark:text-indigo-400 hover:underline">
                 {t('footer.home')}
               </Link>

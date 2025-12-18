@@ -1,9 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Heart, ArrowLeft, RefreshCw, Star, Calendar, AlertTriangle, Sparkles, TrendingUp, Clock } from 'lucide-react';
+import { Heart, ArrowLeft, RefreshCw, Star, AlertTriangle, Sparkles, TrendingUp, Clock, MessageCircle, Lightbulb, Target, Shield, Flame, Moon, Sun } from 'lucide-react';
 import { RekindlingFormData } from './RekindlingForm';
 import { getDayPillar } from '@/lib/saju-calculator';
+import { generateStyledHTML, downloadHTML } from '@/lib/html-download';
+import DownloadButton from './ui/DownloadButton';
 
 interface RekindlingResultProps {
   formData: RekindlingFormData;
@@ -20,6 +22,75 @@ const ELEMENT_RELATIONS: Record<string, Record<string, string>> = {
   '수': { '목': '설기', '화': '재성', '토': '관성', '금': '인성', '수': '비화' },
 };
 
+// 이별 사유별 분석
+const SEPARATION_ANALYSIS: Record<string, {
+  healing: string;
+  chance: number;
+  advice: string[];
+  timeline: string;
+}> = {
+  'fight': {
+    healing: '시간이 지나면 감정이 정리되어 대화가 가능해질 수 있습니다.',
+    chance: 15,
+    advice: ['먼저 자신의 행동을 돌아보세요', '사과할 부분이 있다면 진심을 담아 전하세요', '상대의 입장에서 생각해보세요'],
+    timeline: '감정 정리에 2-3개월 정도 필요할 수 있습니다',
+  },
+  'distance': {
+    healing: '물리적 거리는 마음까지 멀어지게 하지 않습니다.',
+    chance: 20,
+    advice: ['상황이 바뀔 수 있는지 확인해보세요', '원거리 연애의 방법을 함께 고민해보세요', '서로의 노력이 필요합니다'],
+    timeline: '환경 변화가 생기면 기회가 올 수 있습니다',
+  },
+  'timing': {
+    healing: '타이밍은 다시 찾아올 수 있습니다. 기다림도 사랑입니다.',
+    chance: 25,
+    advice: ['지금은 각자 성장할 시간이에요', '연락을 완전히 끊지는 마세요', '좋은 인연은 다시 만나게 됩니다'],
+    timeline: '6개월~1년 후 상황이 나아질 수 있습니다',
+  },
+  'family': {
+    healing: '가족의 반대는 시간이 지나면 변할 수 있습니다.',
+    chance: 10,
+    advice: ['상대 가족의 우려를 이해해보세요', '당신의 진심을 보여줄 방법을 찾으세요', '조급해하지 마세요'],
+    timeline: '장기적인 관점에서 접근이 필요합니다',
+  },
+  'cheating': {
+    healing: '신뢰가 깨진 관계는 회복이 어렵습니다.',
+    chance: -20,
+    advice: ['정말 다시 만나고 싶은지 신중히 생각하세요', '같은 실수가 반복되지 않을까요?', '새로운 시작도 고려해보세요'],
+    timeline: '신뢰 회복에는 오랜 시간이 필요합니다',
+  },
+  'other': {
+    healing: '이별의 진짜 이유를 먼저 파악해야 합니다.',
+    chance: 0,
+    advice: ['왜 헤어졌는지 정확히 알아야 해요', '상대의 진심을 확인해보세요', '막연한 기대보다 현실을 직시하세요'],
+    timeline: '원인 파악 후 방향을 정하세요',
+  },
+};
+
+// 현재 감정별 메시지
+const FEELING_MESSAGES: Record<string, { title: string; message: string; advice: string }> = {
+  'miss': {
+    title: '그리움이 가득하시군요',
+    message: '보고 싶다는 마음은 진심의 증거입니다. 하지만 그리움만으로는 재회가 이루어지지 않아요. 당신의 마음을 전하되, 상대방의 마음도 존중해주세요.',
+    advice: '그리움을 담은 짧은 메시지를 보내보는 건 어떨까요?',
+  },
+  'regret': {
+    title: '후회가 되시는군요',
+    message: '후회는 성장의 시작입니다. 무엇이 잘못되었는지 알았다면, 그것을 고칠 준비가 되었다는 뜻이에요. 같은 실수를 반복하지 않겠다는 다짐이 중요합니다.',
+    advice: '진심 어린 사과와 함께 변화된 모습을 보여주세요',
+  },
+  'confused': {
+    title: '마음이 복잡하시군요',
+    message: '혼란스러운 것은 자연스러운 감정이에요. 지금 당장 결론을 내리지 않아도 됩니다. 시간을 갖고 자신의 진짜 마음을 들여다보세요.',
+    advice: '조급해하지 말고 천천히 마음을 정리하세요',
+  },
+  'hopeful': {
+    title: '희망을 가지고 계시네요',
+    message: '다시 만나고 싶다는 마음은 아름답습니다. 하지만 일방적인 희망보다는 상대의 마음도 확인해보세요. 서로 같은 마음이라면 가능성은 충분합니다.',
+    advice: '적절한 타이밍에 용기 내어 연락해보세요',
+  },
+};
+
 export default function RekindlingResult({ formData, onReset, onBack }: RekindlingResultProps) {
   // 두 사람의 일주 계산
   const myDayPillar = getDayPillar(formData.myYear, formData.myMonth, formData.myDay);
@@ -29,7 +100,7 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
   const today = new Date();
   const todayPillar = getDayPillar(today.getFullYear(), today.getMonth() + 1, today.getDate());
 
-  // 오행 추출 (천간의 오행)
+  // 오행 추출
   const myElement = myDayPillar.stem.element;
   const partnerElement = partnerDayPillar.stem.element;
   const todayElement = todayPillar.stem.element;
@@ -37,29 +108,31 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
   // 관계 분석
   const myToPartner = ELEMENT_RELATIONS[myElement]?.[partnerElement] || '비화';
   const partnerToMe = ELEMENT_RELATIONS[partnerElement]?.[myElement] || '비화';
-
-  // 현재 운 분석
   const myTodayRelation = ELEMENT_RELATIONS[myElement]?.[todayElement] || '비화';
 
-  // 재회 가능성 점수 계산 (0~100)
+  // 이름 설정 (없으면 기본값)
+  const myName = formData.myName || '나';
+  const partnerName = formData.partnerName || '상대방';
+
+  // 재회 가능성 점수 계산
   const calculateRekindlingScore = () => {
-    let score = 50; // 기본 점수
+    let score = 50;
 
     // 궁합에 따른 점수
-    if (myToPartner === '비화' || partnerToMe === '비화') score += 15; // 같은 오행 - 친밀함
-    if (myToPartner === '인성' || partnerToMe === '인성') score += 20; // 보호받는 관계
-    if (myToPartner === '재성' && formData.myGender === 'male') score += 10; // 남자가 여자를 재성으로
+    if (myToPartner === '비화' || partnerToMe === '비화') score += 15;
+    if (myToPartner === '인성' || partnerToMe === '인성') score += 20;
+    if (myToPartner === '재성' && formData.myGender === 'male') score += 10;
     if (partnerToMe === '재성' && formData.myGender === 'female') score += 10;
-    if (myToPartner === '관성' && formData.myGender === 'female') score += 10; // 여자가 남자를 관성으로
+    if (myToPartner === '관성' && formData.myGender === 'female') score += 10;
     if (partnerToMe === '관성' && formData.myGender === 'male') score += 10;
-    if (myToPartner === '설기' || partnerToMe === '설기') score -= 10; // 에너지 소모
+    if (myToPartner === '설기' || partnerToMe === '설기') score -= 10;
 
     // 오늘의 운
     if (myTodayRelation === '인성') score += 10;
     if (myTodayRelation === '비화') score += 5;
     if (myTodayRelation === '관성') score -= 5;
 
-    // 헤어진 기간에 따른 조정
+    // 헤어진 기간
     if (formData.separationMonths <= 3) score += 15;
     else if (formData.separationMonths <= 6) score += 10;
     else if (formData.separationMonths <= 12) score += 5;
@@ -69,90 +142,216 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
     if (formData.relationshipType === 'spouse') score += 10;
     if (formData.relationshipType === 'friend') score -= 5;
 
+    // 이별 사유
+    score += SEPARATION_ANALYSIS[formData.separationReason]?.chance || 0;
+
     return Math.min(95, Math.max(15, score));
   };
 
   const rekindlingScore = calculateRekindlingScore();
+  const separationAnalysis = SEPARATION_ANALYSIS[formData.separationReason];
+  const feelingMessage = FEELING_MESSAGES[formData.currentFeelings];
 
   // 점수에 따른 해석
   const getScoreInterpretation = (score: number) => {
-    if (score >= 80) return { level: '매우 높음', color: 'text-green-400', bg: 'bg-green-500/20', desc: '재회의 가능성이 매우 높습니다. 적극적으로 다가가세요.' };
-    if (score >= 65) return { level: '높음', color: 'text-emerald-400', bg: 'bg-emerald-500/20', desc: '좋은 기운이 있습니다. 자연스럽게 연락해보세요.' };
-    if (score >= 50) return { level: '보통', color: 'text-yellow-400', bg: 'bg-yellow-500/20', desc: '가능성은 있지만 신중하게 접근하세요.' };
-    if (score >= 35) return { level: '낮음', color: 'text-orange-400', bg: 'bg-orange-500/20', desc: '당분간은 거리를 두는 것이 좋겠습니다.' };
-    return { level: '매우 낮음', color: 'text-red-400', bg: 'bg-red-500/20', desc: '새로운 인연을 찾아보는 것을 권합니다.' };
+    if (score >= 80) return { level: '매우 높음', color: 'text-green-400', bg: 'bg-green-500/20', border: 'border-green-500/30', emoji: '💖', desc: '두 분의 인연은 아직 이어져 있습니다.' };
+    if (score >= 65) return { level: '높음', color: 'text-emerald-400', bg: 'bg-emerald-500/20', border: 'border-emerald-500/30', emoji: '💕', desc: '재회의 가능성이 충분히 있습니다.' };
+    if (score >= 50) return { level: '보통', color: 'text-yellow-400', bg: 'bg-yellow-500/20', border: 'border-yellow-500/30', emoji: '💛', desc: '노력 여하에 따라 달라질 수 있습니다.' };
+    if (score >= 35) return { level: '낮음', color: 'text-orange-400', bg: 'bg-orange-500/20', border: 'border-orange-500/30', emoji: '🧡', desc: '지금은 기다림이 필요한 시기입니다.' };
+    return { level: '매우 낮음', color: 'text-red-400', bg: 'bg-red-500/20', border: 'border-red-500/30', emoji: '❤️‍🩹', desc: '새로운 인연을 만날 준비를 해보세요.' };
   };
 
   const interpretation = getScoreInterpretation(rekindlingScore);
 
-  // 궁합 해석
-  const getCompatibilityText = () => {
-    const texts: string[] = [];
+  // 궁합 상세 분석
+  const getDetailedCompatibility = () => {
+    const analysis = [];
 
-    if (myToPartner === '인성') texts.push('상대방은 당신을 편안하게 해주는 존재입니다.');
-    if (myToPartner === '비화') texts.push('서로 비슷한 성향으로 친밀감을 느끼기 쉽습니다.');
-    if (myToPartner === '재성') texts.push('당신이 상대를 리드하는 관계입니다.');
-    if (myToPartner === '관성') texts.push('상대방이 당신에게 자극을 주는 관계입니다.');
-    if (myToPartner === '설기') texts.push('함께 있으면 에너지가 소모되는 느낌일 수 있습니다.');
+    // 내가 상대를 어떻게 느끼는지
+    if (myToPartner === '인성') {
+      analysis.push({ icon: '🛡️', title: `${partnerName}님이 나에게 주는 느낌`, text: '편안하고 안정감을 주는 사람이에요. 함께 있으면 마음이 놓이는 존재입니다.' });
+    } else if (myToPartner === '비화') {
+      analysis.push({ icon: '🤝', title: `${partnerName}님이 나에게 주는 느낌`, text: '나와 비슷한 사람이에요. 서로를 잘 이해하고 공감할 수 있습니다.' });
+    } else if (myToPartner === '재성') {
+      analysis.push({ icon: '💎', title: `${partnerName}님이 나에게 주는 느낌`, text: '내가 가지고 싶은, 끌리는 매력이 있는 사람이에요.' });
+    } else if (myToPartner === '관성') {
+      analysis.push({ icon: '⚡', title: `${partnerName}님이 나에게 주는 느낌`, text: '나를 긴장하게 만드는 사람이에요. 쉽지 않지만 그만큼 마음을 사로잡습니다.' });
+    } else if (myToPartner === '설기') {
+      analysis.push({ icon: '💨', title: `${partnerName}님이 나에게 주는 느낌`, text: '함께 있으면 에너지가 소모되는 느낌이 들 수 있어요.' });
+    }
 
-    if (partnerToMe === '인성') texts.push('당신은 상대방에게 안정감을 주는 사람입니다.');
-    if (partnerToMe === '재성') texts.push('상대방은 당신에게 끌림을 느끼는 편입니다.');
-    if (partnerToMe === '관성') texts.push('당신은 상대방에게 영향력 있는 존재입니다.');
+    // 상대가 나를 어떻게 느끼는지
+    if (partnerToMe === '인성') {
+      analysis.push({ icon: '🏠', title: `${myName}님이 상대에게 주는 느낌`, text: '당신은 상대방에게 안식처 같은 존재입니다. 편안함을 줍니다.' });
+    } else if (partnerToMe === '재성') {
+      analysis.push({ icon: '✨', title: `${myName}님이 상대에게 주는 느낌`, text: '상대방은 당신에게 끌림을 느끼는 편이에요. 매력적으로 보입니다.' });
+    } else if (partnerToMe === '관성') {
+      analysis.push({ icon: '👑', title: `${myName}님이 상대에게 주는 느낌`, text: '당신은 상대방에게 영향력 있는 존재예요. 무시할 수 없는 사람입니다.' });
+    }
 
-    return texts.length > 0 ? texts : ['두 분의 기운이 서로 조화를 이루고 있습니다.'];
+    return analysis;
   };
 
-  // 타이밍 조언
-  const getTimingAdvice = () => {
-    if (myTodayRelation === '인성') return '오늘은 마음이 편안해지는 날입니다. 연락하기 좋은 타이밍이에요.';
-    if (myTodayRelation === '비화') return '오늘은 자신감이 있는 날입니다. 솔직하게 표현해보세요.';
-    if (myTodayRelation === '설기') return '오늘은 표현력이 좋습니다. 진심을 전하기 좋아요.';
-    if (myTodayRelation === '재성') return '오늘은 적극적으로 행동하기 좋은 날입니다.';
-    if (myTodayRelation === '관성') return '오늘은 조심스럽게 접근하는 것이 좋겠습니다.';
-    return '차분하게 상황을 지켜보세요.';
-  };
+  // 재회 타이밍 분석
+  const getTimingAnalysis = () => {
+    const timing = [];
 
-  // 조언 생성
-  const getAdvice = () => {
-    const advice: string[] = [];
-
-    if (rekindlingScore >= 65) {
-      advice.push('두 분의 인연의 끈이 아직 이어져 있습니다.');
-      if (formData.separationMonths <= 6) {
-        advice.push('시간이 많이 지나지 않았으니 자연스럽게 연락해보세요.');
-      }
-      advice.push('과거의 문제점을 반복하지 않도록 노력하세요.');
-    } else if (rekindlingScore >= 50) {
-      advice.push('가능성은 있지만 서두르지 마세요.');
-      advice.push('먼저 자신의 마음을 정리하는 시간이 필요합니다.');
-      advice.push('상대방의 현재 상황을 파악해보세요.');
+    // 오늘의 운세
+    if (myTodayRelation === '인성') {
+      timing.push({ good: true, title: '오늘', desc: '마음이 편안해지는 날이에요. 연락하기 좋습니다.' });
+    } else if (myTodayRelation === '설기') {
+      timing.push({ good: true, title: '오늘', desc: '표현력이 좋은 날입니다. 진심을 전하세요.' });
+    } else if (myTodayRelation === '관성') {
+      timing.push({ good: false, title: '오늘', desc: '조금 긴장되는 날이에요. 신중하게 접근하세요.' });
     } else {
-      advice.push('지금은 재회보다 자기 성장에 집중하세요.');
-      advice.push('더 좋은 인연이 기다리고 있을 수 있습니다.');
-      advice.push('시간이 지나면 상황이 달라질 수 있어요.');
+      timing.push({ good: null, title: '오늘', desc: '평온한 에너지의 날입니다.' });
     }
 
-    return advice;
+    // 기간별 조언
+    if (formData.separationMonths <= 3) {
+      timing.push({ good: true, title: '시기적 분석', desc: '아직 감정이 살아있을 때예요. 너무 늦지 않게 연락해보세요.' });
+    } else if (formData.separationMonths <= 12) {
+      timing.push({ good: null, title: '시기적 분석', desc: '적당한 거리를 둔 시간이 지났어요. 자연스럽게 연락해볼 수 있습니다.' });
+    } else {
+      timing.push({ good: false, title: '시기적 분석', desc: '시간이 많이 지났어요. 새 출발의 의미로 접근하세요.' });
+    }
+
+    return timing;
   };
 
-  // 주의사항
-  const getWarnings = () => {
-    const warnings: string[] = [];
+  // 단계별 조언
+  const getStepByStepAdvice = () => {
+    const steps = [];
 
-    if (formData.separationMonths >= 24) {
-      warnings.push('오랜 시간이 지나 서로 많이 변했을 수 있습니다.');
-    }
-    if (myToPartner === '관성') {
-      warnings.push('상대방에게 집착하지 않도록 주의하세요.');
-    }
-    if (myToPartner === '설기') {
-      warnings.push('감정적으로 지치지 않도록 자기 관리를 하세요.');
-    }
-    if (formData.relationshipType === 'spouse') {
-      warnings.push('법적, 가족적 상황을 충분히 고려하세요.');
+    // Step 1: 마음 정리
+    steps.push({
+      step: 1,
+      title: '내 마음 정리하기',
+      desc: '재회를 원하는 이유가 외로움인지, 진짜 사랑인지 구분하세요.',
+      icon: Heart,
+    });
+
+    // Step 2: 준비
+    if (formData.separationReason === 'fight') {
+      steps.push({ step: 2, title: '변화 준비하기', desc: '같은 갈등이 반복되지 않도록 나의 문제점을 개선하세요.', icon: Lightbulb });
+    } else if (formData.separationReason === 'distance') {
+      steps.push({ step: 2, title: '현실적 방안 찾기', desc: '거리 문제를 해결할 수 있는 방법을 구체적으로 찾아보세요.', icon: Target });
+    } else {
+      steps.push({ step: 2, title: '자기 성장하기', desc: '더 나은 사람이 되어 다시 만났을 때 좋은 모습을 보여주세요.', icon: TrendingUp });
     }
 
-    return warnings;
+    // Step 3: 연락
+    steps.push({
+      step: 3,
+      title: '자연스럽게 연락하기',
+      desc: '갑작스러운 연락보다는 가벼운 안부부터 시작하세요.',
+      icon: MessageCircle,
+    });
+
+    // Step 4: 대화
+    steps.push({
+      step: 4,
+      title: '솔직하게 대화하기',
+      desc: '원했던 것, 아쉬웠던 것을 진심으로 이야기하세요.',
+      icon: Sparkles,
+    });
+
+    return steps;
+  };
+
+  // HTML 다운로드 함수
+  const handleDownload = async () => {
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const compatibilityItems = getDetailedCompatibility();
+    const stepItems = getStepByStepAdvice();
+
+    const content = `
+      <div class="section">
+        <div class="score-box">
+          <div style="font-size: 48px; margin-bottom: 8px;">${interpretation.emoji}</div>
+          <div class="score-value">${rekindlingScore}%</div>
+          <div class="score-label">재회 가능성: ${interpretation.level}</div>
+        </div>
+        <p style="text-align: center; color: white; font-size: 16px; margin-top: 16px;">${interpretation.desc}</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">👤</span> ${myName}님과 ${partnerName}님</div>
+        <div class="grid-2">
+          <div class="stat-card">
+            <div class="stat-label">${myName}님의 일주</div>
+            <div class="stat-value pink">${myDayPillar.stem.ko}${myDayPillar.branch.ko}</div>
+            <div style="font-size: 12px; color: #94a3b8;">${myElement} 오행</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">${partnerName}님의 일주</div>
+            <div class="stat-value purple">${partnerDayPillar.stem.ko}${partnerDayPillar.branch.ko}</div>
+            <div style="font-size: 12px; color: #94a3b8;">${partnerElement} 오행</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">💕</span> 두 사람의 궁합</div>
+        ${compatibilityItems.map(item => `
+          <div class="stat-card" style="margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="font-size: 20px;">${item.icon}</span>
+              <span style="color: #ec4899; font-weight: 700;">${item.title}</span>
+            </div>
+            <p style="color: #e2e8f0; font-size: 14px;">${item.text}</p>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">💔</span> 이별 원인 분석</div>
+        <div class="stat-card">
+          <p style="color: white; font-size: 16px; margin-bottom: 8px;">${separationAnalysis.healing}</p>
+          <p style="color: #f97316; font-size: 12px;">${separationAnalysis.timeline}</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">💭</span> ${feelingMessage.title}</div>
+        <div class="advice-box" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(219, 39, 119, 0.2)); border-color: rgba(236, 72, 153, 0.3);">
+          <p style="color: white; margin-bottom: 8px;">${feelingMessage.message}</p>
+          <p style="color: #f9a8d4; font-size: 14px;">💡 ${feelingMessage.advice}</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📋</span> 재회를 위한 단계별 조언</div>
+        ${stepItems.map(step => `
+          <div class="stat-card" style="margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(236, 72, 153, 0.2); display: flex; align-items: center; justify-content: center; color: #ec4899; font-weight: 700;">${step.step}</div>
+              <div>
+                <div style="color: white; font-weight: 700;">${step.title}</div>
+                <div style="color: #94a3b8; font-size: 12px;">${step.desc}</div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">⚠️</span> 주의사항</div>
+        ${separationAnalysis.advice.map(advice => `
+          <div class="list-item"><span class="bullet" style="color: #f97316;">•</span> ${advice}</div>
+        `).join('')}
+      </div>
+    `;
+
+    const html = generateStyledHTML({
+      title: `${myName}님과 ${partnerName}님의 재회 운세`,
+      date: `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`,
+      content,
+      primaryColor: '#ec4899',
+    });
+
+    downloadHTML(`재회운세_${myName}_${partnerName}.html`, html);
   };
 
   const containerVariants = {
@@ -167,6 +366,10 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
+
+  const compatibilityAnalysis = getDetailedCompatibility();
+  const timingAnalysis = getTimingAnalysis();
+  const stepByStepAdvice = getStepByStepAdvice();
 
   return (
     <motion.div
@@ -192,35 +395,40 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
             <Heart className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
-            재회 운세 결과
+            재회 운세
           </h1>
-          <p className="text-pink-400">두 분의 인연을 분석했습니다</p>
+          <p className="text-pink-400">{myName}님 ❤️ {partnerName}님</p>
         </motion.div>
 
-        {/* 점수 카드 */}
-        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6 text-center">
-          <h2 className="text-lg font-bold text-white mb-4">재회 가능성</h2>
+        {/* 메인 점수 카드 */}
+        <motion.div
+          variants={itemVariants}
+          className={`${interpretation.bg} border ${interpretation.border} rounded-3xl p-6 mb-6 text-center`}
+        >
+          <div className="text-6xl mb-4">{interpretation.emoji}</div>
 
-          <div className="relative w-40 h-40 mx-auto mb-4">
+          <div className="relative w-44 h-44 mx-auto mb-4">
             <svg className="w-full h-full transform -rotate-90">
               <circle
-                cx="80"
-                cy="80"
-                r="70"
+                cx="88"
+                cy="88"
+                r="78"
                 stroke="currentColor"
                 strokeWidth="12"
                 fill="none"
                 className="text-slate-700"
               />
-              <circle
-                cx="80"
-                cy="80"
-                r="70"
+              <motion.circle
+                cx="88"
+                cy="88"
+                r="78"
                 stroke="url(#gradient)"
                 strokeWidth="12"
                 fill="none"
                 strokeLinecap="round"
-                strokeDasharray={`${rekindlingScore * 4.4} 440`}
+                initial={{ strokeDasharray: `0 490` }}
+                animate={{ strokeDasharray: `${rekindlingScore * 4.9} 490` }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
               />
               <defs>
                 <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -230,104 +438,183 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl font-bold text-white">{rekindlingScore}</span>
-              <span className="text-slate-400 text-sm">/ 100</span>
+              <span className="text-5xl font-bold text-white">{rekindlingScore}</span>
+              <span className="text-slate-400 text-sm">%</span>
             </div>
           </div>
 
           <div className={`inline-block px-4 py-2 rounded-full ${interpretation.bg} ${interpretation.color} font-bold mb-3`}>
-            {interpretation.level}
+            재회 가능성: {interpretation.level}
           </div>
-          <p className="text-slate-300 text-sm">{interpretation.desc}</p>
+          <p className="text-white text-lg">{interpretation.desc}</p>
         </motion.div>
 
-        {/* 일주 분석 */}
+        {/* 감정 분석 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span className="text-xl">💭</span>
+            {feelingMessage.title}
+          </h2>
+          <p className="text-slate-300 leading-relaxed mb-4">{feelingMessage.message}</p>
+          <div className="bg-pink-500/10 border border-pink-500/30 rounded-xl p-4">
+            <div className="flex items-start gap-2">
+              <Lightbulb className="w-5 h-5 text-pink-400 flex-shrink-0 mt-0.5" />
+              <p className="text-pink-300 text-sm">{feelingMessage.advice}</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 두 사람의 사주 */}
         <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-pink-400" />
-            사주 분석
+            사주로 본 두 사람
           </h2>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="bg-slate-800/50 rounded-xl p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">나의 일주</p>
-              <p className="text-2xl font-bold text-pink-400">{myDayPillar.stem.ko}{myDayPillar.branch.ko}</p>
-              <p className="text-slate-500 text-xs mt-1">{myElement}(木火土金水)</p>
+              <p className="text-slate-400 text-sm mb-1">{myName}님</p>
+              <p className="text-3xl font-bold text-pink-400">{myDayPillar.stem.ko}{myDayPillar.branch.ko}</p>
+              <p className="text-slate-500 text-xs mt-1">{myElement} 오행</p>
             </div>
             <div className="bg-slate-800/50 rounded-xl p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">상대 일주</p>
-              <p className="text-2xl font-bold text-rose-400">{partnerDayPillar.stem.ko}{partnerDayPillar.branch.ko}</p>
-              <p className="text-slate-500 text-xs mt-1">{partnerElement}(木火土金水)</p>
+              <p className="text-slate-400 text-sm mb-1">{partnerName}님</p>
+              <p className="text-3xl font-bold text-rose-400">{partnerDayPillar.stem.ko}{partnerDayPillar.branch.ko}</p>
+              <p className="text-slate-500 text-xs mt-1">{partnerElement} 오행</p>
             </div>
           </div>
 
-          <div className="space-y-2">
-            {getCompatibilityText().map((text, i) => (
-              <p key={i} className="text-slate-300 text-sm flex items-start gap-2">
-                <Star className="w-4 h-4 text-pink-400 flex-shrink-0 mt-0.5" />
-                {text}
-              </p>
+          {/* 궁합 상세 분석 */}
+          <div className="space-y-3">
+            {compatibilityAnalysis.map((item, i) => (
+              <div key={i} className="bg-slate-800/50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">{item.icon}</span>
+                  <span className="text-pink-400 font-medium">{item.title}</span>
+                </div>
+                <p className="text-slate-300 text-sm">{item.text}</p>
+              </div>
             ))}
           </div>
         </motion.div>
 
-        {/* 오늘의 타이밍 */}
+        {/* 이별 원인 분석 */}
         <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-amber-400" />
-            오늘의 타이밍
+            <span className="text-xl">💔</span>
+            이별 원인 분석
           </h2>
 
           <div className="bg-slate-800/50 rounded-xl p-4 mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-amber-400 text-sm">오늘의 일주</p>
-                <p className="text-xl font-bold text-white">{todayPillar.stem.ko}{todayPillar.branch.ko}</p>
-              </div>
-            </div>
+            <p className="text-white text-lg mb-2">{separationAnalysis.healing}</p>
+            <p className="text-amber-400 text-sm flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              {separationAnalysis.timeline}
+            </p>
           </div>
 
-          <p className="text-slate-300 text-sm">{getTimingAdvice()}</p>
+          <div className="space-y-2">
+            <p className="text-slate-400 text-sm mb-2">이 상황에서의 조언:</p>
+            {separationAnalysis.advice.map((advice, i) => (
+              <div key={i} className="flex items-start gap-2 text-slate-300 text-sm">
+                <span className="text-orange-400">•</span>
+                {advice}
+              </div>
+            ))}
+          </div>
         </motion.div>
 
-        {/* 조언 */}
+        {/* 타이밍 분석 */}
         <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-emerald-400" />
-            재회를 위한 조언
+            <Clock className="w-5 h-5 text-amber-400" />
+            타이밍 분석
           </h2>
 
           <div className="space-y-3">
-            {getAdvice().map((advice, i) => (
-              <div key={i} className="flex items-start gap-3 bg-emerald-500/10 rounded-xl p-3">
-                <span className="text-emerald-400 font-bold">{i + 1}</span>
-                <p className="text-slate-300 text-sm">{advice}</p>
+            {timingAnalysis.map((timing, i) => (
+              <div key={i} className={`rounded-xl p-4 ${
+                timing.good === true ? 'bg-green-500/10 border border-green-500/30' :
+                timing.good === false ? 'bg-orange-500/10 border border-orange-500/30' :
+                'bg-slate-800/50'
+              }`}>
+                <div className="flex items-center gap-2 mb-1">
+                  {timing.good === true && <Sun className="w-4 h-4 text-green-400" />}
+                  {timing.good === false && <Moon className="w-4 h-4 text-orange-400" />}
+                  {timing.good === null && <Star className="w-4 h-4 text-slate-400" />}
+                  <span className={`font-medium ${
+                    timing.good === true ? 'text-green-400' :
+                    timing.good === false ? 'text-orange-400' : 'text-slate-300'
+                  }`}>{timing.title}</span>
+                </div>
+                <p className="text-slate-300 text-sm">{timing.desc}</p>
               </div>
             ))}
+          </div>
+        </motion.div>
+
+        {/* 단계별 조언 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-emerald-400" />
+            재회를 위한 단계별 가이드
+          </h2>
+
+          <div className="space-y-4">
+            {stepByStepAdvice.map((step) => {
+              const IconComponent = step.icon;
+              return (
+                <div key={step.step} className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-pink-400 font-bold">{step.step}</span>
+                  </div>
+                  <div className="flex-1 bg-slate-800/50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <IconComponent className="w-4 h-4 text-pink-400" />
+                      <span className="text-white font-medium">{step.title}</span>
+                    </div>
+                    <p className="text-slate-400 text-sm">{step.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
 
         {/* 주의사항 */}
-        {getWarnings().length > 0 && (
-          <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
-            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-orange-400" />
-              주의사항
-            </h2>
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-orange-400" />
+            꼭 기억하세요
+          </h2>
 
-            <div className="space-y-2">
-              {getWarnings().map((warning, i) => (
-                <p key={i} className="text-slate-300 text-sm flex items-start gap-2">
-                  <span className="text-orange-400">•</span>
-                  {warning}
-                </p>
-              ))}
+          <div className="space-y-3">
+            <div className="flex items-start gap-3 bg-orange-500/10 rounded-xl p-3">
+              <Shield className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
+              <p className="text-slate-300 text-sm">재회는 두 사람 모두의 마음이 맞아야 합니다. 일방적인 집착은 자신을 더 힘들게 할 뿐이에요.</p>
             </div>
-          </motion.div>
-        )}
+            <div className="flex items-start gap-3 bg-pink-500/10 rounded-xl p-3">
+              <Flame className="w-5 h-5 text-pink-400 flex-shrink-0 mt-0.5" />
+              <p className="text-slate-300 text-sm">같은 문제로 다시 헤어지지 않으려면, 서로 변화가 필요합니다. 사랑만으로는 부족해요.</p>
+            </div>
+            <div className="flex items-start gap-3 bg-emerald-500/10 rounded-xl p-3">
+              <Heart className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <p className="text-slate-300 text-sm">설령 재회가 어렵더라도, 이 경험은 당신을 더 성장시킬 거예요. 더 좋은 사랑이 기다리고 있습니다.</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 응원 메시지 */}
+        <motion.div
+          variants={itemVariants}
+          className="bg-gradient-to-br from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-3xl p-6 mb-6"
+        >
+          <p className="text-white text-center text-lg leading-relaxed">
+            {myName}님, 어떤 결과가 되더라도<br />
+            <span className="text-pink-400 font-bold">당신의 마음은 소중합니다.</span><br />
+            진심으로 응원합니다. 💕
+          </p>
+        </motion.div>
 
         {/* 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
@@ -338,6 +625,7 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
             <RefreshCw className="w-5 h-5" />
             다시 보기
           </button>
+          <DownloadButton onDownload={handleDownload} label="결과 저장하기" />
           <button
             onClick={onBack}
             className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"
@@ -348,7 +636,8 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
 
         {/* 면책 */}
         <motion.p variants={itemVariants} className="text-slate-600 text-xs text-center mt-6">
-          본 운세는 재미와 참고용이며, 실제 결과와 다를 수 있습니다.
+          본 운세는 재미와 참고용이며, 실제 결과와 다를 수 있습니다.<br />
+          사주명리학의 오행 상생상극 원리에 기반합니다.
         </motion.p>
       </div>
     </motion.div>

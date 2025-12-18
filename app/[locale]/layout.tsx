@@ -130,6 +130,15 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+
+        {/* Version log */}
+        <Script
+          id="version-log"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `console.log('%c팔자왕 v2.5.0', 'color: #a855f7; font-weight: bold; font-size: 14px;');`
+          }}
+        />
       </head>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>

@@ -6,11 +6,13 @@ import { Heart, ArrowLeft, Sparkles, Users } from 'lucide-react';
 
 export interface RekindlingFormData {
   // 본인 정보
+  myName: string;
   myYear: number;
   myMonth: number;
   myDay: number;
   myGender: 'male' | 'female';
   // 상대방 정보
+  partnerName: string;
   partnerYear: number;
   partnerMonth: number;
   partnerDay: number;
@@ -18,6 +20,8 @@ export interface RekindlingFormData {
   // 관계 정보
   relationshipType: 'lover' | 'spouse' | 'friend';
   separationMonths: number;
+  separationReason: 'fight' | 'distance' | 'timing' | 'family' | 'cheating' | 'other';
+  currentFeelings: 'miss' | 'regret' | 'confused' | 'hopeful';
 }
 
 interface RekindlingFormProps {
@@ -29,16 +33,20 @@ export default function RekindlingForm({ onSubmit, onBack }: RekindlingFormProps
   const currentYear = new Date().getFullYear();
   const [step, setStep] = useState<'my' | 'partner' | 'relation'>('my');
   const [formData, setFormData] = useState<RekindlingFormData>({
+    myName: '',
     myYear: 1990,
     myMonth: 1,
     myDay: 1,
     myGender: 'female',
+    partnerName: '',
     partnerYear: 1990,
     partnerMonth: 1,
     partnerDay: 1,
     partnerGender: 'male',
     relationshipType: 'lover',
     separationMonths: 6,
+    separationReason: 'fight',
+    currentFeelings: 'miss',
   });
 
   const handleSubmit = () => {
@@ -121,6 +129,19 @@ export default function RekindlingForm({ onSubmit, onBack }: RekindlingFormProps
               </h2>
 
               <div className="space-y-4">
+                {/* 이름 */}
+                <div>
+                  <label className="block text-slate-300 text-sm mb-2">이름 (닉네임)</label>
+                  <input
+                    type="text"
+                    placeholder="이름을 입력하세요"
+                    value={formData.myName}
+                    onChange={(e) => setFormData({ ...formData, myName: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-pink-400 transition-colors"
+                    maxLength={10}
+                  />
+                </div>
+
                 {/* 성별 */}
                 <div>
                   <label className="block text-slate-300 text-sm mb-2">성별</label>
@@ -215,6 +236,19 @@ export default function RekindlingForm({ onSubmit, onBack }: RekindlingFormProps
               </h2>
 
               <div className="space-y-4">
+                {/* 이름 */}
+                <div>
+                  <label className="block text-slate-300 text-sm mb-2">상대방 이름 (닉네임)</label>
+                  <input
+                    type="text"
+                    placeholder="상대방 이름을 입력하세요"
+                    value={formData.partnerName}
+                    onChange={(e) => setFormData({ ...formData, partnerName: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-pink-400 transition-colors"
+                    maxLength={10}
+                  />
+                </div>
+
                 {/* 성별 */}
                 <div>
                   <label className="block text-slate-300 text-sm mb-2">성별</label>
@@ -350,6 +384,58 @@ export default function RekindlingForm({ onSubmit, onBack }: RekindlingFormProps
                     <option value={36}>2~3년</option>
                     <option value={60}>3년 이상</option>
                   </select>
+                </div>
+
+                {/* 이별 사유 */}
+                <div>
+                  <label className="block text-slate-300 text-sm mb-2">이별의 주된 이유는?</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { value: 'fight', label: '성격 차이/다툼', emoji: '💔' },
+                      { value: 'distance', label: '거리/시간 부족', emoji: '🌍' },
+                      { value: 'timing', label: '타이밍이 안맞음', emoji: '⏰' },
+                      { value: 'family', label: '가족/주변 반대', emoji: '👨‍👩‍👧' },
+                      { value: 'cheating', label: '외도/신뢰 문제', emoji: '😢' },
+                      { value: 'other', label: '기타/잘 모름', emoji: '❓' },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setFormData({ ...formData, separationReason: option.value as typeof formData.separationReason })}
+                        className={`px-3 py-2 rounded-xl border transition-all text-left ${
+                          formData.separationReason === option.value
+                            ? 'bg-pink-500/30 border-pink-400 text-pink-300'
+                            : 'bg-slate-800/50 border-slate-600 text-slate-300 hover:border-slate-500'
+                        }`}
+                      >
+                        <span className="text-sm">{option.emoji} {option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 현재 마음 */}
+                <div>
+                  <label className="block text-slate-300 text-sm mb-2">지금 어떤 마음인가요?</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { value: 'miss', label: '너무 보고싶어요', emoji: '😭' },
+                      { value: 'regret', label: '후회가 돼요', emoji: '😔' },
+                      { value: 'confused', label: '혼란스러워요', emoji: '😵' },
+                      { value: 'hopeful', label: '다시 만나고 싶어요', emoji: '🥺' },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setFormData({ ...formData, currentFeelings: option.value as typeof formData.currentFeelings })}
+                        className={`px-3 py-2 rounded-xl border transition-all text-left ${
+                          formData.currentFeelings === option.value
+                            ? 'bg-pink-500/30 border-pink-400 text-pink-300'
+                            : 'bg-slate-800/50 border-slate-600 text-slate-300 hover:border-slate-500'
+                        }`}
+                      >
+                        <span className="text-sm">{option.emoji} {option.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>

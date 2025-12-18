@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { Sun, ArrowLeft, RefreshCw, Coins, Heart, Briefcase, Activity, Star, Compass, Palette, Sparkles, Clock, TrendingUp, AlertTriangle, CheckCircle, XCircle, Zap, Users, Moon, Sunrise } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { DailyFortuneFormData } from './DailyFortuneForm';
+import { generateStyledHTML, downloadHTML } from '@/lib/html-download';
+import DownloadButton from './ui/DownloadButton';
 
 interface DailyFortuneResultProps {
   formData: DailyFortuneFormData;
@@ -310,6 +312,121 @@ export default function DailyFortuneResult({ formData, onReset, onBack }: DailyF
   };
 
   const timeFortune = getTimeBasedFortune();
+
+  // HTML 다운로드 함수
+  const handleDownload = async () => {
+    // 약간의 딜레이로 UX 향상
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const content = `
+      <div class="section">
+        <div class="score-box">
+          <div class="score-value">${finalScore}점</div>
+          <div class="score-label">${gradeInfo.grade} • #${fortune.keyword}</div>
+        </div>
+        <div class="grid-2" style="margin-bottom: 16px;">
+          <div class="stat-card">
+            <div class="stat-label">내 일간</div>
+            <div class="stat-value">${userDayStem.ko}(${userElement})</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">오늘 일간</div>
+            <div class="stat-value">${todayStem.ko}(${todayElement})</div>
+          </div>
+        </div>
+        <p style="text-align: center; color: #94a3b8;">${elementRelation.description}</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">📊</span> 분야별 운세</div>
+        <div class="stat-card" style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span class="stat-label">💰 재물운</span>
+            <span class="stat-value yellow">${fortune.money.score}점</span>
+          </div>
+          <div class="progress-bar"><div class="fill yellow" style="width: ${fortune.money.score}%"></div></div>
+          <p style="font-size: 12px; color: #94a3b8; margin-top: 8px;">${fortune.money.detail}</p>
+        </div>
+        <div class="stat-card" style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span class="stat-label">💕 애정운</span>
+            <span class="stat-value pink">${fortune.love.score}점</span>
+          </div>
+          <div class="progress-bar"><div class="fill pink" style="width: ${fortune.love.score}%"></div></div>
+          <p style="font-size: 12px; color: #94a3b8; margin-top: 8px;">${fortune.love.detail}</p>
+        </div>
+        <div class="stat-card" style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span class="stat-label">💼 직장/학업운</span>
+            <span class="stat-value blue">${fortune.work.score}점</span>
+          </div>
+          <div class="progress-bar"><div class="fill blue" style="width: ${fortune.work.score}%"></div></div>
+          <p style="font-size: 12px; color: #94a3b8; margin-top: 8px;">${fortune.work.detail}</p>
+        </div>
+        <div class="stat-card">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span class="stat-label">💪 건강운</span>
+            <span class="stat-value green">${fortune.health.score}점</span>
+          </div>
+          <div class="progress-bar"><div class="fill green" style="width: ${fortune.health.score}%"></div></div>
+          <p style="font-size: 12px; color: #94a3b8; margin-top: 8px;">${fortune.health.detail}</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">⏰</span> 시간대별 운세</div>
+        <p style="color: #22c55e; margin-bottom: 8px;">✅ 행운의 시간: ${fortune.luckyTime}</p>
+        <p style="color: #f97316;">⚠️ 주의 시간: ${fortune.unluckyTime}</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="section">
+          <div class="section-title" style="color: #22c55e;"><span class="icon">✓</span> 하면 좋은 일</div>
+          ${fortune.doList.map(item => `<div class="list-item"><span class="bullet" style="color: #22c55e;">✓</span> ${item}</div>`).join('')}
+        </div>
+        <div class="section">
+          <div class="section-title" style="color: #ef4444;"><span class="icon">✗</span> 피해야 할 일</div>
+          ${fortune.dontList.map(item => `<div class="list-item"><span class="bullet" style="color: #ef4444;">✗</span> ${item}</div>`).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="icon">🍀</span> 행운 아이템</div>
+        <div class="grid-4">
+          <div class="stat-card">
+            <div class="stat-label">행운의 색</div>
+            <div class="stat-value">${elementColors[yongsinElement]?.name}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">행운의 숫자</div>
+            <div class="stat-value yellow">${elementNumbers[yongsinElement]?.join(', ')}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">행운의 방향</div>
+            <div class="stat-value blue">${elementDirections[yongsinElement]}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">행운의 음식</div>
+            <div class="stat-value green">${elementFoods[yongsinElement]?.[0]}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="advice-box">
+        <div class="advice-title">⭐ 오늘의 메시지</div>
+        <div class="advice-text">"${fortune.advice}"</div>
+      </div>
+    `;
+
+    const html = generateStyledHTML({
+      title: '오늘의 운세',
+      date: `${todayStr} (${dayOfWeek}요일) • ${userZodiac}띠 • ${userDayStem.ko}일간`,
+      content,
+      primaryColor: '#f59e0b',
+    });
+
+    downloadHTML(`오늘의운세_${todayStr.replace(/[년월일\s]/g, '')}.html`, html);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -674,6 +791,7 @@ export default function DailyFortuneResult({ formData, onReset, onBack }: DailyF
             <RefreshCw className="w-5 h-5" />
             다시 보기
           </button>
+          <DownloadButton onDownload={handleDownload} label="결과 저장하기" />
           <button
             onClick={onBack}
             className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"

@@ -309,9 +309,6 @@ export default function GuidePage() {
           >
             {t('../common.goToHome')}
           </Link>
-          <div className="pt-6 border-t border-gray-200 dark:border-gray-700 mt-8">
-            <p className="font-semibold text-indigo-600 dark:text-indigo-400">{t('../common.version')}</p>
-          </div>
         </div>
       </div>
     </div>
