@@ -17,6 +17,7 @@ import MonthlyFortuneForm, { MonthlyFortuneFormData } from '@/components/Monthly
 import TarotForm, { TarotFormData } from '@/components/TarotForm';
 import WealthFortuneForm, { WealthFortuneFormData } from '@/components/WealthFortuneForm';
 import DaeunForm, { DaeunFormData } from '@/components/DaeunForm';
+import CareerForm, { CareerFormData } from '@/components/CareerForm';
 
 // 결과 컴포넌트 (무거움 - 동적 import로 필요할 때만 로드)
 const SajuResultPremium = dynamic(() => import('@/components/SajuResultPremium'), {
@@ -50,6 +51,9 @@ const WealthFortuneResult = dynamic(() => import('@/components/WealthFortuneResu
   loading: () => <Loading />,
 });
 const DaeunResult = dynamic(() => import('@/components/DaeunResult'), {
+  loading: () => <Loading />,
+});
+const CareerResult = dynamic(() => import('@/components/CareerResult'), {
   loading: () => <Loading />,
 });
 
@@ -90,6 +94,9 @@ export default function Home() {
 
   // 대운 분석 관련 상태
   const [daeunData, setDaeunData] = useState<DaeunFormData | null>(null);
+
+  // 직업운 관련 상태
+  const [careerData, setCareerData] = useState<CareerFormData | null>(null);
 
   const handleMenuSelect = (option: MenuOption) => {
     setMenuSelection(option);
@@ -137,6 +144,7 @@ export default function Home() {
     setTarotData(null);
     setWealthData(null);
     setDaeunData(null);
+    setCareerData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -151,6 +159,7 @@ export default function Home() {
     setTarotData(null);
     setWealthData(null);
     setDaeunData(null);
+    setCareerData(null);
     setMenuSelection(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -246,6 +255,21 @@ export default function Home() {
     }, 100);
   };
 
+  // 직업운 제출 핸들러
+  const handleCareerSubmit = async (formData: CareerFormData) => {
+    setIsLoading(true);
+
+    // 직업운 분석 시간
+    await new Promise(resolve => setTimeout(resolve, 2500));
+
+    setCareerData(formData);
+    setIsLoading(false);
+
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   // 궁합 제출 핸들러
   const handleCompatibilitySubmit = async (formData: CompatibilityFormData) => {
     setIsLoading(true);
@@ -294,7 +318,7 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10">
         {/* 메인 메뉴 */}
-        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && !tarotData && !wealthData && !daeunData && (
+        {!menuSelection && !result && !compatibilityData && !dreamData && !dailyFortuneData && !rekindlingData && !monthlyFortuneData && !tarotData && !wealthData && !daeunData && !careerData && (
           <MainMenu onSelect={handleMenuSelect} />
         )}
 
@@ -435,6 +459,18 @@ export default function Home() {
         {menuSelection === 'daeun' && daeunData && (
           <DaeunResult
             formData={daeunData}
+            onReset={handleReset}
+            onBack={handleBackToMenu}
+          />
+        )}
+
+        {/* 직업운 플로우 */}
+        {menuSelection === 'career' && !careerData && (
+          <CareerForm onSubmit={handleCareerSubmit} onBack={handleBackToMenu} />
+        )}
+        {menuSelection === 'career' && careerData && (
+          <CareerResult
+            formData={careerData}
             onReset={handleReset}
             onBack={handleBackToMenu}
           />
