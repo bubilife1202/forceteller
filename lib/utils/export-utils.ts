@@ -341,10 +341,11 @@ export function downloadAsHtml(content: string, filename: string) {
   <div class="container">
     ${content}
     <div class="footer">
-      <p style="font-size: 1.1rem; color: #c084fc; margin-bottom: 8px;">✨ ForceTeller ✨</p>
-      <p style="color: #64748b;">AI 기반 프리미엄 운세 서비스</p>
-      <p style="margin-top: 12px; font-size: 0.875rem; color: #475569;">
-        생성일: ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+      <p style="font-size: 1.3rem; color: #fbbf24; margin-bottom: 12px; font-weight: bold;">👑 팔자왕 👑</p>
+      <p style="margin-bottom: 8px;">
+        <a href="https://www.threads.com/@palzawang" target="_blank" style="color: #c084fc; text-decoration: none;">
+          📱 @palzawang
+        </a>
       </p>
     </div>
   </div>
