@@ -47,31 +47,98 @@ export default function NewYearResult2026({
     }
   };
 
-  // HTML 다운로드 함수
+  // HTML 다운로드 함수 - 전체 내용 포함
   const handleDownloadHtml = () => {
+    // 운세 데이터 가져오기
+    const wealthData = getWealthFortune();
+    const loveData = getLoveFortune();
+    const marriageData = getMarriageFortune();
+    const healthData = getHealthFortune();
+    const careerData = getCareerFortune();
+    const studyData = getStudyFortune();
+    const familyData = getFamilyFortune();
+    const socialData = getSocialFortune();
+    const investData = getInvestmentFortune();
+    const movingData = getMovingFortune();
+    const travelData = getTravelFortune();
+    const legalData = getLegalFortune();
+    const luckyData = getLuckyItems();
+
+    // 운세 카드 HTML 생성 헬퍼
+    const createFortuneSection = (
+      emoji: string,
+      title: string,
+      score: number,
+      grade: string,
+      summary: string,
+      detail: string,
+      advice: string,
+      luckyMonths?: string,
+      unluckyMonths?: string
+    ) => `
+      <div class="section">
+        <h2 class="section-title">${emoji} ${title} (${score}점 - ${grade})</h2>
+        <p style="color: #fbbf24; font-weight: bold; margin-bottom: 12px;">${summary}</p>
+        <p style="line-height: 1.8; margin-bottom: 16px;">${detail}</p>
+        <p style="color: #4ade80;">💡 ${advice}</p>
+        ${luckyMonths ? `<p style="margin-top: 8px; color: #60a5fa; font-size: 0.9rem;">🍀 행운의 달: ${luckyMonths}</p>` : ''}
+        ${unluckyMonths ? `<p style="color: #f87171; font-size: 0.9rem;">⚠️ 주의할 달: ${unluckyMonths}</p>` : ''}
+      </div>
+    `;
+
     const htmlContent = `
       <div class="header">
         <h1>🐴 2026 신년운세</h1>
         <p>丙午年 • 붉은 말의 해 • ${name}님</p>
+        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">일간: ${dayElement}(${result.day.stem.ko}) | 오행관계: ${yearRelation.relation}</p>
       </div>
+
       <div class="section">
         <h2 class="section-title">📊 2026년 총운</h2>
-        <div class="score high">${overallScore}점</div>
-        <p style="text-align: center; margin-top: 16px; color: #a78bfa;">일간: ${dayElement}(${result.day.stem.ko})</p>
-        <p style="margin-top: 16px;">${yearRelation.summary}</p>
+        <div class="score ${overallScore >= 70 ? 'high' : overallScore >= 50 ? 'medium' : 'low'}">${overallScore}점</div>
+        <p style="text-align: center; margin-top: 16px; color: #fbbf24; font-weight: bold;">${yearRelation.summary}</p>
+        <p style="margin-top: 16px; line-height: 1.8;">${yearRelation.detail}</p>
       </div>
+
       <div class="section">
-        <h2 class="section-title">🎯 분야별 운세</h2>
+        <h2 class="section-title">🎯 분야별 운세 요약</h2>
         <div class="grid">
           <div class="card"><div class="card-title">💰 재물운</div><div class="card-value">${fortuneCategories.wealth}점</div></div>
           <div class="card"><div class="card-title">💕 애정운</div><div class="card-value">${fortuneCategories.love}점</div></div>
+          <div class="card"><div class="card-title">💍 결혼운</div><div class="card-value">${fortuneCategories.marriage}점</div></div>
           <div class="card"><div class="card-title">💼 직장운</div><div class="card-value">${fortuneCategories.career}점</div></div>
           <div class="card"><div class="card-title">💪 건강운</div><div class="card-value">${fortuneCategories.health}점</div></div>
+          <div class="card"><div class="card-title">📚 학업운</div><div class="card-value">${fortuneCategories.study}점</div></div>
+          <div class="card"><div class="card-title">👨‍👩‍👧 가정운</div><div class="card-value">${fortuneCategories.family}점</div></div>
+          <div class="card"><div class="card-title">👥 대인운</div><div class="card-value">${fortuneCategories.social}점</div></div>
+          <div class="card"><div class="card-title">📈 투자운</div><div class="card-value">${fortuneCategories.investment}점</div></div>
+          <div class="card"><div class="card-title">🏠 이사운</div><div class="card-value">${fortuneCategories.moving}점</div></div>
+          <div class="card"><div class="card-title">✈️ 여행운</div><div class="card-value">${fortuneCategories.travel}점</div></div>
+          <div class="card"><div class="card-title">⚖️ 소송운</div><div class="card-value">${fortuneCategories.legal}점</div></div>
         </div>
       </div>
+
+      ${createFortuneSection('💰', '재물운', fortuneCategories.wealth, wealthData.grade, wealthData.summary, wealthData.detail, wealthData.advice, wealthData.luckyMonths, wealthData.unluckyMonths)}
+      ${createFortuneSection('💕', '애정운', fortuneCategories.love, loveData.grade, loveData.summary, loveData.detail, loveData.advice, loveData.luckyMonths, loveData.unluckyMonths)}
+      ${createFortuneSection('💍', '결혼운', fortuneCategories.marriage, marriageData.grade, marriageData.summary, marriageData.detail, marriageData.advice, marriageData.luckyMonths, marriageData.unluckyMonths)}
+      ${createFortuneSection('💼', '직장운', fortuneCategories.career, careerData.grade, careerData.summary, careerData.detail, careerData.advice, careerData.luckyMonths, careerData.unluckyMonths)}
+      ${createFortuneSection('💪', '건강운', fortuneCategories.health, healthData.grade, healthData.summary, healthData.detail, healthData.advice, healthData.luckyMonths, healthData.unluckyMonths)}
+      ${createFortuneSection('📚', '학업운', fortuneCategories.study, studyData.grade, studyData.summary, studyData.detail, studyData.advice, studyData.luckyMonths, studyData.unluckyMonths)}
+      ${createFortuneSection('👨‍👩‍👧', '가정운', fortuneCategories.family, familyData.grade, familyData.summary, familyData.detail, familyData.advice, familyData.luckyMonths, familyData.unluckyMonths)}
+      ${createFortuneSection('👥', '대인관계운', fortuneCategories.social, socialData.grade, socialData.summary, socialData.detail, socialData.advice, socialData.luckyMonths, socialData.unluckyMonths)}
+      ${createFortuneSection('📈', '투자운', fortuneCategories.investment, investData.grade, investData.summary, investData.detail, investData.advice, investData.luckyMonths, investData.unluckyMonths)}
+      ${createFortuneSection('🏠', '이사운', fortuneCategories.moving, movingData.grade, movingData.summary, movingData.detail, movingData.advice, movingData.luckyMonths, movingData.unluckyMonths)}
+      ${createFortuneSection('✈️', '여행운', fortuneCategories.travel, travelData.grade, travelData.summary, travelData.detail, travelData.advice, travelData.luckyMonths, travelData.unluckyMonths)}
+      ${createFortuneSection('⚖️', '소송/법률운', fortuneCategories.legal, legalData.grade, legalData.summary, legalData.detail, legalData.advice, legalData.luckyMonths, legalData.unluckyMonths)}
+
       <div class="section">
-        <h2 class="section-title">✨ 2026년 종합 분석</h2>
-        <p>${yearRelation.detail}</p>
+        <h2 class="section-title">🍀 2026년 행운 아이템</h2>
+        <div class="grid">
+          <div class="card"><div class="card-title">🎨 행운의 색</div><div class="card-value">${luckyData.color}</div></div>
+          <div class="card"><div class="card-title">🧭 행운의 방향</div><div class="card-value">${luckyData.direction}</div></div>
+          <div class="card"><div class="card-title">🔢 행운의 숫자</div><div class="card-value">${luckyData.number}</div></div>
+          <div class="card"><div class="card-title">✨ 행운의 아이템</div><div class="card-value">${luckyData.item}</div></div>
+        </div>
       </div>
     `;
     downloadAsHtml(htmlContent, `2026신년운세_${name}`);
