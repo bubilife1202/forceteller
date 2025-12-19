@@ -631,32 +631,608 @@ export default function CompatibilityResult({
     return `${person1.name}님과 ${person2.name}님의 관계는 많은 노력이 필요한 조합입니다. 하지만 사주는 참고일 뿐, 실제 관계는 두 분의 마음과 노력에 달려 있습니다. 서로를 존중하고 이해하려는 자세가 있다면, 어떤 궁합도 극복할 수 있습니다. 갈등이 생겼을 때는 감정적으로 대응하지 말고, 하루 정도 시간을 두고 대화하세요.`;
   };
 
-  // HTML 다운로드 함수
+  // ===== 추가 분석 함수들 =====
+
+  // 성격 분석 (일간 기반)
+  const getPersonalityAnalysis = () => {
+    const personalities: Record<string, { trait: string; strength: string; weakness: string; love: string; money: string }> = {
+      갑: { trait: '리더십이 강하고 진취적', strength: '결단력, 추진력, 정의감', weakness: '고집, 독선적', love: '주도적이고 보호하려 함', money: '큰 사업 선호' },
+      을: { trait: '유연하고 적응력이 뛰어남', strength: '포용력, 협동심, 인내력', weakness: '우유부단, 의존적', love: '헌신적이고 맞춰주려 함', money: '안정적인 저축 선호' },
+      병: { trait: '열정적이고 밝은 에너지', strength: '사교성, 낙천성, 표현력', weakness: '성급함, 충동적', love: '열렬하고 적극적 표현', money: '통 큰 소비, 기부' },
+      정: { trait: '섬세하고 감성적', strength: '배려심, 예술성, 직관력', weakness: '예민함, 질투심', love: '로맨틱하고 감성적', money: '계획적 소비' },
+      무: { trait: '듬직하고 신뢰감 있음', strength: '안정감, 포용력, 중재력', weakness: '둔함, 변화 거부', love: '믿음직하고 헌신적', money: '부동산 선호' },
+      기: { trait: '꼼꼼하고 실용적', strength: '세심함, 실행력, 저축심', weakness: '소심함, 욕심', love: '현실적이고 실용적', money: '알뜰 저축형' },
+      경: { trait: '강인하고 원칙적', strength: '정의감, 결단력, 의리', weakness: '냉정함, 융통성 부족', love: '책임감 강하고 진지', money: '투자 및 사업' },
+      신: { trait: '예리하고 완벽주의적', strength: '분석력, 표현력, 미적 감각', weakness: '날카로움, 비판적', love: '표현 능력이 뛰어남', money: '투자 능력 좋음' },
+      임: { trait: '지혜롭고 포용력 있음', strength: '통찰력, 적응력, 인내력', weakness: '우유부단, 방황', love: '깊이 있는 사랑', money: '유동적 자산 선호' },
+      계: { trait: '섬세하고 직관적', strength: '감수성, 창의력, 순수함', weakness: '불안함, 변덕', love: '감정적이고 순수', money: '감각적 소비' },
+    };
+    return {
+      person1: personalities[stem1.ko] || personalities['갑'],
+      person2: personalities[stem2.ko] || personalities['갑'],
+    };
+  };
+
+  // 애정표현 스타일 분석
+  const getLoveExpressionStyle = () => {
+    const styles: Record<string, { style: string; like: string; dislike: string; ideal: string }> = {
+      목: { style: '성장과 발전을 함께하는 사랑', like: '함께 배우고 성장하기', dislike: '정체된 관계', ideal: '서로를 발전시켜주는 파트너' },
+      화: { style: '열정적이고 표현이 풍부한 사랑', like: '스킨십, 이벤트, 서프라이즈', dislike: '차가운 반응, 무관심', ideal: '함께 열정을 나눌 파트너' },
+      토: { style: '안정적이고 믿음직한 사랑', like: '편안한 일상, 함께하는 시간', dislike: '불안정함, 급격한 변화', ideal: '든든하게 의지할 파트너' },
+      금: { style: '품격 있고 진지한 사랑', like: '약속 지키기, 진심어린 대화', dislike: '가벼움, 거짓말', ideal: '신뢰할 수 있는 파트너' },
+      수: { style: '깊이 있고 지적인 사랑', like: '깊은 대화, 정신적 교감', dislike: '피상적인 관계', ideal: '영혼의 파트너' },
+    };
+    return {
+      person1: styles[stem1.element] || styles['토'],
+      person2: styles[stem2.element] || styles['토'],
+      compatibility: stem1.element === stem2.element ?
+        '같은 스타일로 서로를 잘 이해합니다.' :
+        '다른 스타일이지만 서로에게 새로움을 줍니다.',
+    };
+  };
+
+  // 금전 관리 궁합
+  const getFinancialCompatibility = () => {
+    const element1 = stem1.element;
+    const element2 = stem2.element;
+
+    let score = 65;
+    let description = '';
+    let tips: string[] = [];
+
+    if (element1 === element2) {
+      score = 75;
+      description = '비슷한 금전관념을 가지고 있어 갈등이 적습니다.';
+      tips = ['같은 성향이라 큰 틀에서는 맞지만, 세부 사항에서 조율이 필요할 수 있습니다.'];
+    } else if ((element1 === '금' && element2 === '토') || (element1 === '토' && element2 === '금')) {
+      score = 85;
+      description = '재물 관리에 있어 최고의 조합입니다. 안정적인 자산 축적이 가능합니다.';
+      tips = ['함께 부동산이나 안정적인 투자를 고려해보세요.'];
+    } else if ((element1 === '수' && element2 === '화') || (element1 === '화' && element2 === '수')) {
+      score = 55;
+      description = '돈에 대한 관점이 달라 조율이 필요합니다.';
+      tips = ['각자의 용돈을 정하고, 공동 자금은 합의 하에 사용하세요.', '큰 지출은 반드시 상의 후 결정하세요.'];
+    }
+
+    if (element1 === '화' || element2 === '화') {
+      tips.push('화 기운은 통 큰 소비를 하므로, 예산 관리가 필요합니다.');
+    }
+    if (element1 === '수' || element2 === '수') {
+      tips.push('수 기운은 유동적인 자산을 선호하므로, 현금 흐름 관리가 중요합니다.');
+    }
+
+    return { score, description, tips };
+  };
+
+  // 의사소통 스타일 분석
+  const getCommunicationStyle = () => {
+    const styles: Record<string, { speak: string; listen: string; conflict: string }> = {
+      목: { speak: '논리적이고 설득력 있게', listen: '핵심을 빠르게 파악', conflict: '정면 돌파 선호' },
+      화: { speak: '열정적이고 감정적으로', listen: '분위기와 감정 중시', conflict: '즉각적인 표현' },
+      토: { speak: '신중하고 천천히', listen: '끝까지 경청', conflict: '참다가 폭발' },
+      금: { speak: '간결하고 핵심적으로', listen: '비판적으로 분석', conflict: '차갑게 대응' },
+      수: { speak: '우회적이고 깊이 있게', listen: '숨은 의미 파악', conflict: '피하거나 무시' },
+    };
+    return {
+      person1: styles[stem1.element] || styles['토'],
+      person2: styles[stem2.element] || styles['토'],
+    };
+  };
+
+  // 라이프스타일 궁합
+  const getLifestyleCompatibility = () => {
+    const lifestyles: Record<string, { morning: string; weekend: string; vacation: string; home: string }> = {
+      목: { morning: '일찍 일어나 활동적', weekend: '자기계발, 등산', vacation: '트레킹, 자연 여행', home: '식물, 원목 인테리어' },
+      화: { morning: '에너지 넘치는 아침', weekend: '파티, 모임, 운동', vacation: '리조트, 축제', home: '밝고 화려한 인테리어' },
+      토: { morning: '여유로운 아침 식사', weekend: '집에서 휴식', vacation: '편안한 호캉스', home: '아늑하고 편안한 공간' },
+      금: { morning: '정돈된 루틴', weekend: '문화생활, 쇼핑', vacation: '고급 여행', home: '모던하고 깔끔한 인테리어' },
+      수: { morning: '느긋한 시작', weekend: '독서, 영화 감상', vacation: '바다, 온천', home: '아쿠아리움, 블루톤' },
+    };
+    const ls1 = lifestyles[stem1.element] || lifestyles['토'];
+    const ls2 = lifestyles[stem2.element] || lifestyles['토'];
+
+    let matchScore = 65;
+    if (stem1.element === stem2.element) matchScore = 85;
+    else if (['목', '화'].includes(stem1.element) && ['목', '화'].includes(stem2.element)) matchScore = 80;
+    else if (['토', '금', '수'].includes(stem1.element) && ['토', '금', '수'].includes(stem2.element)) matchScore = 75;
+
+    return { person1: ls1, person2: ls2, score: matchScore };
+  };
+
+  // 띠 궁합 분석
+  const getZodiacCompatibility = () => {
+    const zodiacFromBranch: Record<string, { animal: string; traits: string }> = {
+      자: { animal: '쥐', traits: '영리하고 민첩함' },
+      축: { animal: '소', traits: '성실하고 우직함' },
+      인: { animal: '호랑이', traits: '용감하고 리더십' },
+      묘: { animal: '토끼', traits: '온순하고 감성적' },
+      진: { animal: '용', traits: '카리스마와 야망' },
+      사: { animal: '뱀', traits: '지혜롭고 신비로움' },
+      오: { animal: '말', traits: '자유롭고 활동적' },
+      미: { animal: '양', traits: '온화하고 예술적' },
+      신: { animal: '원숭이', traits: '재치있고 영리함' },
+      유: { animal: '닭', traits: '정직하고 부지런함' },
+      술: { animal: '개', traits: '충성스럽고 정의로움' },
+      해: { animal: '돼지', traits: '순수하고 관대함' },
+    };
+
+    const z1 = zodiacFromBranch[branch1.ko] || { animal: '알수없음', traits: '' };
+    const z2 = zodiacFromBranch[branch2.ko] || { animal: '알수없음', traits: '' };
+
+    // 삼합 띠 궁합
+    const samhapGroups = [
+      ['자', '진', '신'], // 수국
+      ['축', '사', '유'], // 금국
+      ['인', '오', '술'], // 화국
+      ['묘', '미', '해'], // 목국
+    ];
+
+    let isSamhap = false;
+    for (const group of samhapGroups) {
+      if (group.includes(branch1.ko) && group.includes(branch2.ko)) {
+        isSamhap = true;
+        break;
+      }
+    }
+
+    // 육합 체크
+    const yukHapPairs: Record<string, string> = {
+      자: '축', 축: '자', 인: '해', 해: '인', 묘: '술', 술: '묘',
+      진: '유', 유: '진', 사: '신', 신: '사', 오: '미', 미: '오',
+    };
+    const isYukHap = yukHapPairs[branch1.ko] === branch2.ko;
+
+    // 상충 체크
+    const chungPairs: Record<string, string> = {
+      자: '오', 오: '자', 축: '미', 미: '축', 인: '신', 신: '인',
+      묘: '유', 유: '묘', 진: '술', 술: '진', 사: '해', 해: '사',
+    };
+    const isChung = chungPairs[branch1.ko] === branch2.ko;
+
+    let score = 60;
+    let comment = '';
+    if (isYukHap) {
+      score = 92;
+      comment = `${z1.animal}띠와 ${z2.animal}띠는 육합 관계로 최고의 띠 궁합입니다!`;
+    } else if (isSamhap) {
+      score = 85;
+      comment = `${z1.animal}띠와 ${z2.animal}띠는 삼합 관계로 함께하면 시너지가 납니다.`;
+    } else if (isChung) {
+      score = 35;
+      comment = `${z1.animal}띠와 ${z2.animal}띠는 상충 관계로 노력이 필요합니다.`;
+    } else {
+      comment = `${z1.animal}띠와 ${z2.animal}띠는 무난한 관계입니다.`;
+    }
+
+    return { zodiac1: z1, zodiac2: z2, score, comment, isYukHap, isSamhap, isChung };
+  };
+
+  // 나이 궁합 분석
+  const getAgeCompatibility = () => {
+    const age1 = new Date().getFullYear() - person1.year;
+    const age2 = new Date().getFullYear() - person2.year;
+    const ageDiff = Math.abs(age1 - age2);
+    const older = age1 > age2 ? person1.name : person2.name;
+    const younger = age1 > age2 ? person2.name : person1.name;
+
+    let score = 80;
+    let comment = '';
+    let tips: string[] = [];
+
+    if (ageDiff === 0) {
+      score = 85;
+      comment = '동갑으로 친구 같은 편안한 관계가 될 수 있습니다.';
+      tips = ['서로 존중하고 대등한 관계를 유지하세요.', '친구처럼 편하면서도 연인으로서의 설렘을 잃지 마세요.'];
+    } else if (ageDiff <= 3) {
+      score = 90;
+      comment = '1~3살 차이는 가장 이상적인 나이 차이입니다.';
+      tips = ['비슷한 세대로 문화적 공감대가 높습니다.', '자연스러운 호칭과 대화가 가능합니다.'];
+    } else if (ageDiff <= 6) {
+      score = 80;
+      comment = '적당한 나이 차이로 서로 배울 점이 있습니다.';
+      tips = [`${older}님은 ${younger}님의 신선함을 즐기세요.`, `${younger}님은 ${older}님의 경험을 배우세요.`];
+    } else if (ageDiff <= 10) {
+      score = 70;
+      comment = '세대 차이가 있지만 서로 보완할 수 있습니다.';
+      tips = ['세대 차이로 인한 문화적 갭을 인정하세요.', '서로의 세계를 존중하고 배워나가세요.'];
+    } else {
+      score = 60;
+      comment = '큰 나이 차이지만 진정한 사랑 앞에 나이는 숫자일 뿐입니다.';
+      tips = ['주변의 시선보다 두 사람의 마음이 중요합니다.', '각자의 생활 패턴을 존중해주세요.'];
+    }
+
+    return { age1, age2, ageDiff, older, younger, score, comment, tips };
+  };
+
+  // 연애/결혼 시기 분석
+  const getTimingAnalysis = () => {
+    const currentYear = new Date().getFullYear();
+    const analyses = [];
+
+    for (let year = currentYear; year <= currentYear + 3; year++) {
+      const yearNum = year % 10;
+      const stemMatch = (yearNum === 0 || yearNum === 1) ? '갑을' :
+                       (yearNum === 2 || yearNum === 3) ? '병정' :
+                       (yearNum === 4 || yearNum === 5) ? '무기' :
+                       (yearNum === 6 || yearNum === 7) ? '경신' : '임계';
+
+      let fortune = '';
+      let score = 60;
+
+      if (stemMatch.includes(stem1.ko) || stemMatch.includes(stem2.ko)) {
+        fortune = '두 분 중 한 분에게 변화의 해입니다.';
+        score = 75;
+      }
+      if ((year - 4) % 12 === 0 || (year - 5) % 12 === 0) { // 용띠, 뱀띠 해
+        fortune += ' 결혼하기 좋은 해입니다.';
+        score = 85;
+      }
+
+      analyses.push({ year, fortune: fortune || '평온한 한 해가 될 것입니다.', score });
+    }
+
+    return analyses;
+  };
+
+  // 연간 커플 운세 (12개월)
+  const getFullYearCoupleFortune = () => {
+    const fortunes = [
+      { month: 1, title: '새해 첫 달', fortune: '새로운 시작의 에너지가 가득합니다. 함께 새해 목표를 세워보세요.', activity: '새해 계획 세우기, 소원 빌기', lucky: '흰색, 금색', score: 80 },
+      { month: 2, title: '사랑의 달', fortune: '로맨틱한 기운이 넘칩니다. 감정 표현에 적극적으로 임하세요.', activity: '발렌타인 데이트, 영화 관람', lucky: '빨간색, 분홍색', score: 90 },
+      { month: 3, title: '봄의 시작', fortune: '새로운 활동을 시작하기 좋습니다. 야외 데이트가 행운을 가져옵니다.', activity: '봄꽃 구경, 피크닉', lucky: '연두색, 노란색', score: 85 },
+      { month: 4, title: '성장의 달', fortune: '서로의 성장을 응원하세요. 배움을 함께하면 좋습니다.', activity: '전시회, 클래스 함께 듣기', lucky: '초록색, 하늘색', score: 75 },
+      { month: 5, title: '가정의 달', fortune: '가족을 소개하기 좋은 시기입니다. 진지한 대화가 필요합니다.', activity: '가족 모임, 집에서 요리', lucky: '보라색, 주황색', score: 70 },
+      { month: 6, title: '열정의 달', fortune: '에너지가 넘치는 시기입니다. 액티비티 데이트를 추천합니다.', activity: '수상 스포츠, 등산', lucky: '파란색, 흰색', score: 85 },
+      { month: 7, title: '휴식의 달', fortune: '함께 쉬는 시간이 필요합니다. 여행을 계획해보세요.', activity: '휴가 여행, 바다 데이트', lucky: '청록색, 은색', score: 80 },
+      { month: 8, title: '추억의 달', fortune: '특별한 추억을 만들기 좋습니다. 사진을 많이 찍어두세요.', activity: '포토존 방문, 축제 참여', lucky: '금색, 노란색', score: 85 },
+      { month: 9, title: '안정의 달', fortune: '관계가 안정되는 시기입니다. 미래를 함께 계획하세요.', activity: '가을 나들이, 단풍 구경', lucky: '갈색, 빨간색', score: 75 },
+      { month: 10, title: '수확의 달', fortune: '그동안의 노력이 결실을 맺습니다. 서로에게 감사를 표현하세요.', activity: '와인 데이트, 맛집 탐방', lucky: '주황색, 갈색', score: 90 },
+      { month: 11, title: '감사의 달', fortune: '서로에 대한 감사함을 느끼는 시기입니다. 작은 선물이 큰 기쁨을 줍니다.', activity: '카페 데이트, 선물 교환', lucky: '보라색, 분홍색', score: 80 },
+      { month: 12, title: '마무리의 달', fortune: '한 해를 함께 마무리하세요. 내년 계획을 세우기 좋습니다.', activity: '연말 파티, 크리스마스 데이트', lucky: '빨간색, 초록색', score: 85 },
+    ];
+    return fortunes;
+  };
+
+  // 행운의 아이템/시간대
+  const getLuckyItems = () => {
+    const elements = [stem1.element, stem2.element];
+    const items: { color: string; direction: string; number: string; time: string; food: string; place: string }[] = [];
+
+    const luckyByElement: Record<string, { color: string; direction: string; number: string; time: string; food: string; place: string }> = {
+      목: { color: '초록색, 청색', direction: '동쪽', number: '3, 8', time: '아침 5~9시', food: '채소, 신맛 음식', place: '공원, 숲' },
+      화: { color: '빨간색, 보라색', direction: '남쪽', number: '2, 7', time: '낮 11~13시', food: '매운 음식, 고기', place: '카페, 레스토랑' },
+      토: { color: '노란색, 갈색', direction: '중앙', number: '5, 10', time: '오후 13~17시', food: '단맛 음식, 곡류', place: '집, 카페' },
+      금: { color: '흰색, 금색', direction: '서쪽', number: '4, 9', time: '저녁 17~21시', food: '매운맛, 흰색 음식', place: '미술관, 쇼핑몰' },
+      수: { color: '검은색, 파란색', direction: '북쪽', number: '1, 6', time: '밤 21~1시', food: '짠맛 음식, 해산물', place: '바다, 수족관' },
+    };
+
+    elements.forEach(el => {
+      if (luckyByElement[el]) items.push(luckyByElement[el]);
+    });
+
+    return items;
+  };
+
+  // 미래 예측 (1년, 5년, 10년)
+  const getFuturePrediction = () => {
+    const baseScore = overallScore;
+    return {
+      year1: {
+        score: Math.min(100, baseScore + Math.floor(Math.random() * 10) - 3),
+        prediction: baseScore >= 70
+          ? '첫 해는 서로를 알아가는 시기입니다. 다양한 경험을 함께 하면서 관계가 더욱 깊어질 것입니다.'
+          : '첫 해는 서로 적응하는 시기입니다. 작은 갈등이 있을 수 있지만, 이를 통해 서로를 더 잘 이해하게 됩니다.',
+      },
+      year5: {
+        score: Math.min(100, baseScore + Math.floor(Math.random() * 15) - 5),
+        prediction: baseScore >= 70
+          ? '5년 후에는 안정적인 관계가 형성됩니다. 결혼이나 동거 등 큰 결정을 하기 좋은 시기입니다.'
+          : '5년 후에는 많은 것이 변해있을 것입니다. 꾸준한 노력이 관계를 더욱 단단하게 만듭니다.',
+      },
+      year10: {
+        score: Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5),
+        prediction: baseScore >= 70
+          ? '10년 후에는 서로 없이는 상상할 수 없는 깊은 유대감을 형성하게 됩니다. 함께한 추억이 큰 자산이 됩니다.'
+          : '10년의 세월 동안 함께 성장하고 변화합니다. 노력한 만큼 보람 있는 관계가 될 것입니다.',
+      },
+    };
+  };
+
+  // 계산된 추가 분석
+  const personalityAnalysis = getPersonalityAnalysis();
+  const loveExpression = getLoveExpressionStyle();
+  const financialCompat = getFinancialCompatibility();
+  const commStyle = getCommunicationStyle();
+  const lifestyleCompat = getLifestyleCompatibility();
+  const zodiacCompat = getZodiacCompatibility();
+  const ageCompat = getAgeCompatibility();
+  const timingAnalysis = getTimingAnalysis();
+  const fullYearFortune = getFullYearCoupleFortune();
+  const luckyItems = getLuckyItems();
+  const futurePrediction = getFuturePrediction();
+
+  // HTML 다운로드 함수 - 전체 결과 포함
   const handleDownloadHtml = () => {
+    const createSection = (title: string, content: string) => `
+      <div class="section">
+        <h2 class="section-title">${title}</h2>
+        ${content}
+      </div>
+    `;
+
+    const createCard = (title: string, value: string | number, desc?: string) => `
+      <div class="card">
+        <div class="card-title">${title}</div>
+        <div class="card-value">${value}</div>
+        ${desc ? `<p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">${desc}</p>` : ''}
+      </div>
+    `;
+
     const htmlContent = `
       <div class="header">
         <h1>💑 사주 궁합 분석</h1>
         <p>${person1.name}님 ❤️ ${person2.name}님</p>
+        <p style="margin-top: 8px; font-size: 0.9rem;">
+          ${person1.name}: ${person1.year}년생 (${stem1.ko}${stem1.cn} ${stem1.element}) |
+          ${person2.name}: ${person2.year}년생 (${stem2.ko}${stem2.cn} ${stem2.element})
+        </p>
       </div>
-      <div class="section">
-        <h2 class="section-title">❤️ 종합 궁합 점수</h2>
-        <div class="score ${overallScore >= 70 ? 'high' : overallScore >= 50 ? 'medium' : 'low'}">${overallScore}점</div>
-        <p style="text-align: center; margin-top: 16px;">${getOverallAdvice().substring(0, 200)}...</p>
-      </div>
-      <div class="section">
-        <h2 class="section-title">🔮 분야별 궁합</h2>
-        <div class="grid">
-          <div class="card"><div class="card-title">천간 궁합</div><div class="card-value">${stemAnalysis.score}점</div></div>
-          <div class="card"><div class="card-title">지지 궁합</div><div class="card-value">${branchAnalysis.score}점</div></div>
-          <div class="card"><div class="card-title">전체 궁합</div><div class="card-value">${overallScore}점</div></div>
+
+      ${createSection('❤️ 종합 궁합 점수', `
+        <div style="text-align: center;">
+          <div class="score ${overallScore >= 70 ? 'high' : overallScore >= 50 ? 'medium' : 'low'}">${overallScore}점 - ${getScoreLabel(overallScore)}</div>
+          <p style="margin-top: 16px; line-height: 1.8;">${getOverallAdvice()}</p>
         </div>
-      </div>
-      <div class="section">
-        <h2 class="section-title">💕 관계 유형</h2>
-        <p>${relationshipType === 'lover' ? '연인' : relationshipType === 'spouse' ? '배우자' : relationshipType === 'business' ? '사업 파트너' : '친구/동료'}</p>
-      </div>
+        <div class="grid" style="margin-top: 20px;">
+          ${createCard('천간 궁합', `${stemAnalysis.score}점`, stemAnalysis.type)}
+          ${createCard('지지 궁합', `${branchAnalysis.score}점`, branchAnalysis.type)}
+          ${createCard('오행 조화', `${elementHarmony.score}점`, '상호보완')}
+          ${createCard('띠 궁합', `${zodiacCompat.score}점`, `${zodiacCompat.zodiac1.animal}띠 & ${zodiacCompat.zodiac2.animal}띠`)}
+        </div>
+      `)}
+
+      ${createSection('☀️ 천간(天干) 궁합 상세', `
+        <p style="color: #fbbf24; font-weight: bold; margin-bottom: 12px;">${stemAnalysis.type} (${stemAnalysis.score}점)</p>
+        <p style="line-height: 1.8; margin-bottom: 12px;">${stemAnalysis.description}</p>
+        <p style="color: #94a3b8; line-height: 1.8;">${stemAnalysis.detail}</p>
+      `)}
+
+      ${createSection('🏠 지지(地支) 궁합 상세', `
+        <p style="color: #22d3ee; font-weight: bold; margin-bottom: 12px;">${branchAnalysis.type} (${branchAnalysis.score}점)</p>
+        <p style="line-height: 1.8; margin-bottom: 12px;">${branchAnalysis.description}</p>
+        <p style="color: #94a3b8; line-height: 1.8;">${branchAnalysis.detail}</p>
+      `)}
+
+      ${createSection('🐲 띠 궁합 분석', `
+        <div class="grid">
+          ${createCard(person1.name, `${zodiacCompat.zodiac1.animal}띠`, zodiacCompat.zodiac1.traits)}
+          ${createCard(person2.name, `${zodiacCompat.zodiac2.animal}띠`, zodiacCompat.zodiac2.traits)}
+        </div>
+        <p style="margin-top: 16px; line-height: 1.8; ${zodiacCompat.isYukHap ? 'color: #4ade80;' : zodiacCompat.isChung ? 'color: #f87171;' : ''}">${zodiacCompat.comment}</p>
+      `)}
+
+      ${createSection('👤 성격 분석', `
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: #60a5fa; margin-bottom: 8px;">${person1.name}님 (${stem1.ko}${stem1.cn})</h3>
+          <p>• 성격: ${personalityAnalysis.person1.trait}</p>
+          <p>• 장점: ${personalityAnalysis.person1.strength}</p>
+          <p>• 단점: ${personalityAnalysis.person1.weakness}</p>
+          <p>• 연애 스타일: ${personalityAnalysis.person1.love}</p>
+          <p>• 금전 스타일: ${personalityAnalysis.person1.money}</p>
+        </div>
+        <div>
+          <h3 style="color: #f472b6; margin-bottom: 8px;">${person2.name}님 (${stem2.ko}${stem2.cn})</h3>
+          <p>• 성격: ${personalityAnalysis.person2.trait}</p>
+          <p>• 장점: ${personalityAnalysis.person2.strength}</p>
+          <p>• 단점: ${personalityAnalysis.person2.weakness}</p>
+          <p>• 연애 스타일: ${personalityAnalysis.person2.love}</p>
+          <p>• 금전 스타일: ${personalityAnalysis.person2.money}</p>
+        </div>
+      `)}
+
+      ${createSection('💕 애정표현 스타일', `
+        <div class="grid">
+          <div class="card">
+            <div class="card-title">${person1.name}님</div>
+            <p>• 스타일: ${loveExpression.person1.style}</p>
+            <p>• 좋아하는 것: ${loveExpression.person1.like}</p>
+            <p>• 싫어하는 것: ${loveExpression.person1.dislike}</p>
+            <p>• 이상형: ${loveExpression.person1.ideal}</p>
+          </div>
+          <div class="card">
+            <div class="card-title">${person2.name}님</div>
+            <p>• 스타일: ${loveExpression.person2.style}</p>
+            <p>• 좋아하는 것: ${loveExpression.person2.like}</p>
+            <p>• 싫어하는 것: ${loveExpression.person2.dislike}</p>
+            <p>• 이상형: ${loveExpression.person2.ideal}</p>
+          </div>
+        </div>
+        <p style="margin-top: 16px; color: #a78bfa;">${loveExpression.compatibility}</p>
+      `)}
+
+      ${createSection('💬 의사소통 스타일', `
+        <div class="grid">
+          <div class="card">
+            <div class="card-title">${person1.name}님</div>
+            <p>• 말하기: ${commStyle.person1.speak}</p>
+            <p>• 듣기: ${commStyle.person1.listen}</p>
+            <p>• 갈등 시: ${commStyle.person1.conflict}</p>
+          </div>
+          <div class="card">
+            <div class="card-title">${person2.name}님</div>
+            <p>• 말하기: ${commStyle.person2.speak}</p>
+            <p>• 듣기: ${commStyle.person2.listen}</p>
+            <p>• 갈등 시: ${commStyle.person2.conflict}</p>
+          </div>
+        </div>
+      `)}
+
+      ${createSection('💰 금전 관리 궁합', `
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div class="score ${financialCompat.score >= 70 ? 'high' : financialCompat.score >= 50 ? 'medium' : 'low'}" style="font-size: 1.5rem;">${financialCompat.score}점</div>
+        </div>
+        <p style="line-height: 1.8; margin-bottom: 12px;">${financialCompat.description}</p>
+        <ul style="list-style: none; padding: 0;">
+          ${financialCompat.tips.map(tip => `<li style="padding: 4px 0;">💡 ${tip}</li>`).join('')}
+        </ul>
+      `)}
+
+      ${createSection('🏡 라이프스타일 궁합', `
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div class="score ${lifestyleCompat.score >= 70 ? 'high' : lifestyleCompat.score >= 50 ? 'medium' : 'low'}" style="font-size: 1.5rem;">${lifestyleCompat.score}점</div>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <div class="card-title">${person1.name}님</div>
+            <p>• 아침: ${lifestyleCompat.person1.morning}</p>
+            <p>• 주말: ${lifestyleCompat.person1.weekend}</p>
+            <p>• 휴가: ${lifestyleCompat.person1.vacation}</p>
+            <p>• 집: ${lifestyleCompat.person1.home}</p>
+          </div>
+          <div class="card">
+            <div class="card-title">${person2.name}님</div>
+            <p>• 아침: ${lifestyleCompat.person2.morning}</p>
+            <p>• 주말: ${lifestyleCompat.person2.weekend}</p>
+            <p>• 휴가: ${lifestyleCompat.person2.vacation}</p>
+            <p>• 집: ${lifestyleCompat.person2.home}</p>
+          </div>
+        </div>
+      `)}
+
+      ${createSection('📅 나이 궁합', `
+        <p style="font-size: 1.1rem; margin-bottom: 12px;">
+          ${person1.name}(${ageCompat.age1}세) & ${person2.name}(${ageCompat.age2}세) - ${ageCompat.ageDiff}살 차이
+        </p>
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div class="score ${ageCompat.score >= 70 ? 'high' : ageCompat.score >= 50 ? 'medium' : 'low'}" style="font-size: 1.5rem;">${ageCompat.score}점</div>
+        </div>
+        <p style="line-height: 1.8; margin-bottom: 12px;">${ageCompat.comment}</p>
+        <ul style="list-style: none; padding: 0;">
+          ${ageCompat.tips.map(tip => `<li style="padding: 4px 0;">💡 ${tip}</li>`).join('')}
+        </ul>
+      `)}
+
+      ${relationshipAnalysis ? createSection(`💝 ${relationshipAnalysis.title} 상세 분석`, `
+        ${relationshipAnalysis.aspects.map(aspect => `
+          <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="font-weight: bold;">${aspect.name}</span>
+              <span style="color: ${aspect.score >= 70 ? '#4ade80' : aspect.score >= 50 ? '#fbbf24' : '#f87171'};">${aspect.score}점</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.1); border-radius: 4px; height: 8px; margin-bottom: 8px;">
+              <div style="background: linear-gradient(90deg, ${aspect.score >= 70 ? '#22c55e, #4ade80' : aspect.score >= 50 ? '#f59e0b, #fbbf24' : '#ef4444, #f87171'}); height: 100%; width: ${aspect.score}%; border-radius: 4px;"></div>
+            </div>
+            <p style="color: #94a3b8; font-size: 0.9rem;">${aspect.description}</p>
+          </div>
+        `).join('')}
+      `) : ''}
+
+      ${createSection('✅ 두 분의 장점', `
+        <ul style="list-style: none; padding: 0;">
+          ${strengths.map(s => `<li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">✓ ${s}</li>`).join('')}
+        </ul>
+      `)}
+
+      ${createSection('⚠️ 주의할 점', `
+        <ul style="list-style: none; padding: 0;">
+          ${weaknesses.map(w => `<li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">! ${w}</li>`).join('')}
+        </ul>
+      `)}
+
+      ${createSection('🔮 연애/결혼 시기 분석', `
+        <div class="grid">
+          ${timingAnalysis.map(t => `
+            <div class="card">
+              <div class="card-title">${t.year}년</div>
+              <div class="card-value" style="font-size: 1.2rem; color: ${t.score >= 70 ? '#4ade80' : '#fbbf24'};">${t.score}점</div>
+              <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px;">${t.fortune}</p>
+            </div>
+          `).join('')}
+        </div>
+      `)}
+
+      ${createSection('🔮 미래 예측', `
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: #60a5fa; margin-bottom: 8px;">📅 1년 후 (${futurePrediction.year1.score}점)</h3>
+          <p style="line-height: 1.8;">${futurePrediction.year1.prediction}</p>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: #a78bfa; margin-bottom: 8px;">📅 5년 후 (${futurePrediction.year5.score}점)</h3>
+          <p style="line-height: 1.8;">${futurePrediction.year5.prediction}</p>
+        </div>
+        <div>
+          <h3 style="color: #f472b6; margin-bottom: 8px;">📅 10년 후 (${futurePrediction.year10.score}점)</h3>
+          <p style="line-height: 1.8;">${futurePrediction.year10.prediction}</p>
+        </div>
+      `)}
+
+      ${createSection('📆 12개월 커플 운세', `
+        <div class="grid">
+          ${fullYearFortune.map(f => `
+            <div class="card">
+              <div class="card-title">${f.month}월 - ${f.title}</div>
+              <div class="card-value" style="font-size: 1.1rem; color: ${f.score >= 80 ? '#4ade80' : '#fbbf24'};">${f.score}점</div>
+              <p style="font-size: 0.85rem; line-height: 1.6; margin-top: 4px;">${f.fortune}</p>
+              <p style="font-size: 0.8rem; color: #a78bfa; margin-top: 4px;">추천: ${f.activity}</p>
+              <p style="font-size: 0.8rem; color: #fbbf24;">행운: ${f.lucky}</p>
+            </div>
+          `).join('')}
+        </div>
+      `)}
+
+      ${createSection('🍀 행운의 아이템', `
+        ${luckyItems.map((item, i) => `
+          <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+            <h4 style="color: #fbbf24; margin-bottom: 8px;">${i === 0 ? person1.name : person2.name}님의 행운</h4>
+            <div class="grid">
+              <div class="card"><div class="card-title">🎨 색상</div><div class="card-value">${item.color}</div></div>
+              <div class="card"><div class="card-title">🧭 방향</div><div class="card-value">${item.direction}</div></div>
+              <div class="card"><div class="card-title">🔢 숫자</div><div class="card-value">${item.number}</div></div>
+              <div class="card"><div class="card-title">⏰ 시간</div><div class="card-value">${item.time}</div></div>
+              <div class="card"><div class="card-title">🍽️ 음식</div><div class="card-value">${item.food}</div></div>
+              <div class="card"><div class="card-title">📍 장소</div><div class="card-value">${item.place}</div></div>
+            </div>
+          </div>
+        `).join('')}
+      `)}
+
+      ${createSection('📍 추천 데이트 장소', `
+        ${getDateRecommendations().slice(0, 5).map(rec => `
+          <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; gap: 12px;">
+            <span style="font-size: 1.5rem;">${rec.icon}</span>
+            <div>
+              <p style="font-weight: bold; margin-bottom: 4px;">${rec.place}</p>
+              <p style="color: #94a3b8; font-size: 0.9rem;">${rec.reason}</p>
+            </div>
+          </div>
+        `).join('')}
+      `)}
+
+      ${createSection('💝 관계 강화 비법', `
+        <div class="grid">
+          ${getRelationshipTips().map(tip => `
+            <div class="card">
+              <div style="font-size: 1.5rem; margin-bottom: 8px;">${tip.icon}</div>
+              <div class="card-title">${tip.title}</div>
+              <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.6;">${tip.desc}</p>
+            </div>
+          `).join('')}
+        </div>
+      `)}
+
+      ${createSection('🛡️ 갈등 해결 방법', `
+        <ul style="list-style: none; padding: 0;">
+          ${getConflictResolution().map((tip, i) => `
+            <li style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; gap: 12px;">
+              <span style="color: #fbbf24; font-weight: bold;">${i + 1}</span>
+              <span>${tip}</span>
+            </li>
+          `).join('')}
+        </ul>
+      `)}
     `;
-    downloadAsHtml(htmlContent, `궁합_${person1.name}_${person2.name}`);
+
+    downloadAsHtml(htmlContent, `궁합분석_${person1.name}_${person2.name}`);
   };
 
   // 이메일 전송 함수
@@ -1031,6 +1607,411 @@ ForceTeller - AI 운세 서비스
               <div key={i} className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-3">
                 <span className="text-amber-400 font-bold">{i + 1}</span>
                 <p className="text-slate-300 text-sm">{tip}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 띠 궁합 분석 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-2xl">
+              🐲
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-100">띠 궁합 분석</h3>
+              <p className="text-orange-400 text-sm">{zodiacCompat.zodiac1.animal}띠 & {zodiacCompat.zodiac2.animal}띠</p>
+            </div>
+            <span className={`ml-auto text-2xl font-bold ${getScoreColor(zodiacCompat.score)}`}>
+              {zodiacCompat.score}점
+            </span>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+              <p className="text-blue-400 font-medium mb-2">{person1.name}님</p>
+              <p className="text-2xl mb-1">{zodiacCompat.zodiac1.animal}띠</p>
+              <p className="text-slate-400 text-sm">{zodiacCompat.zodiac1.traits}</p>
+            </div>
+            <div className="bg-pink-500/10 border border-pink-500/30 rounded-xl p-4">
+              <p className="text-pink-400 font-medium mb-2">{person2.name}님</p>
+              <p className="text-2xl mb-1">{zodiacCompat.zodiac2.animal}띠</p>
+              <p className="text-slate-400 text-sm">{zodiacCompat.zodiac2.traits}</p>
+            </div>
+          </div>
+          <div className={`p-4 rounded-2xl ${zodiacCompat.isYukHap ? 'bg-green-500/10 border border-green-500/30' : zodiacCompat.isChung ? 'bg-red-500/10 border border-red-500/30' : 'bg-slate-800/50'}`}>
+            <p className="text-slate-200 leading-relaxed">{zodiacCompat.comment}</p>
+          </div>
+        </motion.div>
+
+        {/* 성격 분석 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center">
+              <Users className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">성격 분석</h3>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-5">
+              <h4 className="text-blue-400 font-bold mb-3">{person1.name}님 ({stem1.ko}{stem1.cn})</h4>
+              <div className="space-y-2 text-sm">
+                <p><span className="text-slate-400">성격:</span> <span className="text-slate-200">{personalityAnalysis.person1.trait}</span></p>
+                <p><span className="text-slate-400">장점:</span> <span className="text-green-400">{personalityAnalysis.person1.strength}</span></p>
+                <p><span className="text-slate-400">단점:</span> <span className="text-orange-400">{personalityAnalysis.person1.weakness}</span></p>
+                <p><span className="text-slate-400">연애:</span> <span className="text-pink-400">{personalityAnalysis.person1.love}</span></p>
+                <p><span className="text-slate-400">금전:</span> <span className="text-amber-400">{personalityAnalysis.person1.money}</span></p>
+              </div>
+            </div>
+            <div className="bg-pink-500/10 border border-pink-500/30 rounded-2xl p-5">
+              <h4 className="text-pink-400 font-bold mb-3">{person2.name}님 ({stem2.ko}{stem2.cn})</h4>
+              <div className="space-y-2 text-sm">
+                <p><span className="text-slate-400">성격:</span> <span className="text-slate-200">{personalityAnalysis.person2.trait}</span></p>
+                <p><span className="text-slate-400">장점:</span> <span className="text-green-400">{personalityAnalysis.person2.strength}</span></p>
+                <p><span className="text-slate-400">단점:</span> <span className="text-orange-400">{personalityAnalysis.person2.weakness}</span></p>
+                <p><span className="text-slate-400">연애:</span> <span className="text-pink-400">{personalityAnalysis.person2.love}</span></p>
+                <p><span className="text-slate-400">금전:</span> <span className="text-amber-400">{personalityAnalysis.person2.money}</span></p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 애정표현 스타일 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-2xl">
+              💕
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">애정표현 스타일</h3>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6 mb-4">
+            <div className="bg-slate-800/50 rounded-2xl p-5">
+              <h4 className="text-blue-400 font-bold mb-3">{person1.name}님</h4>
+              <div className="space-y-2 text-sm">
+                <p className="text-slate-200">{loveExpression.person1.style}</p>
+                <p><span className="text-green-400">👍</span> {loveExpression.person1.like}</p>
+                <p><span className="text-red-400">👎</span> {loveExpression.person1.dislike}</p>
+                <p><span className="text-purple-400">💜</span> {loveExpression.person1.ideal}</p>
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-2xl p-5">
+              <h4 className="text-pink-400 font-bold mb-3">{person2.name}님</h4>
+              <div className="space-y-2 text-sm">
+                <p className="text-slate-200">{loveExpression.person2.style}</p>
+                <p><span className="text-green-400">👍</span> {loveExpression.person2.like}</p>
+                <p><span className="text-red-400">👎</span> {loveExpression.person2.dislike}</p>
+                <p><span className="text-purple-400">💜</span> {loveExpression.person2.ideal}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4 text-center">
+            <p className="text-purple-300">{loveExpression.compatibility}</p>
+          </div>
+        </motion.div>
+
+        {/* 의사소통 스타일 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-2xl">
+              💬
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">의사소통 스타일</h3>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-slate-800/50 rounded-2xl p-5">
+              <h4 className="text-blue-400 font-bold mb-3">{person1.name}님</h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-2"><span className="text-xl">🗣️</span><span className="text-slate-200">{commStyle.person1.speak}</span></div>
+                <div className="flex items-center gap-2"><span className="text-xl">👂</span><span className="text-slate-200">{commStyle.person1.listen}</span></div>
+                <div className="flex items-center gap-2"><span className="text-xl">⚡</span><span className="text-slate-200">{commStyle.person1.conflict}</span></div>
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-2xl p-5">
+              <h4 className="text-pink-400 font-bold mb-3">{person2.name}님</h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-2"><span className="text-xl">🗣️</span><span className="text-slate-200">{commStyle.person2.speak}</span></div>
+                <div className="flex items-center gap-2"><span className="text-xl">👂</span><span className="text-slate-200">{commStyle.person2.listen}</span></div>
+                <div className="flex items-center gap-2"><span className="text-xl">⚡</span><span className="text-slate-200">{commStyle.person2.conflict}</span></div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 금전 관리 궁합 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center">
+              <Wallet className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-100">금전 관리 궁합</h3>
+              <p className="text-amber-400 text-sm">재물 관리 스타일 비교</p>
+            </div>
+            <span className={`ml-auto text-2xl font-bold ${getScoreColor(financialCompat.score)}`}>
+              {financialCompat.score}점
+            </span>
+          </div>
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 mb-4">
+            <p className="text-slate-200 leading-relaxed">{financialCompat.description}</p>
+          </div>
+          <div className="space-y-2">
+            {financialCompat.tips.map((tip, i) => (
+              <div key={i} className="flex items-start gap-2 text-sm">
+                <span className="text-amber-400">💡</span>
+                <span className="text-slate-300">{tip}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 라이프스타일 궁합 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-2xl">
+              🏡
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-100">라이프스타일 궁합</h3>
+              <p className="text-teal-400 text-sm">일상 생활 패턴 비교</p>
+            </div>
+            <span className={`ml-auto text-2xl font-bold ${getScoreColor(lifestyleCompat.score)}`}>
+              {lifestyleCompat.score}점
+            </span>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-slate-800/50 rounded-2xl p-5">
+              <h4 className="text-blue-400 font-bold mb-3">{person1.name}님</h4>
+              <div className="space-y-2 text-sm">
+                <p><span className="text-slate-400">🌅 아침:</span> <span className="text-slate-200">{lifestyleCompat.person1.morning}</span></p>
+                <p><span className="text-slate-400">🗓️ 주말:</span> <span className="text-slate-200">{lifestyleCompat.person1.weekend}</span></p>
+                <p><span className="text-slate-400">✈️ 휴가:</span> <span className="text-slate-200">{lifestyleCompat.person1.vacation}</span></p>
+                <p><span className="text-slate-400">🏠 집:</span> <span className="text-slate-200">{lifestyleCompat.person1.home}</span></p>
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-2xl p-5">
+              <h4 className="text-pink-400 font-bold mb-3">{person2.name}님</h4>
+              <div className="space-y-2 text-sm">
+                <p><span className="text-slate-400">🌅 아침:</span> <span className="text-slate-200">{lifestyleCompat.person2.morning}</span></p>
+                <p><span className="text-slate-400">🗓️ 주말:</span> <span className="text-slate-200">{lifestyleCompat.person2.weekend}</span></p>
+                <p><span className="text-slate-400">✈️ 휴가:</span> <span className="text-slate-200">{lifestyleCompat.person2.vacation}</span></p>
+                <p><span className="text-slate-400">🏠 집:</span> <span className="text-slate-200">{lifestyleCompat.person2.home}</span></p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 나이 궁합 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-2xl">
+              📅
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-100">나이 궁합</h3>
+              <p className="text-indigo-400 text-sm">{ageCompat.ageDiff}살 차이</p>
+            </div>
+            <span className={`ml-auto text-2xl font-bold ${getScoreColor(ageCompat.score)}`}>
+              {ageCompat.score}점
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="bg-blue-500/10 rounded-xl p-4 text-center">
+              <p className="text-blue-400 text-sm">{person1.name}님</p>
+              <p className="text-2xl font-bold text-slate-100">{ageCompat.age1}세</p>
+            </div>
+            <div className="bg-pink-500/10 rounded-xl p-4 text-center">
+              <p className="text-pink-400 text-sm">{person2.name}님</p>
+              <p className="text-2xl font-bold text-slate-100">{ageCompat.age2}세</p>
+            </div>
+          </div>
+          <div className="bg-slate-800/50 rounded-2xl p-5 mb-4">
+            <p className="text-slate-200 leading-relaxed">{ageCompat.comment}</p>
+          </div>
+          <div className="space-y-2">
+            {ageCompat.tips.map((tip, i) => (
+              <div key={i} className="flex items-start gap-2 text-sm">
+                <span className="text-indigo-400">💡</span>
+                <span className="text-slate-300">{tip}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 연애/결혼 시기 분석 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-2xl">
+              💍
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">연애/결혼 시기 분석</h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {timingAnalysis.map((t, i) => (
+              <div key={i} className="bg-slate-800/50 rounded-xl p-4 text-center">
+                <p className="text-slate-400 text-sm mb-1">{t.year}년</p>
+                <p className={`text-2xl font-bold ${getScoreColor(t.score)}`}>{t.score}점</p>
+                <p className="text-slate-400 text-xs mt-2">{t.fortune}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 12개월 커플 운세 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">12개월 커플 운세</h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {fullYearFortune.map((f, i) => {
+              const isCurrentMonth = f.month === new Date().getMonth() + 1;
+              return (
+                <div key={i} className={`rounded-xl p-4 ${isCurrentMonth ? 'bg-pink-500/20 border-2 border-pink-500' : 'bg-slate-800/50'}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`font-bold ${isCurrentMonth ? 'text-pink-400' : 'text-slate-300'}`}>{f.month}월</span>
+                    <span className={`text-sm font-bold ${getScoreColor(f.score)}`}>{f.score}점</span>
+                  </div>
+                  <p className="text-slate-400 text-xs mb-1">{f.title}</p>
+                  <p className="text-slate-300 text-xs line-clamp-2">{f.fortune}</p>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* 미래 예측 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-fuchsia-500 flex items-center justify-center text-2xl">
+              🔮
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">미래 예측</h3>
+          </div>
+          <div className="space-y-4">
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-blue-400 font-bold">📅 1년 후</span>
+                <span className={`font-bold ${getScoreColor(futurePrediction.year1.score)}`}>{futurePrediction.year1.score}점</span>
+              </div>
+              <p className="text-slate-300 text-sm leading-relaxed">{futurePrediction.year1.prediction}</p>
+            </div>
+            <div className="bg-purple-500/10 border border-purple-500/30 rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-purple-400 font-bold">📅 5년 후</span>
+                <span className={`font-bold ${getScoreColor(futurePrediction.year5.score)}`}>{futurePrediction.year5.score}점</span>
+              </div>
+              <p className="text-slate-300 text-sm leading-relaxed">{futurePrediction.year5.prediction}</p>
+            </div>
+            <div className="bg-pink-500/10 border border-pink-500/30 rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-pink-400 font-bold">📅 10년 후</span>
+                <span className={`font-bold ${getScoreColor(futurePrediction.year10.score)}`}>{futurePrediction.year10.score}점</span>
+              </div>
+              <p className="text-slate-300 text-sm leading-relaxed">{futurePrediction.year10.prediction}</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 행운의 아이템 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-2xl">
+              🍀
+            </div>
+            <h3 className="text-xl font-bold text-slate-100">행운의 아이템</h3>
+          </div>
+          <div className="space-y-6">
+            {luckyItems.map((item, i) => (
+              <div key={i} className="bg-slate-800/50 rounded-2xl p-5">
+                <h4 className={`font-bold mb-4 ${i === 0 ? 'text-blue-400' : 'text-pink-400'}`}>{i === 0 ? person1.name : person2.name}님의 행운</h4>
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                  <div className="text-center p-2 bg-slate-700/50 rounded-xl">
+                    <span className="text-xl">🎨</span>
+                    <p className="text-xs text-slate-400 mt-1">색상</p>
+                    <p className="text-sm text-slate-200">{item.color}</p>
+                  </div>
+                  <div className="text-center p-2 bg-slate-700/50 rounded-xl">
+                    <span className="text-xl">🧭</span>
+                    <p className="text-xs text-slate-400 mt-1">방향</p>
+                    <p className="text-sm text-slate-200">{item.direction}</p>
+                  </div>
+                  <div className="text-center p-2 bg-slate-700/50 rounded-xl">
+                    <span className="text-xl">🔢</span>
+                    <p className="text-xs text-slate-400 mt-1">숫자</p>
+                    <p className="text-sm text-slate-200">{item.number}</p>
+                  </div>
+                  <div className="text-center p-2 bg-slate-700/50 rounded-xl">
+                    <span className="text-xl">⏰</span>
+                    <p className="text-xs text-slate-400 mt-1">시간</p>
+                    <p className="text-sm text-slate-200">{item.time}</p>
+                  </div>
+                  <div className="text-center p-2 bg-slate-700/50 rounded-xl">
+                    <span className="text-xl">🍽️</span>
+                    <p className="text-xs text-slate-400 mt-1">음식</p>
+                    <p className="text-sm text-slate-200">{item.food}</p>
+                  </div>
+                  <div className="text-center p-2 bg-slate-700/50 rounded-xl">
+                    <span className="text-xl">📍</span>
+                    <p className="text-xs text-slate-400 mt-1">장소</p>
+                    <p className="text-sm text-slate-200">{item.place}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
