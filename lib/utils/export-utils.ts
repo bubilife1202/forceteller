@@ -1,9 +1,144 @@
 'use client';
 
-// HTML 다운로드 유틸리티 - 화면과 동일한 스타일
+/**
+ * DOM 요소를 HTML 파일로 다운로드 (화면 그대로 저장)
+ * @param elementId - 저장할 요소의 ID
+ * @param filename - 파일명 (확장자 제외)
+ */
+export function downloadElementAsHtml(elementId: string, filename: string) {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    console.error('Element not found:', elementId);
+    return;
+  }
+
+  // 버튼들 임시 숨기기
+  const buttons = element.querySelectorAll('button');
+  const originalDisplays: string[] = [];
+  buttons.forEach((btn, i) => {
+    originalDisplays[i] = (btn as HTMLElement).style.display;
+    (btn as HTMLElement).style.display = 'none';
+  });
+
+  // HTML 콘텐츠 복제
+  const clone = element.cloneNode(true) as HTMLElement;
+
+  // 버튼 요소 제거
+  clone.querySelectorAll('button').forEach(btn => btn.remove());
+
+  // 버튼 원복
+  buttons.forEach((btn, i) => {
+    (btn as HTMLElement).style.display = originalDisplays[i];
+  });
+
+  // 모든 스타일시트 수집
+  const styles = Array.from(document.styleSheets)
+    .map(sheet => {
+      try {
+        return Array.from(sheet.cssRules)
+          .map(rule => rule.cssText)
+          .join('\n');
+      } catch {
+        // 외부 스타일시트는 CORS로 인해 접근 불가할 수 있음
+        return '';
+      }
+    })
+    .join('\n');
+
+  const htmlTemplate = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${filename}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    ${styles}
+
+    /* 추가 스타일 보정 */
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* 별빛 배경 효과 */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at top, rgba(109, 40, 217, 0.15), transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(192, 132, 252, 0.1), transparent 50%),
+        radial-gradient(ellipse at bottom left, rgba(251, 191, 36, 0.05), transparent 50%);
+      pointer-events: none;
+    }
+
+    /* Tailwind 클래스 폴백 */
+    .glass-strong {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #fbbf24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* SVG 아이콘 스타일 보정 */
+    svg {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* 프린트 스타일 */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      body::before, body::after {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  ${clone.outerHTML}
+
+  <div style="text-align: center; padding: 40px 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px;">
+    <p style="font-size: 1.5rem; color: #fbbf24; margin-bottom: 12px; font-weight: bold;">👑 팔자왕 👑</p>
+    <p style="color: #c084fc;">
+      <a href="https://www.threads.com/@palzawang" target="_blank" style="color: #c084fc; text-decoration: none;">
+        📱 @palzawang
+      </a>
+    </p>
+  </div>
+</body>
+</html>`;
+
+  const blob = new Blob([htmlTemplate], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filename}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// 기존 함수들 유지 (하위 호환성)
 export function downloadAsHtml(content: string, filename: string) {
-  const htmlTemplate = `
-<!DOCTYPE html>
+  const htmlTemplate = `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -22,7 +157,6 @@ export function downloadAsHtml(content: string, filename: string) {
       position: relative;
     }
 
-    /* 별빛 배경 효과 */
     body::before {
       content: '';
       position: fixed;
@@ -35,7 +169,6 @@ export function downloadAsHtml(content: string, filename: string) {
       pointer-events: none;
     }
 
-    /* 별 효과 */
     body::after {
       content: '';
       position: fixed;
@@ -85,10 +218,7 @@ export function downloadAsHtml(content: string, filename: string) {
       margin-bottom: 12px;
     }
 
-    .header p {
-      color: #c084fc;
-      font-size: 1rem;
-    }
+    .header p { color: #c084fc; font-size: 1rem; }
 
     .section {
       background: rgba(30, 41, 59, 0.5);
@@ -117,30 +247,12 @@ export function downloadAsHtml(content: string, filename: string) {
       margin: 10px 0;
     }
 
-    .score.high {
-      background: rgba(34, 197, 94, 0.2);
-      color: #4ade80;
-      box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
-    }
-    .score.medium {
-      background: rgba(251, 191, 36, 0.2);
-      color: #fbbf24;
-      box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-    }
-    .score.low {
-      background: rgba(239, 68, 68, 0.2);
-      color: #f87171;
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
-    }
+    .score.high { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+    .score.medium { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    .score.low { background: rgba(239, 68, 68, 0.2); color: #f87171; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; }
-    }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 
     .card {
       background: rgba(30, 41, 59, 0.6);
@@ -149,21 +261,10 @@ export function downloadAsHtml(content: string, filename: string) {
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .card-title {
-      color: #c084fc;
-      font-size: 0.875rem;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .card-value {
-      color: #f1f5f9;
-      font-weight: 600;
-      font-size: 1rem;
-    }
+    .card-title { color: #c084fc; font-size: 0.875rem; margin-bottom: 8px; font-weight: 500; }
+    .card-value { color: #f1f5f9; font-weight: 600; font-size: 1rem; }
 
     ul { list-style: none; padding-left: 0; }
-
     li {
       padding: 10px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -172,7 +273,6 @@ export function downloadAsHtml(content: string, filename: string) {
       gap: 10px;
       color: #cbd5e1;
     }
-
     li:last-child { border-bottom: none; }
 
     .check { color: #4ade80; font-weight: bold; }
@@ -186,36 +286,13 @@ export function downloadAsHtml(content: string, filename: string) {
       color: #64748b;
     }
 
-    .footer a {
-      color: #c084fc;
-      text-decoration: none;
-    }
+    .footer a { color: #c084fc; text-decoration: none; }
 
-    .progress-bar {
-      height: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 5px;
-      overflow: hidden;
-      margin: 10px 0;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 5px;
-    }
-
-    .progress-fill.high {
-      background: linear-gradient(90deg, #22c55e, #4ade80);
-      box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
-    }
-    .progress-fill.medium {
-      background: linear-gradient(90deg, #f59e0b, #fbbf24);
-      box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
-    }
-    .progress-fill.low {
-      background: linear-gradient(90deg, #ef4444, #f87171);
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-    }
+    .progress-bar { height: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; overflow: hidden; margin: 10px 0; }
+    .progress-fill { height: 100%; border-radius: 5px; }
+    .progress-fill.high { background: linear-gradient(90deg, #22c55e, #4ade80); }
+    .progress-fill.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .progress-fill.low { background: linear-gradient(90deg, #ef4444, #f87171); }
 
     .message-box {
       background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.25));
@@ -224,16 +301,10 @@ export function downloadAsHtml(content: string, filename: string) {
       padding: 24px;
       margin: 20px 0;
       text-align: center;
-      box-shadow: 0 0 30px rgba(251, 191, 36, 0.1);
     }
 
-    .message-text {
-      font-size: 1.125rem;
-      line-height: 1.9;
-      color: #f1f5f9;
-    }
+    .message-text { font-size: 1.125rem; line-height: 1.9; color: #f1f5f9; }
 
-    /* 추가 유틸리티 스타일 */
     .text-gold { color: #fbbf24; }
     .text-purple { color: #c084fc; }
     .text-green { color: #4ade80; }
@@ -242,43 +313,13 @@ export function downloadAsHtml(content: string, filename: string) {
     .text-blue { color: #60a5fa; }
     .text-muted { color: #94a3b8; }
 
-    .badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; }
+    .badge-gold { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+    .badge-purple { background: rgba(192, 132, 252, 0.2); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.3); }
+    .badge-green { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
+    .badge-red { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
 
-    .badge-gold {
-      background: rgba(251, 191, 36, 0.2);
-      color: #fbbf24;
-      border: 1px solid rgba(251, 191, 36, 0.3);
-    }
-
-    .badge-purple {
-      background: rgba(192, 132, 252, 0.2);
-      color: #c084fc;
-      border: 1px solid rgba(192, 132, 252, 0.3);
-    }
-
-    .badge-green {
-      background: rgba(74, 222, 128, 0.2);
-      color: #4ade80;
-      border: 1px solid rgba(74, 222, 128, 0.3);
-    }
-
-    .badge-red {
-      background: rgba(248, 113, 113, 0.2);
-      color: #f87171;
-      border: 1px solid rgba(248, 113, 113, 0.3);
-    }
-
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      margin: 20px 0;
-    }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); margin: 20px 0; }
 
     .highlight-box {
       background: linear-gradient(135deg, rgba(109, 40, 217, 0.2), rgba(192, 132, 252, 0.15));
@@ -288,53 +329,16 @@ export function downloadAsHtml(content: string, filename: string) {
       margin: 12px 0;
     }
 
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
+    .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
     .stat-row:last-child { border-bottom: none; }
-
     .stat-label { color: #94a3b8; }
     .stat-value { color: #f1f5f9; font-weight: 600; }
 
-    .icon-text {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .subsection {
-      background: rgba(15, 23, 42, 0.4);
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 12px;
-    }
-
-    .subsection-title {
-      color: #c084fc;
-      font-size: 1rem;
-      margin-bottom: 12px;
-      font-weight: 600;
-    }
-
-    .tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tag {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 0.875rem;
-      color: #cbd5e1;
-    }
+    .icon-text { display: flex; align-items: center; gap: 8px; }
+    .subsection { background: rgba(15, 23, 42, 0.4); border-radius: 12px; padding: 16px; margin-top: 12px; }
+    .subsection-title { color: #c084fc; font-size: 1rem; margin-bottom: 12px; font-weight: 600; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 6px 12px; font-size: 0.875rem; color: #cbd5e1; }
   </style>
 </head>
 <body>
@@ -350,8 +354,7 @@ export function downloadAsHtml(content: string, filename: string) {
     </div>
   </div>
 </body>
-</html>
-`;
+</html>`;
 
   const blob = new Blob([htmlTemplate], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -364,21 +367,20 @@ export function downloadAsHtml(content: string, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-// 이메일 보내기 유틸리티 (mailto: 링크 사용)
+// 이메일 보내기 유틸리티
 export function sendByEmail(subject: string, body: string) {
   const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   window.location.href = mailtoLink;
 }
 
-// 점수에 따른 클래스 반환
+// 유틸리티 함수들
 export function getScoreClass(score: number): string {
   if (score >= 70) return 'high';
   if (score >= 50) return 'medium';
   return 'low';
 }
 
-// 진행바 HTML 생성
-export function createProgressBarHtml(score: number, label: string, color: string): string {
+export function createProgressBarHtml(score: number, label: string): string {
   const scoreClass = getScoreClass(score);
   return `
     <div class="card">
@@ -391,7 +393,6 @@ export function createProgressBarHtml(score: number, label: string, color: strin
   `;
 }
 
-// 리스트 HTML 생성 (체크/X 표시)
 export function createListHtml(items: string[], type: 'check' | 'cross'): string {
   return `
     <ul>
@@ -405,7 +406,6 @@ export function createListHtml(items: string[], type: 'check' | 'cross'): string
   `;
 }
 
-// 섹션 HTML 생성
 export function createSectionHtml(title: string, content: string, emoji?: string): string {
   return `
     <div class="section">
@@ -415,7 +415,6 @@ export function createSectionHtml(title: string, content: string, emoji?: string
   `;
 }
 
-// 점수 배지 HTML 생성
 export function createScoreBadgeHtml(score: number, label?: string): string {
   const scoreClass = getScoreClass(score);
   return `
@@ -425,7 +424,6 @@ export function createScoreBadgeHtml(score: number, label?: string): string {
   `;
 }
 
-// 메시지 박스 HTML 생성
 export function createMessageBoxHtml(message: string): string {
   return `
     <div class="message-box">
@@ -434,16 +432,10 @@ export function createMessageBoxHtml(message: string): string {
   `;
 }
 
-// 그리드 HTML 생성
 export function createGridHtml(cards: string[]): string {
-  return `
-    <div class="grid">
-      ${cards.join('')}
-    </div>
-  `;
+  return `<div class="grid">${cards.join('')}</div>`;
 }
 
-// 카드 HTML 생성
 export function createCardHtml(title: string, value: string | number, emoji?: string): string {
   return `
     <div class="card">

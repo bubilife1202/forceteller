@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Heart, ArrowLeft, RefreshCw, Star, AlertTriangle, Sparkles, TrendingUp, Clock, MessageCircle, Lightbulb, Target, Shield, Flame, Moon, Sun, Calendar, Phone, MapPin, Coffee, Gift, Users, Zap, CheckCircle, XCircle, Eye, ThumbsUp, ThumbsDown, Download, Mail } from 'lucide-react';
 import { RekindlingFormData } from './RekindlingForm';
 import { getDayPillar } from '@/lib/saju-calculator';
-import { downloadAsHtml, sendByEmail } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml, sendByEmail } from '@/lib/utils/export-utils';
 
 interface RekindlingResultProps {
   formData: RekindlingFormData;
@@ -644,186 +644,8 @@ export default function RekindlingResult({ formData, onReset, onBack }: Rekindli
 
   // HTML 다운로드 함수
   const handleDownloadHtml = () => {
-    const htmlContent = `
-      <div class="header">
-        <h1>💕 재회 운세 결과</h1>
-        <p>${myName}님 ❤️ ${partnerName}님</p>
-      </div>
-
-      <!-- 재회 가능성 점수 -->
-      <div class="section" style="text-align: center;">
-        <h2 class="section-title">${interpretation.emoji} 재회 가능성</h2>
-        <div class="score ${rekindlingScore >= 65 ? 'high' : rekindlingScore >= 35 ? 'medium' : 'low'}">
-          ${rekindlingScore}%
-        </div>
-        <p style="margin-top: 12px; font-size: 1.25rem; color: ${interpretation.color.replace('text-', '')};">${interpretation.level}</p>
-        <p style="margin-top: 8px; color: #fff;">${interpretation.desc}</p>
-      </div>
-
-      <!-- 두 사람의 일주 -->
-      <div class="section">
-        <h2 class="section-title">✨ 두 사람의 일주</h2>
-        <div class="grid">
-          <div class="card" style="text-align: center;">
-            <div class="card-title">${myName}님</div>
-            <div class="card-value" style="font-size: 1.5rem; color: #f472b6;">${myDayPillar.stem.ko}${myDayPillar.branch.ko}</div>
-            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">${myElement} 오행</p>
-          </div>
-          <div class="card" style="text-align: center;">
-            <div class="card-title">${partnerName}님</div>
-            <div class="card-value" style="font-size: 1.5rem; color: #fb7185;">${partnerDayPillar.stem.ko}${partnerDayPillar.branch.ko}</div>
-            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">${partnerElement} 오행</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 감정 분석 -->
-      <div class="section">
-        <h2 class="section-title">💭 ${feelingMessage.title}</h2>
-        <p style="color: #cbd5e1; margin-bottom: 16px;">${feelingMessage.message}</p>
-        <div style="background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-          <p style="color: #f9a8d4;">💡 ${feelingMessage.advice}</p>
-        </div>
-        <div style="background: rgba(30,41,59,0.5); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-          <h3 style="color: #fff; margin-bottom: 12px;">💖 마음 치유 단계</h3>
-          <ul>
-            ${feelingMessage.healingProcess.map((step, i) => `<li><span style="color: #f472b6;">${i + 1}.</span> ${step}</li>`).join('')}
-          </ul>
-        </div>
-        <div style="background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(244,63,94,0.1)); border-radius: 12px; padding: 16px;">
-          <h3 style="color: #fff; margin-bottom: 12px;">✨ 오늘의 긍정 확언</h3>
-          ${feelingMessage.positiveAffirmations.slice(0, 3).map(a => `<p style="color: #f9a8d4; font-style: italic; margin-bottom: 8px;">"${a}"</p>`).join('')}
-        </div>
-      </div>
-
-      ${elementCompatibility ? `
-      <!-- 오행 궁합 분석 -->
-      <div class="section">
-        <h2 class="section-title">✨ 오행으로 본 두 사람의 관계</h2>
-        <div style="background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(168,85,247,0.1)); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-          <h3 style="color: #f472b6; font-size: 1.25rem; margin-bottom: 8px;">${elementCompatibility.title}</h3>
-          <p style="color: #fff;">${elementCompatibility.chemistry}</p>
-        </div>
-        <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-          <h4 style="color: #4ade80; margin-bottom: 8px;">👍 이 관계의 강점</h4>
-          <p style="color: #cbd5e1; font-size: 0.875rem;">${elementCompatibility.strength}</p>
-        </div>
-        <div style="background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-          <h4 style="color: #fb923c; margin-bottom: 8px;">⚠️ 주의할 점</h4>
-          <p style="color: #cbd5e1; font-size: 0.875rem;">${elementCompatibility.weakness}</p>
-        </div>
-        <div style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-          <h4 style="color: #60a5fa; margin-bottom: 8px;">🎯 관계 개선 조언</h4>
-          <p style="color: #cbd5e1; font-size: 0.875rem;">${elementCompatibility.advice}</p>
-        </div>
-        <div style="background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.3); border-radius: 12px; padding: 16px;">
-          <h4 style="color: #f472b6; margin-bottom: 8px;">💖 재회 성공 팁</h4>
-          <p style="color: #cbd5e1; font-size: 0.875rem;">${elementCompatibility.rekindlingTip}</p>
-        </div>
-      </div>
-      ` : ''}
-
-      <!-- 이별 원인 심층 분석 -->
-      <div class="section">
-        <h2 class="section-title">💔 이별 원인 심층 분석</h2>
-        <div style="background: rgba(30,41,59,0.5); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-          <p style="color: #fff; font-size: 1.125rem; margin-bottom: 8px;">${separationAnalysis.healing}</p>
-          <p style="color: #fbbf24; font-size: 0.875rem; margin-bottom: 12px;">⏰ ${separationAnalysis.timeline}</p>
-          <p style="color: #cbd5e1; font-size: 0.875rem;">${separationAnalysis.deepAnalysis}</p>
-        </div>
-        <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-          <h4 style="color: #4ade80; margin-bottom: 12px;">✅ 꼭 해야 할 것들</h4>
-          <ul>
-            ${separationAnalysis.doList.map(item => `<li><span class="check">✓</span> ${item}</li>`).join('')}
-          </ul>
-        </div>
-        <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-          <h4 style="color: #f87171; margin-bottom: 12px;">❌ 절대 하면 안 되는 것들</h4>
-          <ul>
-            ${separationAnalysis.dontList.map(item => `<li><span class="cross">✗</span> ${item}</li>`).join('')}
-          </ul>
-        </div>
-        <div style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-          <h4 style="color: #60a5fa; margin-bottom: 8px;">📱 연락 전략</h4>
-          <p style="color: #cbd5e1; font-size: 0.875rem;">${separationAnalysis.contactStrategy}</p>
-        </div>
-        <div style="background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 16px;">
-          <h4 style="color: #a78bfa; margin-bottom: 8px;">☕ 첫 만남 조언</h4>
-          <p style="color: #cbd5e1; font-size: 0.875rem;">${separationAnalysis.firstMeetingTip}</p>
-        </div>
-      </div>
-
-      <!-- 월별 재회 운세 -->
-      <div class="section">
-        <h2 class="section-title">📅 ${currentMonth}월 재회 운세</h2>
-        <div style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 16px;">
-          <h3 style="color: #fbbf24; margin-bottom: 8px;">${monthlyFortune.title}</h3>
-          <p style="color: #fff; margin-bottom: 8px;">${monthlyFortune.fortune}</p>
-          <p style="color: #cbd5e1; font-size: 0.875rem;">💡 ${monthlyFortune.tip}</p>
-        </div>
-      </div>
-
-      <!-- 재회 성공 행동 -->
-      <div class="section">
-        <h2 class="section-title">👍 재회 성공률 높이는 행동</h2>
-        <div style="display: grid; gap: 12px;">
-          ${SUCCESS_BEHAVIORS.slice(0, 6).map(b => `
-            <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 12px;">
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                <span style="font-size: 1.25rem;">${b.icon}</span>
-                <span style="color: #4ade80; font-weight: bold;">${b.title}</span>
-              </div>
-              <p style="color: #cbd5e1; font-size: 0.875rem;">${b.desc}</p>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <!-- 재회 실패 행동 -->
-      <div class="section">
-        <h2 class="section-title">👎 절대 하면 안 되는 행동</h2>
-        <div style="display: grid; gap: 12px;">
-          ${FAILURE_BEHAVIORS.slice(0, 6).map(b => `
-            <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 12px;">
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                <span style="font-size: 1.25rem;">${b.icon}</span>
-                <span style="color: #f87171; font-weight: bold;">${b.title}</span>
-              </div>
-              <p style="color: #cbd5e1; font-size: 0.875rem;">${b.desc}</p>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <!-- 주의사항 -->
-      <div class="section">
-        <h2 class="section-title">⚠️ 꼭 기억하세요</h2>
-        <ul>
-          <li><span style="color: #fb923c;">🛡️</span> 재회는 두 사람 모두의 마음이 맞아야 합니다. 일방적인 집착은 자신을 더 힘들게 할 뿐이에요.</li>
-          <li><span style="color: #f472b6;">🔥</span> 같은 문제로 다시 헤어지지 않으려면, 서로 변화가 필요합니다. 사랑만으로는 부족해요.</li>
-          <li><span style="color: #4ade80;">💖</span> 설령 재회가 어렵더라도, 이 경험은 당신을 더 성장시킬 거예요. 더 좋은 사랑이 기다리고 있습니다.</li>
-          <li><span style="color: #60a5fa;">👁️</span> 상대방의 행동을 잘 관찰하세요. 말보다 행동이 진심을 보여줍니다.</li>
-          <li><span style="color: #a78bfa;">👥</span> 힘들 때는 주변의 도움을 받으세요. 혼자 모든 것을 해결하려 하지 마세요.</li>
-        </ul>
-      </div>
-
-      <!-- 힐링 명언 -->
-      <div class="section" style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2)); border: 1px solid rgba(99,102,241,0.3);">
-        <h2 class="section-title">⭐ 오늘의 힐링 명언</h2>
-        <p style="color: #fff; font-size: 1.125rem; font-style: italic; text-align: center; margin-bottom: 8px;">"${randomQuote.quote}"</p>
-        <p style="color: #94a3b8; font-size: 0.875rem; text-align: right;">- ${randomQuote.author}</p>
-      </div>
-
-      <!-- 응원 메시지 -->
-      <div class="message-box">
-        <p class="message-text">
-          ${myName}님, 어떤 결과가 되더라도<br/>
-          <strong style="color: #f472b6;">당신의 마음은 소중합니다.</strong><br/>
-          진심으로 응원합니다. 💕
-        </p>
-      </div>
-    `;
-    downloadAsHtml(htmlContent, `재회운세_${myName}_${partnerName}`);
+    const today = new Date().toISOString().split('T')[0];
+    downloadElementAsHtml('rekindling-result', `재회운세_${myName}_${partnerName}_${today}`);
   };
 
   // 이메일 전송 함수
@@ -910,7 +732,7 @@ ForceTeller - AI 운세 서비스
       initial="hidden"
       animate="visible"
     >
-      <div className="max-w-lg mx-auto">
+      <div id="rekindling-result" className="max-w-lg mx-auto">
         {/* 뒤로가기 */}
         <motion.button
           variants={itemVariants}

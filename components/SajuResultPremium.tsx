@@ -12,7 +12,8 @@ import HapchungAnalysis from './premium/HapchungAnalysis';
 import ShinsalAnalysis from './premium/ShinsalAnalysis';
 import HealthAdvice from './premium/HealthAdvice';
 import DaeunTimeline from './premium/DaeunTimeline';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Download } from 'lucide-react';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 
 interface SajuResultPremiumProps {
   result: SajuResultType;
@@ -107,6 +108,11 @@ export default function SajuResultPremium({
   const heesin = getHeesin();
   const coreEvaluation = getCoreEvaluation();
 
+  const handleDownloadHtml = () => {
+    const today = new Date().toISOString().split('T')[0];
+    downloadElementAsHtml('saju-result-premium', `${name}_사주프리미엄_${today}`);
+  };
+
   return (
     <div id="saju-result-premium" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4 relative">
       {/* Hero Section */}
@@ -199,8 +205,17 @@ export default function SajuResultPremium({
           </p>
         </div>
 
-        {/* Action Button */}
-        <div className="flex justify-center">
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-4">
+          <motion.button
+            onClick={handleDownloadHtml}
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 rounded-xl font-semibold transition"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Download className="w-4 h-4" />
+            저장하기
+          </motion.button>
           <motion.button
             onClick={onReset}
             className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition"

@@ -1,8 +1,8 @@
 'use client';
 
 import { SajuResult as SajuResultType } from '@/lib/saju-calculator';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Download } from 'lucide-react';
 import OverviewSection from './sections/OverviewSection';
 import PersonalitySection from './sections/PersonalitySection';
 import PillarsSection from './sections/PillarsSection';
@@ -15,6 +15,7 @@ import SectionCard from './ui/SectionCard';
 import SectionHeader from './ui/SectionHeader';
 import InfoBox from './ui/InfoBox';
 import Tooltip from './ui/Tooltip';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 
 interface SajuResultProps {
   result: SajuResultType;
@@ -26,137 +27,11 @@ interface SajuResultProps {
 export default function SajuResultSimplified({ result, name, gender, onReset }: SajuResultProps) {
   const t = useTranslations('result');
   const tCommon = useTranslations('common');
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
 
-  // 이미지로 공유하기 (Web Share API)
-  const handleShare = async () => {
-    setIsSharing(true);
-    try {
-      const htmlToImage = await import('html-to-image');
-      const element = document.getElementById('saju-result');
-      if (!element) {
-        alert(t('alerts.shareNotFound'));
-        setIsSharing(false);
-        return;
-      }
-
-      const buttons = element.querySelectorAll('button');
-      buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const scrollWidth = element.scrollWidth;
-      const scrollHeight = element.scrollHeight;
-
-      const blob = await htmlToImage.toBlob(element, {
-        quality: 1.0,
-        pixelRatio: 3,
-        backgroundColor: '#ffffff',
-        cacheBust: true,
-        width: scrollWidth,
-        height: scrollHeight,
-      });
-
-      buttons.forEach(btn => (btn as HTMLElement).style.display = '');
-
-      if (!blob) {
-        alert(t('alerts.imageFailed'));
-        setIsSharing(false);
-        return;
-      }
-
-      const today = new Date().toISOString().split('T')[0];
-      const file = new File([blob], `${name}_사주풀이_${today}.png`, { type: 'image/png' });
-
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: t('title', { name }),
-          text: t('title', { name }),
-          files: [file]
-        });
-        // 공유 성공 (사용자가 공유 완료한 경우)
-      } else {
-        // Web Share API를 지원하지 않으면 다운로드
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = `${name}_사주풀이_${today}.png`;
-        link.href = url;
-        link.click();
-        URL.revokeObjectURL(url);
-        alert('이미지가 다운로드되었습니다. 다운로드 폴더를 확인해주세요.');
-      }
-      setIsSharing(false);
-    } catch (error) {
-      console.error('공유 오류:', error);
-      const element = document.getElementById('saju-result');
-      if (element) {
-        const buttons = element.querySelectorAll('button');
-        buttons.forEach(btn => (btn as HTMLElement).style.display = '');
-      }
-      setIsSharing(false);
-      // AbortError는 사용자가 공유를 취소한 경우이므로 에러 메시지 표시 안 함
-      if (error instanceof Error && error.name === 'AbortError') return;
-      alert(t('alerts.shareFailed'));
-    }
-  };
-
-  // 이미지 다운로드
-  const handleDownloadPDF = async () => {
-    setIsSaving(true);
-    try {
-      const htmlToImage = await import('html-to-image');
-      const element = document.getElementById('saju-result');
-      if (!element) {
-        console.error('저장 대상 요소를 찾을 수 없습니다.');
-        setIsSaving(false);
-        return;
-      }
-
-      const buttons = element.querySelectorAll('button');
-      buttons.forEach(btn => (btn as HTMLElement).style.display = 'none');
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const scrollWidth = element.scrollWidth;
-      const scrollHeight = element.scrollHeight;
-
-      const dataUrl = await htmlToImage.toPng(element, {
-        quality: 1.0,
-        pixelRatio: 3,
-        backgroundColor: '#ffffff',
-        cacheBust: true,
-        skipAutoScale: false,
-        preferredFontFormat: 'woff2',
-        width: scrollWidth,
-        height: scrollHeight,
-        style: {
-          margin: '0',
-          padding: '0',
-        }
-      });
-
-      buttons.forEach(btn => (btn as HTMLElement).style.display = '');
-
-      const link = document.createElement('a');
-      const today = new Date().toISOString().split('T')[0];
-      link.download = `${name}_사주풀이_${today}.png`;
-      link.href = dataUrl;
-      link.click();
-
-      setIsSaving(false);
-    } catch (error) {
-      console.error('이미지 생성 오류:', error);
-      const element = document.getElementById('saju-result');
-      if (element) {
-        const buttons = element.querySelectorAll('button');
-        buttons.forEach(btn => (btn as HTMLElement).style.display = '');
-      }
-      if (error instanceof Error) {
-        alert(t('alerts.imageError', { error: error.message }));
-      } else {
-        alert(t('alerts.imageErrorGeneric'));
-      }
-      setIsSaving(false);
-    }
+  // HTML 다운로드
+  const handleDownloadHtml = () => {
+    const today = new Date().toISOString().split('T')[0];
+    downloadElementAsHtml('saju-result', `${name}_사주풀이_${today}`);
   };
 
   return (
@@ -187,20 +62,12 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
             </div>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={handleDownloadPDF}
-                disabled={isSaving || isSharing}
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition disabled:opacity-50"
-                title={t('buttons.downloadTitle')}
+                onClick={handleDownloadHtml}
+                className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition"
+                title="HTML로 저장"
               >
-                📸 {isSaving ? t('buttons.imageSaving') : t('buttons.image')}
-              </button>
-              <button
-                onClick={handleShare}
-                disabled={isSaving || isSharing}
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition disabled:opacity-50"
-                title={t('buttons.shareTitle')}
-              >
-                📤 {isSharing ? '공유 준비중...' : t('buttons.share')}
+                <Download className="w-4 h-4" />
+                저장하기
               </button>
               <button
                 onClick={onReset}

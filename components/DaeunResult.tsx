@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, ArrowLeft, RefreshCw, Calendar, Target, Heart, Briefcase, Coins, Activity, Crown, Zap, Download, Mail, Shield, AlertTriangle, CheckCircle, TrendingDown, Compass, Clock, Palette, Hash, MapPin, Brain, Lightbulb, Star, Award } from 'lucide-react';
+import { TrendingUp, ArrowLeft, RefreshCw, Calendar, Target, Heart, Briefcase, Coins, Activity, Crown, Zap, Download, Shield, AlertTriangle, CheckCircle, TrendingDown, Compass, Clock, Palette, Hash, MapPin, Brain, Lightbulb, Star, Award } from 'lucide-react';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { DaeunFormData } from './DaeunForm';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 
 // 천간 목록
 const STEMS = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'];
@@ -678,278 +679,6 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
     return { text: 'text-orange-400', bg: 'bg-orange-500', bar: 'bg-orange-400' };
   };
 
-  // HTML 다운로드 함수
-  const handleDownloadHtml = () => {
-    const htmlContent = `
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${formData.name}님의 인생 그래프 분석</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      color: #e2e8f0;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    .container { max-width: 800px; margin: 0 auto; background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 40px; }
-    h1 { color: #67e8f9; font-size: 32px; margin-bottom: 10px; text-align: center; }
-    h2 { color: #38bdf8; font-size: 24px; margin: 30px 0 15px; border-bottom: 2px solid #38bdf8; padding-bottom: 10px; }
-    h3 { color: #7dd3fc; font-size: 20px; margin: 20px 0 10px; }
-    .info { text-align: center; color: #94a3b8; margin-bottom: 30px; }
-    .section { background: rgba(51, 65, 85, 0.5); border-radius: 15px; padding: 20px; margin: 20px 0; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0; }
-    .card { background: rgba(71, 85, 105, 0.5); padding: 15px; border-radius: 10px; }
-    .card-title { color: #67e8f9; font-weight: bold; margin-bottom: 8px; }
-    .score-bar { background: #334155; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
-    .score-fill { background: linear-gradient(90deg, #10b981, #34d399); height: 100%; border-radius: 10px; }
-    .badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12px; margin: 5px 5px 5px 0; }
-    .badge-green { background: rgba(16, 185, 129, 0.3); color: #34d399; }
-    .badge-red { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
-    .badge-yellow { background: rgba(245, 158, 11, 0.3); color: #fcd34d; }
-    .badge-blue { background: rgba(59, 130, 246, 0.3); color: #93c5fd; }
-    ul { list-style: none; padding-left: 20px; }
-    li:before { content: "• "; color: #67e8f9; font-weight: bold; }
-    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #475569; }
-    th { background: rgba(51, 65, 85, 0.5); color: #67e8f9; font-weight: bold; }
-    .highlight { background: rgba(34, 211, 238, 0.1); border-left: 3px solid #22d3ee; padding: 15px; margin: 15px 0; border-radius: 8px; }
-    .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #334155; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>${formData.name}님의 인생 그래프 분석</h1>
-    <div class="info">
-      <p>${result.day.stem.ko}일간 • ${result.day.stem.element} 오행</p>
-      <p>현재 ${currentAge}세 (만 ${currentAge - 1}세) • 생년월일: ${formData.year}.${formData.month}.${formData.day}</p>
-      <p>분석일: ${new Date().toLocaleDateString('ko-KR')}</p>
-    </div>
-
-    <div class="section">
-      <h2>🎯 현재 대운 SWOT 분석 (${currentDaeun.age}~${currentDaeun.age + 9}세)</h2>
-      <h3>${currentTenGodInfo.name} - ${currentTenGodInfo.keyword}</h3>
-      <p>${currentTenGodInfo.description}</p>
-
-      <div class="grid" style="margin-top: 20px;">
-        <div class="card">
-          <div class="card-title">✅ 강점 (Strengths)</div>
-          <ul>${currentSwot.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
-        </div>
-        <div class="card">
-          <div class="card-title">⚠️ 약점 (Weaknesses)</div>
-          <ul>${currentSwot.weaknesses.map(w => `<li>${w}</li>`).join('')}</ul>
-        </div>
-        <div class="card">
-          <div class="card-title">💡 기회 (Opportunities)</div>
-          <ul>${currentSwot.opportunities.map(o => `<li>${o}</li>`).join('')}</ul>
-        </div>
-        <div class="card">
-          <div class="card-title">⛔ 위협 (Threats)</div>
-          <ul>${currentSwot.threats.map(t => `<li>${t}</li>`).join('')}</ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>📅 향후 5년 세운 분석</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>연도</th>
-            <th>세운</th>
-            <th>십성</th>
-            <th>조화도</th>
-            <th>키워드</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${yearlyFortunes.map(yf => `
-            <tr>
-              <td>${yf.year}년</td>
-              <td>${yf.stem}</td>
-              <td>${yf.tenGod}</td>
-              <td>${yf.harmony}점</td>
-              <td>${yf.keywords}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="section">
-      <h2>💫 대운별 건강운·재물운·연애운 통합 분석</h2>
-      ${integratedAnalysis.map(d => `
-        <div class="card" style="margin-bottom: 15px;">
-          <div class="card-title">${d.stem.ko}${d.branch.ko} 대운 (${d.age}~${d.age + 9}세) - ${d.tenGod}</div>
-          <div style="margin-top: 10px;">
-            <div>건강운: ${Math.min(100, Math.max(0, d.healthScore))}점</div>
-            <div class="score-bar"><div class="score-fill" style="width: ${Math.min(100, Math.max(0, d.healthScore))}%"></div></div>
-            <div>재물운: ${Math.min(100, Math.max(0, d.wealthScore))}점</div>
-            <div class="score-bar"><div class="score-fill" style="width: ${Math.min(100, Math.max(0, d.wealthScore))}%"></div></div>
-            <div>연애운: ${Math.min(100, Math.max(0, d.loveScore))}점</div>
-            <div class="score-bar"><div class="score-fill" style="width: ${Math.min(100, Math.max(0, d.loveScore))}%"></div></div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="section">
-      <h2>🔄 인생 전환점 시기 분석</h2>
-      ${turningPoints.length > 0 ? turningPoints.map(tp => `
-        <div class="highlight">
-          <h3>${tp.age}세 - ${tp.impact}</h3>
-          <p>${tp.from} → ${tp.to}</p>
-          <p>${tp.description}</p>
-        </div>
-      `).join('') : '<p>큰 전환점이 발견되지 않았습니다. 완만한 변화가 예상됩니다.</p>'}
-    </div>
-
-    <div class="section">
-      <h2>🎯 대운별 권장 활동 및 주의사항</h2>
-      ${daeunData.slice(0, 6).map(d => {
-        const guide = TEN_GOD_LIFE_GUIDE[d.tenGod] || TEN_GOD_LIFE_GUIDE['비견'];
-        return `
-          <div class="card" style="margin-bottom: 15px;">
-            <div class="card-title">${d.age}~${d.age + 9}세 (${d.tenGod})</div>
-            <h4 style="color: #10b981; margin-top: 10px;">권장 활동:</h4>
-            <ul>${guide.doList.map(item => `<li>${item}</li>`).join('')}</ul>
-            <h4 style="color: #ef4444; margin-top: 10px;">주의사항:</h4>
-            <ul>${guide.dontList.map(item => `<li>${item}</li>`).join('')}</ul>
-          </div>
-        `;
-      }).join('')}
-    </div>
-
-    <div class="section">
-      <h2>🌳 오행 균형 변화</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>대운</th>
-            <th>목(木)</th>
-            <th>화(火)</th>
-            <th>토(土)</th>
-            <th>금(金)</th>
-            <th>수(水)</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${fiveElementsData.map(d => `
-            <tr>
-              <td>${d.age}</td>
-              <td>${d.wood}</td>
-              <td>${d.fire}</td>
-              <td>${d.earth}</td>
-              <td>${d.metal}</td>
-              <td>${d.water}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="section">
-      <h2>💡 ${ageGroupAdvice.title}</h2>
-      <p style="font-size: 16px; margin: 15px 0;">${ageGroupAdvice.advice}</p>
-      <h3>이 시기 중점 과제:</h3>
-      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-        ${ageGroupAdvice.focus.map(f => `<span class="badge badge-blue">${f}</span>`).join('')}
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>🍀 현재 대운의 행운의 요소</h2>
-      <div class="grid">
-        <div class="card">
-          <div class="card-title">🎨 행운의 색상</div>
-          <div style="margin-top: 10px;">
-            ${luckyElements.colors.map(c => `<span class="badge badge-yellow">${c}</span>`).join('')}
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">🧭 행운의 방향</div>
-          <div style="margin-top: 10px;">
-            ${luckyElements.directions.map(d => `<span class="badge badge-green">${d}</span>`).join('')}
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">🔢 행운의 숫자</div>
-          <div style="margin-top: 10px;">
-            ${luckyElements.numbers.map(n => `<span class="badge badge-blue">${n}</span>`).join('')}
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">⏰ 행운의 시간대</div>
-          <div style="margin-top: 10px;">
-            ${luckyElements.times.map(t => `<span class="badge badge-yellow">${t}</span>`).join('')}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>🎯 중요 결정 시기 추천</h2>
-      <div class="grid">
-        <div class="card">
-          <div class="card-title">💼 커리어 결정</div>
-          <p style="font-size: 18px; color: #67e8f9;">${decisionTimings.career}</p>
-        </div>
-        <div class="card">
-          <div class="card-title">💒 결혼 결정</div>
-          <p style="font-size: 18px; color: #67e8f9;">${decisionTimings.marriage}</p>
-        </div>
-        <div class="card">
-          <div class="card-title">💰 투자 결정</div>
-          <p style="font-size: 18px; color: #67e8f9;">${decisionTimings.investment}</p>
-        </div>
-        <div class="card">
-          <div class="card-title">🏢 사업 결정</div>
-          <p style="font-size: 18px; color: #67e8f9;">${decisionTimings.business}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>📊 인생 그래프 요약</h2>
-      ${daeunData.map(d => `
-        <div style="margin-bottom: 10px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span>${d.age}~${d.age + 9}세 (${d.stem.ko}${d.branch.ko} - ${d.tenGod})</span>
-            <span style="color: #67e8f9; font-weight: bold;">${d.score}점</span>
-          </div>
-          <div class="score-bar">
-            <div class="score-fill" style="width: ${d.score}%"></div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="footer">
-      <p>※ 본 분석은 전통 명리학을 기반으로 한 참고 자료입니다.</p>
-      <p>인생의 중요한 결정은 다양한 요소를 고려하여 신중하게 내리시기 바랍니다.</p>
-      <p>생성일시: ${new Date().toLocaleString('ko-KR')}</p>
-    </div>
-  </div>
-</body>
-</html>
-    `;
-
-    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${formData.name}_인생그래프_${new Date().getTime()}.html`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -963,6 +692,12 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
     visible: { opacity: 1, y: 0 },
   };
 
+  // HTML 다운로드
+  const handleDownloadHtml = () => {
+    const today = new Date().toISOString().split('T')[0];
+    downloadElementAsHtml('daeun-result', `${formData.name}_대운분석_${today}`);
+  };
+
   return (
     <motion.div
       className="min-h-screen py-8 px-4"
@@ -970,7 +705,7 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
       initial="hidden"
       animate="visible"
     >
-      <div className="max-w-lg mx-auto">
+      <div id="daeun-result" className="max-w-lg mx-auto">
         {/* 뒤로가기 */}
         <motion.button
           variants={itemVariants}
@@ -2029,6 +1764,13 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
 
         {/* 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
+          <button
+            onClick={handleDownloadHtml}
+            className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl text-white font-bold text-lg hover:from-emerald-600 hover:to-teal-700 transition-all flex items-center justify-center gap-2 shadow-lg"
+          >
+            <Download className="w-5 h-5" />
+            저장하기
+          </button>
           <button
             onClick={onReset}
             className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-bold text-lg hover:from-blue-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2 shadow-lg"

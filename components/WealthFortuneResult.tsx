@@ -1,373 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, RefreshCw, Coins, TrendingUp, Calendar, Star, Sparkles, Target, Clock, Gift, Gem, Crown, DollarSign, PiggyBank, Wallet } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Coins, TrendingUp, Calendar, Star, Sparkles, Target, Clock, Gift, Gem, Crown, DollarSign, PiggyBank, Wallet, Download } from 'lucide-react';
 import { WealthFortuneFormData } from './WealthFortuneForm';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
-
-// 일간별 상세 재물 운세
-const DAY_STEM_WEALTH: Record<string, {
-  wealthPersonality: string;
-  moneyMindset: string;
-  strengths: string[];
-  weaknesses: string[];
-  idealIncome: string[];
-  avoidIncome: string[];
-  savingStyle: string;
-  spendingStyle: string;
-  investmentProfile: string;
-  wealthPeak: string;
-  luckyBusiness: string[];
-  luckyItems: string[];
-  luckyColors: string[];
-  wealthTips: string[];
-  monthlyAdvice: { month: string; advice: string }[];
-  lifetimeWealthPath: string;
-  retirementStyle: string;
-  wealthBlockers: string[];
-  wealthBoosters: string[];
-}> = {
-  '갑': {
-    wealthPersonality: '개척형 재물가 - 새로운 분야에서 부를 일구는 선구자 타입입니다. 남들이 가지 않은 길에서 큰 성공을 거둘 수 있으나, 초기 실패에 대한 인내가 필요합니다.',
-    moneyMindset: '돈은 자유와 성장을 위한 도구라고 생각합니다. 안정보다는 성장 가능성에 투자하며, 큰 그림을 보는 시야가 있습니다.',
-    strengths: ['새로운 사업 기회 포착 능력', '장기적 비전과 계획 수립', '결단력 있는 투자 결정', '리더십으로 팀 재물 운 상승', '성장 산업 예측력'],
-    weaknesses: ['초기 자금 관리 미숙', '성급한 확장으로 인한 손실', '세부 사항 간과', '과도한 자신감으로 리스크 과소평가', '단기 수익 경시'],
-    idealIncome: ['스타트업 창업', 'CEO/경영자', '부동산 개발', '벤처 투자', 'M&A 전문가', '프랜차이즈 사업', '대규모 무역'],
-    avoidIncome: ['단순 반복 업무', '수수료 기반 영업', '프리랜서 불규칙 수입', '소규모 자영업'],
-    savingStyle: '목표 지향적 저축 - 명확한 목표(사업 자금, 투자금)가 있을 때 강력하게 저축합니다. 막연한 저축은 오래 못 합니다.',
-    spendingStyle: '자기 발전 소비형 - 교육, 네트워킹, 건강에 아끼지 않습니다. 브랜드보다 실용성 중시하지만 리더로서 품위 유지에도 신경 씁니다.',
-    investmentProfile: '성장주 집중 투자자 - 배당보다 성장 가능성을 봅니다. ETF보다 개별 종목을 선호하고, 장기 보유 전략이 맞습니다. 손절이 늦을 수 있어 주의.',
-    wealthPeak: '35-45세에 첫 번째 재물 피크, 50-60세에 두 번째 큰 성공 기회가 옵니다. 인내심을 갖고 기다리세요.',
-    luckyBusiness: ['IT/테크 스타트업', '신재생 에너지', '바이오/헬스케어', '교육 사업', '친환경 사업'],
-    luckyItems: ['푸른색 지갑', '나무 소재 액세서리', '동쪽 창문 식물', '대나무 문구류'],
-    luckyColors: ['청록색', '녹색', '하늘색', '민트'],
-    wealthTips: ['봄(2-4월)에 새로운 사업 시작하면 성공률 UP', '동쪽 방향의 사무실/점포가 유리', '매주 월요일 아침 재무 계획 수립', '나무 관련 사업에 투자 고려', '멘토/선배의 조언 적극 수용'],
-    monthlyAdvice: [
-      { month: '1월', advice: '새해 재무 계획 수립의 달. 큰 그림을 그리되 세부 실행 계획도 함께.' },
-      { month: '2월', advice: '봄 기운이 시작되어 재물운 상승. 새로운 수입원 모색 적기.' },
-      { month: '3월', advice: '적극적인 투자와 사업 확장에 유리한 달.' },
-      { month: '4월', advice: '성장의 기운 최고조. 큰 결정을 내리기 좋은 시기.' },
-      { month: '5월', advice: '수확의 시작. 그동안의 노력이 결실을 맺기 시작.' },
-      { month: '6월', advice: '안정적 관리의 달. 확장보다 내실 다지기.' },
-      { month: '7월', advice: '여름 더위처럼 재물 활동 활발. 네트워킹 수익 기대.' },
-      { month: '8월', advice: '에너지 소모 주의. 건강 투자가 재물 투자.' },
-      { month: '9월', advice: '가을 수확기 시작. 상반기 투자 회수 검토.' },
-      { month: '10월', advice: '결실의 달. 매출과 수익 정점 기대.' },
-      { month: '11월', advice: '내년 계획 수립 시작. 세금 절세 전략 점검.' },
-      { month: '12월', advice: '정리와 반성의 달. 올해 재무 결산 및 내년 예산 수립.' }
-    ],
-    lifetimeWealthPath: '20대 기반 구축 → 30대 본격 성장 → 40대 안정과 확장 → 50대 수확과 재투자 → 60대 이후 후세 양성과 사회 환원',
-    retirementStyle: '완전한 은퇴보다 멘토/자문 역할로 활동적 노후. 사회 공헌 사업에 관심. 시니어 창업도 고려.',
-    wealthBlockers: ['성급함', '과도한 확장욕', '세부 관리 소홀', '과신'],
-    wealthBoosters: ['인내심', '전문가 조언 수용', '단계적 성장', '체계적 관리']
-  },
-  '을': {
-    wealthPersonality: '유연형 재물가 - 변화하는 환경에 적응하며 꾸준히 부를 쌓는 타입입니다. 큰 대박보다 안정적인 성장을 추구합니다.',
-    moneyMindset: '돈은 안정과 평화를 위한 수단이라 생각합니다. 무리한 투자보다 확실한 수익을 선호합니다.',
-    strengths: ['적응력 뛰어난 재테크', '인맥을 통한 기회 포착', '꾸준한 저축 습관', '위험 회피 능력', '협상과 조율 능력'],
-    weaknesses: ['결단력 부족으로 기회 놓침', '너무 보수적인 투자', '남의 의견에 휘둘림', '우유부단함', '작은 수익에 만족'],
-    idealIncome: ['프리랜서/컨설턴트', '중개업', '협력 사업', '디자인/예술', '서비스업', '교육/강의', '화훼/조경'],
-    avoidIncome: ['고위험 투자', '대규모 제조업', '경쟁 치열한 시장', '독립적 의사결정 필요 업종'],
-    savingStyle: '자동화 저축형 - 급여 들어오면 자동으로 저축되는 시스템이 최적. 의지력에 의존하면 흔들릴 수 있습니다.',
-    spendingStyle: '감성 소비형 - 기분에 따라 소비가 달라집니다. 스트레스 받으면 쇼핑으로 해소하는 경향. 예산 앱 활용 권장.',
-    investmentProfile: '안정형 분산 투자자 - 예금, 적금, 채권 중심의 안전 자산 선호. 주식은 배당주/우량주 위주로 소액 분산.',
-    wealthPeak: '30-40세에 인맥 통한 기회로 성장, 45-55세에 안정적 고수익 시기.',
-    luckyBusiness: ['플로리스트', '인테리어', 'SNS 마케팅', '부업/사이드잡', '협업 프로젝트'],
-    luckyItems: ['연두색 지갑', '꽃무늬 소품', '화분', '실크 스카프'],
-    luckyColors: ['연두색', '라벤더', '핑크', '베이지'],
-    wealthTips: ['봄(3-5월)에 새로운 수입원 개척', '협력자/파트너와 함께 사업 추진', '매일 소액이라도 저축 습관화', '감정적 지출 통제 필요', '부업으로 수입 다각화'],
-    monthlyAdvice: [
-      { month: '1월', advice: '조용히 재무 상태 점검. 작년 지출 패턴 분석.' },
-      { month: '2월', advice: '인맥 정리 및 네트워킹. 귀인을 만날 수 있는 달.' },
-      { month: '3월', advice: '새로운 부업/수입원 시작하기 좋은 시기.' },
-      { month: '4월', advice: '협력 사업 기회 도래. 파트너십 제안 긍정 검토.' },
-      { month: '5월', advice: '안정적 수익 흐름 형성. 저축 비율 높이기.' },
-      { month: '6월', advice: '중간 점검의 달. 상반기 재무 목표 달성도 확인.' },
-      { month: '7월', advice: '여유 자금으로 소소한 투자 시작 고려.' },
-      { month: '8월', advice: '휴식과 재충전. 무리한 재테크 활동 자제.' },
-      { month: '9월', advice: '가을 수확기. 안정적 수익 실현 기대.' },
-      { month: '10월', advice: '새로운 기술/자격 투자로 수입 상승 도모.' },
-      { month: '11월', advice: '연말 보너스 계획 수립. 저축 vs 투자 비율 결정.' },
-      { month: '12월', advice: '감사와 나눔의 달. 기부도 좋은 재물 순환.' }
-    ],
-    lifetimeWealthPath: '20대 스킬 구축 → 30대 인맥 확장 → 40대 안정 수입 → 50대 다각화 수입 → 60대 여유로운 노후',
-    retirementStyle: '취미를 겸한 소규모 사업으로 활동적 노후. 정원 가꾸기, 플라워샵 등 좋아하는 일을 하며 수입 창출.',
-    wealthBlockers: ['우유부단함', '감정적 지출', '기회 회피', '의존성'],
-    wealthBoosters: ['자동화 시스템', '파트너십', '꾸준함', '적응력']
-  },
-  '병': {
-    wealthPersonality: '확장형 재물가 - 열정과 에너지로 재물을 끌어당기는 타입입니다. 인맥과 영향력으로 큰 부를 이룰 수 있습니다.',
-    moneyMindset: '돈은 영향력과 자유를 상징합니다. 돈으로 더 큰 일을 하고 싶어하며, 나눔에도 인색하지 않습니다.',
-    strengths: ['강력한 추진력', '넓은 인맥 활용', '설득력과 영업력', '브랜드 구축 능력', '트렌드 선도'],
-    weaknesses: ['과시적 소비', '충동적 투자', '장기 계획 부족', '지출 통제 어려움', '번아웃 위험'],
-    idealIncome: ['인플루언서/크리에이터', '영업/마케팅', '연예/엔터테인먼트', '요식업', '이벤트/행사', '강연/코칭', '광고/홍보'],
-    avoidIncome: ['조용한 사무직', '단독 작업', '장기 프로젝트', '세밀한 분석 업무'],
-    savingStyle: '목표 보상형 저축 - 구체적인 보상(여행, 명품 등)을 목표로 할 때 저축 동기부여 최대화.',
-    spendingStyle: '과시형 소비 - 품위 유지와 이미지 관리에 지출이 큽니다. VIP 멤버십, 프리미엄 서비스 선호.',
-    investmentProfile: '적극적 투자자 - 고위험 고수익 상품 선호. 트렌드 따라 빠른 투자 결정. 손절 빠르게 할 것.',
-    wealthPeak: '25-35세 화려한 성장기, 40-50세 안정화 및 제2의 도약.',
-    luckyBusiness: ['유튜브/SNS', '요식업/카페', '화장품/뷰티', '패션', '공연/이벤트'],
-    luckyItems: ['빨간 지갑', '크리스탈 액세서리', '양초', '조명 인테리어'],
-    luckyColors: ['빨강', '오렌지', '골드', '보라'],
-    wealthTips: ['여름(5-7월)에 마케팅/홍보 활동 집중', '남쪽 방향 사업장이 유리', 'SNS 브랜딩으로 수입 다각화', '번아웃 방지 위한 휴식 필수', '파트너에게 재무 관리 위임 고려'],
-    monthlyAdvice: [
-      { month: '1월', advice: '새해 목표 크게 세우기. 비전보드 작성으로 동기부여.' },
-      { month: '2월', advice: '새로운 프로젝트 론칭에 좋은 달. 적극적 홍보.' },
-      { month: '3월', advice: '네트워킹 활동 강화. 인맥이 곧 재물.' },
-      { month: '4월', advice: '확장의 기운. 새로운 시장 진출 고려.' },
-      { month: '5월', advice: '여름 시즌 준비. 매출 상승 기대.' },
-      { month: '6월', advice: '최고의 재물운. 적극적인 영업과 마케팅.' },
-      { month: '7월', advice: '열정 최고조. 하지만 체력 관리 필수.' },
-      { month: '8월', advice: '충전의 달. 번아웃 방지 위해 휴식.' },
-      { month: '9월', advice: '하반기 전략 재정비. 수익 구조 점검.' },
-      { month: '10월', advice: '연말 대목 준비. 마케팅 예산 확보.' },
-      { month: '11월', advice: '성과 수확의 달. 보너스와 인센티브 기대.' },
-      { month: '12월', advice: '감사 이벤트로 고객 확보. 내년 예약 받기.' }
-    ],
-    lifetimeWealthPath: '20대 브랜드 구축 → 30대 확장과 성장 → 40대 안정과 다각화 → 50대 후배 양성 → 60대 사회 환원',
-    retirementStyle: '강연, 자문, 미디어 출연으로 활발한 노후. 완전한 은퇴는 어울리지 않음. 사회적 영향력 유지.',
-    wealthBlockers: ['과소비', '충동', '번아웃', '장기 계획 부족'],
-    wealthBoosters: ['인맥', '브랜딩', '열정', '빠른 실행력']
-  },
-  '정': {
-    wealthPersonality: '섬세형 재물가 - 디테일과 품질로 가치를 창출하는 타입입니다. 예술적 감각이 돈이 됩니다.',
-    moneyMindset: '돈은 아름다움과 가치를 추구하는 도구입니다. 양보다 질을 중시하며, 의미 있는 곳에 투자합니다.',
-    strengths: ['디테일 장악력', '창의적 아이디어', '품질 관리 능력', '예술적 가치 창출', '충성 고객 확보'],
-    weaknesses: ['완벽주의로 속도 저하', '상업성 부족', '가격 책정 어려움', '확장 주저', '현실 타협 어려움'],
-    idealIncome: ['디자이너', '예술가', '작가', '프로그래머', '공예가', '요리사/파티시에', '주얼리/악세서리', '맞춤 서비스'],
-    avoidIncome: ['대량 생산', '빠른 턴오버 업종', '저가 경쟁 시장', '영업 중심 업무'],
-    savingStyle: '가치 저축형 - 단순 금액보다 가치 있는 곳에 저축. 예술품, 와인, 한정판 등 가치 저장 선호.',
-    spendingStyle: '품질 중시 소비 - 저렴한 것 여러 개보다 비싸도 좋은 것 하나. 취향 있는 소비를 합니다.',
-    investmentProfile: '가치 투자자 - 실제 가치를 분석해 투자. 유행 따라가지 않음. 부동산, 예술품, 가치주 선호.',
-    wealthPeak: '35-50세 전문성 인정받는 시기. 꾸준한 성장형으로 급격한 피크보다 점진적 상승.',
-    luckyBusiness: ['디자인 스튜디오', '공방', '카페/베이커리', '출판/콘텐츠', '주문제작 서비스'],
-    luckyItems: ['핑크/보라 지갑', '크리스탈', '향초', '수제 공예품'],
-    luckyColors: ['핑크', '보라', '와인색', '코발트블루'],
-    wealthTips: ['여름 저녁(6-8월)에 창작 활동 집중', '온라인 포트폴리오/샵 운영', '단가를 높여 품질로 승부', '협업 프로젝트로 인지도 상승', '정기 고객/구독 서비스 구축'],
-    monthlyAdvice: [
-      { month: '1월', advice: '새해 포트폴리오 정리. 작년 작업 아카이빙.' },
-      { month: '2월', advice: '새로운 기술/트렌드 학습의 달.' },
-      { month: '3월', advice: '봄 시즌 신작 준비. 창작 에너지 상승.' },
-      { month: '4월', advice: '전시/론칭 적기. 세상에 작품 선보이기.' },
-      { month: '5월', advice: '협업 기회 모색. 다른 분야와 콜라보.' },
-      { month: '6월', advice: '여름 저녁 창작 시간 확보. 집중력 최고.' },
-      { month: '7월', advice: '작품 가격 재검토. 가치에 맞는 단가 설정.' },
-      { month: '8월', advice: '휴식과 영감 충전. 여행이나 전시 관람.' },
-      { month: '9월', advice: '가을 시즌 신작 준비. 연말 대목 겨냥.' },
-      { month: '10월', advice: '마케팅 강화. SNS 활동 및 고객 소통.' },
-      { month: '11월', advice: '연말 선물 시즌 대비. 패키징과 서비스 강화.' },
-      { month: '12월', advice: '한 해 정산. 베스트 작품 정리 및 내년 계획.' }
-    ],
-    lifetimeWealthPath: '20대 기술 연마 → 30대 스타일 확립 → 40대 명성 구축 → 50대 마스터 인정 → 60대 후배 양성',
-    retirementStyle: '죽을 때까지 창작 활동. 은퇴 개념 없이 좋아하는 일을 계속하며 수입 창출. 제자 양성.',
-    wealthBlockers: ['완벽주의', '가격 저평가', '마케팅 부족', '확장 두려움'],
-    wealthBoosters: ['전문성', '품질', '스토리텔링', '충성 고객']
-  },
-  '무': {
-    wealthPersonality: '안정형 재물가 - 든든하고 신뢰할 수 있는 재물 관리자 타입입니다. 부동산과 실물 자산에 강합니다.',
-    moneyMindset: '돈은 안정과 신뢰의 기반입니다. 투기보다 투자, 변동보다 안정을 추구합니다.',
-    strengths: ['부동산 투자 감각', '장기 보유 인내심', '신뢰 기반 비즈니스', '안정적 자산 관리', '위기 대응 능력'],
-    weaknesses: ['변화 적응 느림', '기회 놓칠 수 있음', '보수적 사고', '신기술 도입 주저', '리스크 회피 과도'],
-    idealIncome: ['공무원', '은행/금융기관', '부동산', '건설/건축', '농업/식품', '보험', '자산관리사'],
-    avoidIncome: ['고위험 투자', '빠른 트렌드 사업', '불안정한 스타트업', '변동성 높은 업종'],
-    savingStyle: '자동 정기형 저축 - 매달 정해진 날 정해진 금액 저축. 변동 없이 꾸준하게.',
-    spendingStyle: '계획적 실용 소비 - 필요한 것만 구매. 충동구매 없음. 가성비 중시.',
-    investmentProfile: '안전자산 투자자 - 예금, 적금, 채권, 부동산 중심. 원금 보장이 최우선.',
-    wealthPeak: '40-55세 부동산과 자산 가치 상승으로 재물 피크. 늦지만 확실한 성공.',
-    luckyBusiness: ['부동산 중개', '건설/인테리어', '요식업', '농산물 유통', '창고/물류'],
-    luckyItems: ['노란/베이지 지갑', '세라믹 소품', '화분', '황토 제품'],
-    luckyColors: ['노랑', '베이지', '황토색', '갈색'],
-    wealthTips: ['환절기(3,6,9,12월)에 부동산 거래 유리', '중심부/고향 방향 투자 고려', '땅, 건물 등 실물 자산 선호', '장기 보유 전략 유지', '급하게 팔지 말 것'],
-    monthlyAdvice: [
-      { month: '1월', advice: '올해 부동산/자산 계획 수립. 시장 조사.' },
-      { month: '2월', advice: '세금 신고 준비. 절세 전략 점검.' },
-      { month: '3월', advice: '환절기 부동산 거래 적기. 매물 검토.' },
-      { month: '4월', advice: '안정적 투자처 발굴. 정기예금 갱신.' },
-      { month: '5월', advice: '가정의 달 가족 재무 회의. 장기 계획 공유.' },
-      { month: '6월', advice: '환절기 거래 적기. 상반기 투자 정리.' },
-      { month: '7월', advice: '여름 비수기 매물 탐색. 좋은 기회 포착.' },
-      { month: '8월', advice: '휴가철 가족과 재무 상담. 상속/증여 계획.' },
-      { month: '9월', advice: '가을 거래 시즌 시작. 적극적 투자 검토.' },
-      { month: '10월', advice: '연말 대비 자산 정리. 포트폴리오 점검.' },
-      { month: '11월', advice: '내년 예산 수립. 보험/연금 점검.' },
-      { month: '12월', advice: '연말 세금 최적화. 기부금 공제 활용.' }
-    ],
-    lifetimeWealthPath: '20대 안정 직장 → 30대 종자돈 마련 → 40대 부동산 투자 → 50대 자산 불리기 → 60대 안정적 노후',
-    retirementStyle: '월세 수입으로 안정적 노후. 부동산 관리하며 여유롭게. 가족에게 자산 이전 준비.',
-    wealthBlockers: ['보수적 사고', '기회 놓침', '변화 거부', '과도한 안전 추구'],
-    wealthBoosters: ['인내심', '신뢰', '실물 자산', '장기 보유']
-  },
-  '기': {
-    wealthPersonality: '육성형 재물가 - 사람과 관계를 통해 재물을 불리는 타입입니다. 서비스업과 돌봄 산업에 적합합니다.',
-    moneyMindset: '돈은 사람을 돕고 가치를 나누는 수단입니다. 이익보다 관계를, 단기보다 장기를 봅니다.',
-    strengths: ['고객 관계 관리 탁월', '입소문 마케팅', '신뢰 기반 성장', '꾸준한 단골 확보', '서비스 정신'],
-    weaknesses: ['단가 인상 어려움', '거절 못함', '과도한 서비스로 손해', '사업적 냉정함 부족', '자기 몫 챙기기 어려움'],
-    idealIncome: ['교육/강사', '간호/요양', '상담/코칭', '카페/음식점', 'HR/인사', '사회복지', '보육/육아'],
-    avoidIncome: ['고압적 영업', '비인간적 환경', '관계 단절 업무', '단기 수익 추구 업종'],
-    savingStyle: '가족 목표 저축형 - 가족이나 소중한 사람을 위한 목표가 있을 때 저축 의지 강해짐.',
-    spendingStyle: '관계 중심 소비 - 선물, 외식, 경조사비 지출이 큼. 나보다 남을 위해 쓰는 경향.',
-    investmentProfile: '안정 배당 투자자 - 고위험 투자 부적합. 배당주, 채권, 적금 중심의 안전 운용.',
-    wealthPeak: '40-55세 인맥과 신뢰가 쌓여 재물로 돌아오는 시기. 늦되 확실한 성공.',
-    luckyBusiness: ['학원/교육', '카페/베이커리', '반려동물 사업', '케어 서비스', '농장/체험장'],
-    luckyItems: ['베이지/황토 지갑', '도자기', '식물', '손수건'],
-    luckyColors: ['베이지', '아이보리', '황토', '카키'],
-    wealthTips: ['환절기에 새로운 서비스 론칭', '단골 고객 관리 프로그램 운영', '리뷰와 추천으로 신규 고객 확보', '가격보다 가치로 경쟁', '번아웃 방지 자기 케어'],
-    monthlyAdvice: [
-      { month: '1월', advice: '새해 고객 감사 이벤트. 관계 재확인.' },
-      { month: '2월', advice: '발렌타인 시즌 마케팅. 선물 서비스 강화.' },
-      { month: '3월', advice: '봄 신규 프로그램 론칭. 새학기 수요 공략.' },
-      { month: '4월', advice: '고객 피드백 수집 및 서비스 개선.' },
-      { month: '5월', advice: '가정의 달 프로모션. 가족 대상 서비스.' },
-      { month: '6월', advice: '상반기 결산. 단골 고객 감사 행사.' },
-      { month: '7월', advice: '여름 방학 특별 프로그램.' },
-      { month: '8월', advice: '휴식과 재충전. 자기 케어 시간.' },
-      { month: '9월', advice: '가을 신규 프로그램. 새학기 마케팅.' },
-      { month: '10월', advice: '추석 감사 이벤트. VIP 고객 관리.' },
-      { month: '11월', advice: '연말 예약 받기. 내년 계획 안내.' },
-      { month: '12월', advice: '송년 감사. 고객에게 연하장/선물.' }
-    ],
-    lifetimeWealthPath: '20대 서비스 정신 배양 → 30대 전문성 구축 → 40대 신뢰 자산화 → 50대 확장 → 60대 후배 양성',
-    retirementStyle: '봉사와 멘토링으로 보람 있는 노후. 작은 규모로 좋아하는 일 계속하며 사람들과 소통.',
-    wealthBlockers: ['자기 몫 못 챙김', '거절 못함', '과잉 서비스', '가격 저평가'],
-    wealthBoosters: ['신뢰', '입소문', '단골', '서비스 품질']
-  },
-  '경': {
-    wealthPersonality: '결단형 재물가 - 명확한 판단과 실행력으로 큰 부를 이루는 타입입니다. 금융과 투자에 강합니다.',
-    moneyMindset: '돈은 실력과 성과의 증거입니다. 공정한 경쟁에서 이기는 것에 자부심을 느낍니다.',
-    strengths: ['빠른 의사결정', '투자 판단력', '협상력', '위기 관리 능력', '수익 극대화 전략'],
-    weaknesses: ['손절 늦음 (자존심)', '타인 조언 무시', '독단적 판단', '관계보다 수익 우선', '융통성 부족'],
-    idealIncome: ['금융/투자', '법조계', 'CEO/임원', '컨설턴트', '의사/전문직', '보석/귀금속', 'M&A전문가'],
-    avoidIncome: ['팀워크 중심 업무', '감성적 서비스', '저수익 봉사직', '창의성 요구 업무'],
-    savingStyle: '목표 달성형 저축 - 명확한 금액 목표 설정 후 달성. 게임처럼 목표 격파.',
-    spendingStyle: '품격 소비형 - 저렴한 것은 사지 않음. 좋은 것에 투자하고 오래 쓰는 스타일.',
-    investmentProfile: '적극적 가치 투자자 - 고수익 추구하되 분석 기반 투자. 주식, 선물, 부동산 등 다양한 포트폴리오.',
-    wealthPeak: '35-50세 전문성과 판단력이 빛나는 시기. 큰 딜과 투자로 도약.',
-    luckyBusiness: ['투자/자산관리', '법률/회계', '귀금속/보석', '자동차/기계', 'IT솔루션'],
-    luckyItems: ['흰색/금색 지갑', '금속 액세서리', '시계', '만년필'],
-    luckyColors: ['흰색', '금색', '은색', '회색'],
-    wealthTips: ['가을(8-10월)에 투자 결정 유리', '서쪽 방향 사업장이 좋음', '금속/귀금속 투자 고려', '전문가 네트워크 구축', '손절 라인 미리 설정'],
-    monthlyAdvice: [
-      { month: '1월', advice: '연간 투자 전략 수립. 포트폴리오 리밸런싱.' },
-      { month: '2월', advice: '시장 분석 및 트렌드 파악. 공부의 달.' },
-      { month: '3월', advice: '1분기 성과 점검. 전략 수정.' },
-      { month: '4월', advice: '새로운 투자처 발굴. 리서치 강화.' },
-      { month: '5월', advice: '중간 점검. 수익 실현 고려.' },
-      { month: '6월', advice: '상반기 결산. 포지션 정리.' },
-      { month: '7월', advice: '여름 조정장 활용. 저점 매수 기회.' },
-      { month: '8월', advice: '가을 투자 시즌 준비. 자금 확보.' },
-      { month: '9월', advice: '투자 적기 도래. 과감한 결정.' },
-      { month: '10월', advice: '수확의 달. 적정 수익 실현.' },
-      { month: '11월', advice: '연말 세금 최적화. 손익 조절.' },
-      { month: '12월', advice: '올해 성과 정리. 내년 전략 구상.' }
-    ],
-    lifetimeWealthPath: '20대 전문성 구축 → 30대 실전 경험 → 40대 큰 딜 성사 → 50대 자산 관리 → 60대 후배 멘토링',
-    retirementStyle: '투자 수익으로 여유로운 노후. 사외이사, 자문 역할로 영향력 유지. 골프 등 품격 있는 취미.',
-    wealthBlockers: ['자존심', '독단', '손절 지연', '융통성 부족'],
-    wealthBoosters: ['결단력', '분석력', '전문성', '네트워크']
-  },
-  '신': {
-    wealthPersonality: '정교형 재물가 - 세밀한 분석과 품질로 가치를 창출하는 타입입니다. 전문 기술과 품질 관리에 강합니다.',
-    moneyMindset: '돈은 정확한 노력의 대가입니다. 품질과 정직함으로 신뢰를 얻고 그것이 수익으로 돌아온다고 믿습니다.',
-    strengths: ['세밀한 분석력', '품질 관리 능력', '전문 기술 보유', '신뢰성 구축', '꼼꼼한 재무 관리'],
-    weaknesses: ['결정 지연', '완벽주의 비용 증가', '확장 주저', '융통성 부족', '새로운 시도 거부'],
-    idealIncome: ['보석감정사', '품질관리', '회계/세무', '의료/치과', 'IT개발', '시계/정밀기계', '감정평가'],
-    avoidIncome: ['즉흥적 사업', '고객 접점 많은 업무', '창의성 위주 업무', '불확실성 높은 업종'],
-    savingStyle: '체계적 분산 저축 - 여러 계좌에 목적별로 분리 저축. 스프레드시트로 관리.',
-    spendingStyle: '가성비 분석 소비 - 구매 전 리뷰, 가격비교 철저. 충동구매 거의 없음.',
-    investmentProfile: '분석형 투자자 - 데이터 기반 의사결정. 감정 배제. 분산 투자로 리스크 관리.',
-    wealthPeak: '40-55세 전문성 인정받아 고수익 달성. 꾸준한 상승형.',
-    luckyBusiness: ['감정/평가', '정밀 기계', 'IT/소프트웨어', '의료기기', '주얼리'],
-    luckyItems: ['은색/회색 지갑', '금속 시계', '스틸 액세서리', '정밀 도구'],
-    luckyColors: ['은색', '회색', '화이트', '라이트블루'],
-    wealthTips: ['가을(8-10월)에 새 프로젝트 시작', '전문 자격증 취득으로 몸값 상승', '품질로 경쟁 (가격 경쟁 피하기)', '정기적 스킬 업데이트', '꼼꼼한 계약 검토'],
-    monthlyAdvice: [
-      { month: '1월', advice: '연간 재무 계획 수립. 세부 예산 편성.' },
-      { month: '2월', advice: '스킬 업그레이드 계획. 자격증 준비.' },
-      { month: '3월', advice: '1분기 점검. 계획 대비 실적 분석.' },
-      { month: '4월', advice: '새로운 도구/기술 도입 검토.' },
-      { month: '5월', advice: '중간 점검. 포트폴리오 리밸런싱.' },
-      { month: '6월', advice: '상반기 결산. 세부 분석.' },
-      { month: '7월', advice: '스킬 연마. 자기 개발 투자.' },
-      { month: '8월', advice: '새 프로젝트 준비. 리서치.' },
-      { month: '9월', advice: '전문성 발휘 시기. 적극적 활동.' },
-      { month: '10월', advice: '성과 창출의 달. 결실 기대.' },
-      { month: '11월', advice: '연말 정산 준비. 세금 최적화.' },
-      { month: '12월', advice: '한 해 데이터 정리. 내년 전략 수립.' }
-    ],
-    lifetimeWealthPath: '20대 기술 습득 → 30대 전문가 인정 → 40대 고수익 달성 → 50대 확장 → 60대 후배 교육',
-    retirementStyle: '전문 지식으로 자문/컨설팅. 취미로 정밀 공예. 체계적인 노후 자금 관리.',
-    wealthBlockers: ['결정 지연', '완벽주의', '확장 거부', '융통성 부족'],
-    wealthBoosters: ['전문성', '품질', '신뢰', '체계적 관리']
-  },
-  '임': {
-    wealthPersonality: '지혜형 재물가 - 넓은 시야와 통찰력으로 기회를 포착하는 타입입니다. 무역과 글로벌 비즈니스에 강합니다.',
-    moneyMindset: '돈은 흐름입니다. 막히면 썩고, 흘러야 불어납니다. 순환과 투자를 중시합니다.',
-    strengths: ['글로벌 시야', '기회 포착력', '유연한 전략', '인맥 활용', '위기 대응 능력'],
-    weaknesses: ['산만함', '깊이 부족', '변덕', '약속 불이행', '집중력 분산'],
-    idealIncome: ['무역/수출입', '여행/관광', '물류/운송', '외교/국제기구', '철학/교수', '컨설팅', '미디어'],
-    avoidIncome: ['단순 반복 업무', '좁은 분야 특화', '로컬 사업', '규칙 엄격한 업종'],
-    savingStyle: '흐름 저축형 - 수입이 클 때 크게 저축, 작을 때 작게. 고정 금액보다 비율로.',
-    spendingStyle: '경험 중심 소비 - 물건보다 여행, 교육, 경험에 투자. 소유보다 경험.',
-    investmentProfile: '글로벌 분산 투자자 - 해외 주식, ETF, 외화 등 다양한 통화/지역 분산.',
-    wealthPeak: '35-50세 글로벌 네트워크와 경험이 수익으로 연결되는 시기.',
-    luckyBusiness: ['무역회사', '여행사', '온라인 글로벌 셀링', '교육 플랫폼', '컨설팅'],
-    luckyItems: ['검정/남색 지갑', '글로브/지구본', '여권 케이스', '여행 가방'],
-    luckyColors: ['검정', '남색', '다크블루', '차콜'],
-    wealthTips: ['겨울(11-1월)에 해외 비즈니스 유리', '북쪽 방향 또는 해외 시장 공략', '외국어 능력 = 수입 상승', '글로벌 네트워크 구축', '한 곳에 올인하지 말 것'],
-    monthlyAdvice: [
-      { month: '1월', advice: '글로벌 트렌드 분석. 해외 시장 조사.' },
-      { month: '2월', advice: '네트워킹 강화. 해외 파트너 접촉.' },
-      { month: '3월', advice: '새로운 시장 진출 계획. 언어 공부.' },
-      { month: '4월', advice: '해외 출장/미팅. 기회 탐색.' },
-      { month: '5월', advice: '계약 협상. 파트너십 구축.' },
-      { month: '6월', advice: '상반기 글로벌 사업 점검.' },
-      { month: '7월', advice: '여름 휴가 겸 해외 리서치.' },
-      { month: '8월', advice: '새로운 아이디어 구상. 브레인스토밍.' },
-      { month: '9월', advice: '하반기 전략 실행. 해외 론칭.' },
-      { month: '10월', advice: '파트너 관계 강화. 신뢰 구축.' },
-      { month: '11월', advice: '겨울 비즈니스 적기. 적극적 활동.' },
-      { month: '12월', advice: '연말 결산. 글로벌 성과 정리.' }
-    ],
-    lifetimeWealthPath: '20대 세계 경험 → 30대 글로벌 네트워크 → 40대 국제 비즈니스 → 50대 확장 → 60대 지혜 전수',
-    retirementStyle: '세계 여행하며 자유로운 노후. 글로벌 자문/멘토링. 여러 나라에 거점.',
-    wealthBlockers: ['산만함', '집중력 부족', '변덕', '깊이 부족'],
-    wealthBoosters: ['글로벌 시야', '유연성', '네트워크', '통찰력']
-  },
-  '계': {
-    wealthPersonality: '직관형 재물가 - 감각과 직관으로 기회를 잡는 타입입니다. 예술과 서비스, 무의식적 영역에 강합니다.',
-    moneyMindset: '돈은 에너지입니다. 좋은 에너지를 쓰면 좋은 돈이 들어온다고 믿습니다. 영적/감성적 접근.',
-    strengths: ['직관적 투자 감각', '트렌드 예측력', '예술적 가치 창출', '힐링/서비스 능력', '공감 능력'],
-    weaknesses: ['비합리적 판단', '감정적 투자', '현실 감각 부족', '재무 관리 취약', '일관성 부족'],
-    idealIncome: ['예술가', '타로/상담', '심리상담', '힐링/웰니스', '음악/공연', '영성 서비스', 'ASMR/명상 콘텐츠'],
-    avoidIncome: ['데이터 분석', '정밀 계산 업무', '규칙적 사무직', '논리 중심 업무'],
-    savingStyle: '직관 저축형 - 느낌 올 때 저축. 강제 저축 시스템이 필요. 자동이체 필수.',
-    spendingStyle: '감성 소비형 - 기분에 따라 지출 변동 큼. 예산 앱으로 통제 필요.',
-    investmentProfile: '직관형 투자자 - 느낌으로 투자. 가끔 대박이 나지만 리스크도 큼. 소액 분산 권장.',
-    wealthPeak: '30-45세 직관력이 빛나는 시기. 예술/서비스로 인정받으면 큰 수익.',
-    luckyBusiness: ['타로/사주', '명상센터', '아로마/힐링', '예술/음악', '심리상담'],
-    luckyItems: ['보라/검정 지갑', '크리스탈', '달 모양 소품', '물 소리 분수'],
-    luckyColors: ['보라', '검정', '은색', '달빛색'],
-    wealthTips: ['겨울 밤(11-1월)에 직관 최고조', '물가/북쪽 방향이 좋은 기운', '명상으로 재물 직관 강화', '예술/힐링으로 수입 다각화', '감정적 투자 결정 24시간 대기'],
-    monthlyAdvice: [
-      { month: '1월', advice: '새해 비전 명상. 직관으로 목표 설정.' },
-      { month: '2월', advice: '감성 콘텐츠 제작. 창작 활동.' },
-      { month: '3월', advice: '봄 에너지로 새 프로젝트 시작.' },
-      { month: '4월', advice: '협업 기회 탐색. 예술적 파트너십.' },
-      { month: '5월', advice: '감사와 풍요 에너지. 나눔으로 복 받기.' },
-      { month: '6월', advice: '중간 점검. 직관 vs 현실 균형.' },
-      { month: '7월', advice: '여름 에너지 활용. 활발한 활동.' },
-      { month: '8월', advice: '휴식과 명상. 내면의 소리 듣기.' },
-      { month: '9월', advice: '가을 영감. 새로운 창작물.' },
-      { month: '10월', advice: '수확의 에너지. 그동안의 결실.' },
-      { month: '11월', advice: '직관력 최고조. 중요한 결정.' },
-      { month: '12월', advice: '한 해 감사 정리. 내년 비전 명상.' }
-    ],
-    lifetimeWealthPath: '20대 감각 개발 → 30대 예술성 인정 → 40대 전문가 등극 → 50대 지혜 전수 → 60대 영적 성장',
-    retirementStyle: '힐링과 예술로 풍요로운 노후. 명상, 요가, 창작 활동. 후배 양성과 영적 성장.',
-    wealthBlockers: ['비합리적 판단', '감정적 투자', '현실 감각 부족', '일관성 부족'],
-    wealthBoosters: ['직관', '예술성', '공감 능력', '영적 감각']
-  }
-};
+import { DAY_STEM_WEALTH } from '@/lib/data/wealth-data';
 
 interface WealthFortuneResultProps {
   formData: WealthFortuneFormData;
@@ -589,6 +227,11 @@ export default function WealthFortuneResult({ formData, onReset, onBack }: Wealt
     visible: { opacity: 1, y: 0 },
   };
 
+  const handleDownloadHtml = () => {
+    const today = new Date().toISOString().split('T')[0];
+    downloadElementAsHtml('wealth-result', `${formData.name}_재물운_${today}`);
+  };
+
   return (
     <motion.div
       className="min-h-screen py-8 px-4"
@@ -596,7 +239,7 @@ export default function WealthFortuneResult({ formData, onReset, onBack }: Wealt
       initial="hidden"
       animate="visible"
     >
-      <div className="max-w-2xl mx-auto">
+      <div id="wealth-result" className="max-w-2xl mx-auto">
         {/* 뒤로가기 */}
         <motion.button
           variants={itemVariants}
@@ -1093,6 +736,13 @@ export default function WealthFortuneResult({ formData, onReset, onBack }: Wealt
 
         {/* 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
+          <button
+            onClick={handleDownloadHtml}
+            className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl text-white font-bold text-lg hover:from-amber-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg"
+          >
+            <Download className="w-5 h-5" />
+            저장하기
+          </button>
           <button
             onClick={onReset}
             className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-2xl text-black font-bold text-lg hover:from-yellow-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg"
