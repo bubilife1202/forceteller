@@ -1,14 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, ArrowLeft, RefreshCw, Star, TrendingUp, TrendingDown, Coins, Heart, Briefcase, Activity, Sparkles, Sun, Moon, Clock, Lightbulb, AlertTriangle, CheckCircle, Compass, Palette, Hash, Utensils, Target, Quote, Flame, Droplets, Leaf, Mountain, Zap } from 'lucide-react';
+import { Calendar, ArrowLeft, RefreshCw, Star, TrendingUp, TrendingDown, Coins, Heart, Briefcase, Activity, Sparkles, Sun, Moon, Clock, Lightbulb, AlertTriangle, CheckCircle, Compass, Palette, Hash, Utensils, Target, Quote, Flame, Droplets, Leaf, Mountain, Zap, Download, Mail, Home } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { MonthlyFortuneFormData } from './MonthlyFortuneForm';
+import { downloadAsHtml, sendByEmail, createSectionHtml, createScoreBadgeHtml, createProgressBarHtml, createGridHtml, createCardHtml, createListHtml, createMessageBoxHtml } from '@/lib/utils/export-utils';
 
 interface MonthlyFortuneResultProps {
   formData: MonthlyFortuneFormData;
   onReset: () => void;
   onBack: () => void;
+  onHome?: () => void;
 }
 
 // 월별 천간 (2026년 기준 - 병오년)
@@ -649,7 +651,7 @@ const TEN_GOD_MONTHLY_GOALS: Record<string, {
   },
 };
 
-export default function MonthlyFortuneResult({ formData, onReset, onBack }: MonthlyFortuneResultProps) {
+export default function MonthlyFortuneResult({ formData, onReset, onBack, onHome }: MonthlyFortuneResultProps) {
   // 사용자의 일주 계산
   const userDayPillar = getDayPillar(formData.year, formData.month, formData.day);
   const userDayStem = userDayPillar.stem;
@@ -690,6 +692,127 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack }: Mont
       case '금': return <Zap className="w-5 h-5 text-gray-300" />;
       case '수': return <Droplets className="w-5 h-5 text-blue-400" />;
       default: return <Star className="w-5 h-5 text-purple-400" />;
+    }
+  };
+
+  // HTML 다운로드 함수
+  const handleDownloadHtml = () => {
+    const headerHtml = `
+      <div class="header">
+        <h1>📅 2026년 ${targetMonth}월 운세</h1>
+        <p>${userDayStem.ko}일간 • ${userElement} 오행 • ${tenGod}의 달</p>
+      </div>
+    `;
+
+    const scoreHtml = createSectionHtml('종합 운세', `
+      ${createScoreBadgeHtml(finalScore)}
+      <p style="text-align: center; color: #a78bfa; margin-top: 12px;">키워드: #${fortune.keyword}</p>
+      <p style="text-align: center; margin-top: 12px;">${fortune.summary}</p>
+    `, '⭐');
+
+    const categoryHtml = createSectionHtml('분야별 운세', createGridHtml([
+      createProgressBarHtml(fortune.money.score, '💰 재물운', 'yellow'),
+      createProgressBarHtml(fortune.love.score, '💕 애정운', 'pink'),
+      createProgressBarHtml(fortune.work.score, '💼 직장운', 'blue'),
+      createProgressBarHtml(fortune.health.score, '🏃 건강운', 'green'),
+    ]), '📊');
+
+    const weeklyHtml = createSectionHtml('주간별 운세', `
+      <div style="display: grid; gap: 12px;">
+        ${Object.entries(weeklyFortune).map(([key, data]) => `
+          <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: #a78bfa;">${key === 'week1' ? '1주차' : key === 'week2' ? '2주차' : key === 'week3' ? '3주차' : '4주차'} - #${data.theme}</span>
+              <span style="font-weight: bold; color: ${data.score >= 70 ? '#4ade80' : data.score >= 50 ? '#fbbf24' : '#f87171'};">${data.score}점</span>
+            </div>
+            <p style="font-size: 0.875rem; color: #94a3b8;">${data.tip}</p>
+          </div>
+        `).join('')}
+      </div>
+    `, '📆');
+
+    const doHtml = createSectionHtml('이달 하면 좋은 일', createListHtml(fortune.doList, 'check'), '✅');
+    const dontHtml = createSectionHtml('이달 피해야 할 일', createListHtml(fortune.dontList, 'cross'), '⚠️');
+
+    const goalHtml = createSectionHtml('이달의 목표', `
+      <div style="background: rgba(34,197,94,0.1); padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 16px;">
+        <p style="color: #4ade80; font-weight: bold;">"${monthlyGoals.mainGoal}"</p>
+      </div>
+      ${createListHtml(monthlyGoals.subGoals, 'check')}
+    `, '🎯');
+
+    const luckyHtml = createSectionHtml('행운 아이템', createGridHtml([
+      createCardHtml('행운의 색', luckyItems.colors.slice(0, 2).join(', '), '🎨'),
+      createCardHtml('행운의 숫자', luckyItems.numbers.slice(0, 3).join(', '), '🔢'),
+      createCardHtml('행운의 방향', luckyItems.directions.join(', '), '🧭'),
+      createCardHtml('추천 활동', luckyItems.activities.slice(0, 2).join(', '), '⭐'),
+    ]), '✨');
+
+    const messageHtml = createSectionHtml('이달의 명언', `
+      ${mantras.map(m => `<p style="text-align: center; margin: 12px 0; font-style: italic;">"${m}"</p>`).join('')}
+    `, '💬');
+
+    const fullHtml = headerHtml + scoreHtml + categoryHtml + weeklyHtml + doHtml + dontHtml + goalHtml + luckyHtml + messageHtml;
+    downloadAsHtml(fullHtml, `월간운세_2026년_${targetMonth}월_${userDayStem.ko}일간`);
+  };
+
+  // 이메일 전송 함수
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] 2026년 ${targetMonth}월 운세 - ${userDayStem.ko}일간`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+📅 2026년 ${targetMonth}월 운세
+${userDayStem.ko}일간 • ${userElement} 오행 • ${tenGod}의 달
+━━━━━━━━━━━━━━━━━━━━
+
+⭐ 종합 운세: ${finalScore}점
+키워드: #${fortune.keyword}
+
+${fortune.summary}
+
+━━ 분야별 운세 ━━
+💰 재물운: ${fortune.money.score}점
+💕 애정운: ${fortune.love.score}점
+💼 직장운: ${fortune.work.score}점
+🏃 건강운: ${fortune.health.score}점
+
+━━ 주간별 운세 ━━
+1주차: ${weeklyFortune.week1.score}점 #${weeklyFortune.week1.theme}
+2주차: ${weeklyFortune.week2.score}점 #${weeklyFortune.week2.theme}
+3주차: ${weeklyFortune.week3.score}점 #${weeklyFortune.week3.theme}
+4주차: ${weeklyFortune.week4.score}점 #${weeklyFortune.week4.theme}
+
+━━ 이달 하면 좋은 일 ━━
+${fortune.doList.map(item => `✓ ${item}`).join('\n')}
+
+━━ 이달 피해야 할 일 ━━
+${fortune.dontList.map(item => `✗ ${item}`).join('\n')}
+
+━━ 이달의 목표 ━━
+"${monthlyGoals.mainGoal}"
+${monthlyGoals.subGoals.map(goal => `• ${goal}`).join('\n')}
+
+━━ 행운 아이템 ━━
+🎨 행운의 색: ${luckyItems.colors.slice(0, 2).join(', ')}
+🔢 행운의 숫자: ${luckyItems.numbers.slice(0, 3).join(', ')}
+🧭 행운의 방향: ${luckyItems.directions.join(', ')}
+
+━━ 이달의 명언 ━━
+${mantras.map(m => `"${m}"`).join('\n')}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+
+    sendByEmail(subject, body);
+  };
+
+  // 홈으로 이동
+  const handleGoHome = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      onBack();
     }
   };
 
@@ -1211,8 +1334,25 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack }: Mont
           </div>
         </motion.div>
 
-        {/* 버튼 */}
+        {/* 내보내기 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>저장하기</span>
+            </button>
+            <button
+              onClick={handleSendEmail}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일 보내기</span>
+            </button>
+          </div>
+
           <button
             onClick={onReset}
             className="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl text-white font-bold text-lg hover:from-indigo-600 hover:to-purple-700 transition-all flex items-center justify-center gap-2 shadow-lg"
@@ -1220,11 +1360,13 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack }: Mont
             <RefreshCw className="w-5 h-5" />
             다른 달 보기
           </button>
+
           <button
-            onClick={onBack}
-            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"
+            onClick={handleGoHome}
+            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
           >
-            메뉴로
+            <Home className="w-5 h-5" />
+            홈으로
           </button>
         </motion.div>
       </div>

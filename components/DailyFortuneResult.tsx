@@ -1,14 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sun, ArrowLeft, RefreshCw, Coins, Heart, Briefcase, Activity, Star, Compass, Palette, Sparkles, Clock, TrendingUp, AlertTriangle, CheckCircle, XCircle, Zap, Users, Moon, Sunrise } from 'lucide-react';
+import { Sun, ArrowLeft, RefreshCw, Coins, Heart, Briefcase, Activity, Star, Compass, Palette, Sparkles, Clock, TrendingUp, AlertTriangle, CheckCircle, XCircle, Zap, Users, Moon, Sunrise, Download, Mail, Home } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { DailyFortuneFormData } from './DailyFortuneForm';
+import { downloadAsHtml, sendByEmail, createSectionHtml, createScoreBadgeHtml, createProgressBarHtml, createGridHtml, createCardHtml, createListHtml, createMessageBoxHtml } from '@/lib/utils/export-utils';
 
 interface DailyFortuneResultProps {
   formData: DailyFortuneFormData;
   onReset: () => void;
   onBack: () => void;
+  onHome?: () => void;
 }
 
 // 오행별 색상
@@ -331,7 +333,7 @@ function getZodiacCompatibility(birthYear: number): { good: string[]; bad: strin
   };
 }
 
-export default function DailyFortuneResult({ formData, onReset, onBack }: DailyFortuneResultProps) {
+export default function DailyFortuneResult({ formData, onReset, onBack, onHome }: DailyFortuneResultProps) {
   // 사용자의 일주 계산
   const userDayPillar = getDayPillar(formData.year, formData.month, formData.day);
   const userDayStem = userDayPillar.stem;
@@ -393,6 +395,96 @@ export default function DailyFortuneResult({ formData, onReset, onBack }: DailyF
   };
 
   const timeFortune = getTimeBasedFortune();
+
+  // HTML 다운로드 함수
+  const handleDownloadHtml = () => {
+    const headerHtml = `
+      <div class="header">
+        <h1>☀️ ${todayStr} 오늘의 운세</h1>
+        <p>${userZodiac}띠 • ${userDayStem.ko}일간 (${userElement} 오행)</p>
+      </div>
+    `;
+
+    const scoreHtml = createSectionHtml('종합 운세', `
+      ${createScoreBadgeHtml(finalScore, gradeInfo.grade)}
+      <p style="text-align: center; color: #a78bfa; margin-top: 12px;">오늘의 키워드: #${fortune.keyword}</p>
+      <p style="text-align: center; margin-top: 8px;">${elementRelation.description}</p>
+    `, gradeInfo.emoji);
+
+    const categoryHtml = createSectionHtml('분야별 운세', createGridHtml([
+      createProgressBarHtml(fortune.money.score, '💰 재물운', 'yellow'),
+      createProgressBarHtml(fortune.love.score, '💕 애정운', 'pink'),
+      createProgressBarHtml(fortune.work.score, '💼 직장운', 'blue'),
+      createProgressBarHtml(fortune.health.score, '🏃 건강운', 'green'),
+    ]), '📊');
+
+    const doHtml = createSectionHtml('오늘 하면 좋은 일', createListHtml(fortune.doList, 'check'), '✅');
+    const dontHtml = createSectionHtml('오늘 피해야 할 일', createListHtml(fortune.dontList, 'cross'), '⚠️');
+
+    const luckyHtml = createSectionHtml('행운 아이템', createGridHtml([
+      createCardHtml('행운의 색', elementColors[yongsinElement]?.name || '-', '🎨'),
+      createCardHtml('행운의 숫자', elementNumbers[yongsinElement]?.join(', ') || '-', '🔢'),
+      createCardHtml('행운의 방향', elementDirections[yongsinElement] || '-', '🧭'),
+      createCardHtml('행운의 음식', elementFoods[yongsinElement]?.[0] || '-', '🍽️'),
+    ]), '✨');
+
+    const messageHtml = createSectionHtml('오늘의 메시지',
+      createMessageBoxHtml(getPrediction(tenGod, formData.year, formData.month, formData.day)),
+    '💫');
+
+    const fullHtml = headerHtml + scoreHtml + categoryHtml + doHtml + dontHtml + luckyHtml + messageHtml;
+    downloadAsHtml(fullHtml, `운세_${todayStr.replace(/\s/g, '_')}_${userDayStem.ko}일간`);
+  };
+
+  // 이메일 전송 함수
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] ${todayStr} 오늘의 운세 - ${userDayStem.ko}일간`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+☀️ ${todayStr} 오늘의 운세
+${userZodiac}띠 • ${userDayStem.ko}일간 (${userElement} 오행)
+━━━━━━━━━━━━━━━━━━━━
+
+📊 종합 운세: ${finalScore}점 (${gradeInfo.grade})
+키워드: #${fortune.keyword}
+
+━━ 분야별 운세 ━━
+💰 재물운: ${fortune.money.score}점
+💕 애정운: ${fortune.love.score}점
+💼 직장운: ${fortune.work.score}점
+🏃 건강운: ${fortune.health.score}점
+👥 대인운: ${fortune.social.score}점
+
+━━ 오늘 하면 좋은 일 ━━
+${fortune.doList.map(item => `✓ ${item}`).join('\n')}
+
+━━ 오늘 피해야 할 일 ━━
+${fortune.dontList.map(item => `✗ ${item}`).join('\n')}
+
+━━ 행운 아이템 ━━
+🎨 행운의 색: ${elementColors[yongsinElement]?.name}
+🔢 행운의 숫자: ${elementNumbers[yongsinElement]?.join(', ')}
+🧭 행운의 방향: ${elementDirections[yongsinElement]}
+⏰ 행운의 시간: ${fortune.luckyTime}
+
+━━ 오늘의 메시지 ━━
+${getPrediction(tenGod, formData.year, formData.month, formData.day)}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+
+    sendByEmail(subject, body);
+  };
+
+  // 홈으로 이동
+  const handleGoHome = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      onBack();
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -757,8 +849,25 @@ export default function DailyFortuneResult({ formData, onReset, onBack }: DailyF
           </div>
         </motion.div>
 
-        {/* 버튼 */}
+        {/* 내보내기 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>저장하기</span>
+            </button>
+            <button
+              onClick={handleSendEmail}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일 보내기</span>
+            </button>
+          </div>
+
           <button
             onClick={onReset}
             className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl text-white font-bold text-lg hover:from-amber-600 hover:to-orange-700 transition-all flex items-center justify-center gap-2 shadow-lg"
@@ -766,11 +875,13 @@ export default function DailyFortuneResult({ formData, onReset, onBack }: DailyF
             <RefreshCw className="w-5 h-5" />
             다시 보기
           </button>
+
           <button
-            onClick={onBack}
-            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"
+            onClick={handleGoHome}
+            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
           >
-            메뉴로
+            <Home className="w-5 h-5" />
+            홈으로
           </button>
         </motion.div>
       </div>

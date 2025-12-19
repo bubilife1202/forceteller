@@ -2,7 +2,9 @@
 
 import { motion } from 'framer-motion';
 import { SajuResult } from '@/lib/saju-calculator';
-import { BookOpen, ArrowLeft, RefreshCw, Calendar, Star, Sun } from 'lucide-react';
+import { BookOpen, ArrowLeft, RefreshCw, Calendar, Star, Sun, Download, Mail, Home } from 'lucide-react';
+import TojeongPremiumSection from './premium/TojeongPremiumSection';
+import { downloadAsHtml, sendByEmail, createSectionHtml, createScoreBadgeHtml, createGridHtml, createCardHtml, createListHtml } from '@/lib/utils/export-utils';
 
 interface TojeongResult2026Props {
   result: SajuResult;
@@ -11,6 +13,7 @@ interface TojeongResult2026Props {
   birthDate: { year: number; month: number; day: number };
   onReset: () => void;
   onBack: () => void;
+  onHome?: () => void;
 }
 
 // 토정비결 괘 계산
@@ -315,13 +318,13 @@ const getSeasonalFortune = (totalGwae: number) => {
 };
 
 export default function TojeongResult2026({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   result,
   name,
   gender,
   birthDate,
   onReset,
   onBack,
+  onHome,
 }: TojeongResult2026Props) {
   const { sangGwae, jungGwae, haGwae } = calculateTojeongGwae(birthDate.year, birthDate.month, birthDate.day);
   const totalGwae = sangGwae + jungGwae + haGwae;
@@ -361,6 +364,104 @@ export default function TojeongResult2026({
     if (luck >= 70) return 'bg-emerald-500/20';
     if (luck >= 60) return 'bg-blue-500/20';
     return 'bg-slate-500/20';
+  };
+
+  // HTML 다운로드 함수
+  const handleDownloadHtml = () => {
+    const headerHtml = `
+      <div class="header">
+        <h1>📚 2026 토정비결</h1>
+        <p>병오년(丙午年) ${name}님의 한 해 운세</p>
+      </div>
+    `;
+
+    const gwaeHtml = createSectionHtml('괘(卦) 정보', `
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h3 style="font-size: 1.5rem; color: #fbbf24;">${yearlyFortune.title}</h3>
+      </div>
+      ${createGridHtml([
+        createCardHtml('상괘(上卦)', `${gwaeInterpretations[sangGwae]?.name} - ${gwaeInterpretations[sangGwae]?.meaning}`, '☰'),
+        createCardHtml('중괘(中卦)', `${gwaeInterpretations[jungGwae]?.name} - ${gwaeInterpretations[jungGwae]?.meaning}`, '☵'),
+        createCardHtml('하괘(下卦)', `${gwaeInterpretations[haGwae]?.name} - ${gwaeInterpretations[haGwae]?.meaning}`, '☱'),
+        createCardHtml('총괘(總卦)', `${totalGwae}괘`, '⚊'),
+      ])}
+    `, '⚊');
+
+    const yearHtml = createSectionHtml('2026년 총운', `
+      <p style="text-align: center; font-size: 1.25rem; color: #a78bfa; margin-bottom: 16px;">${yearlyFortune.title}</p>
+      <p style="margin-top: 16px;">${yearlyFortune.description}</p>
+    `, '📜');
+
+    const seasonHtml = createSectionHtml('계절별 운세', createGridHtml([
+      createCardHtml(seasonalFortune.spring.name, `${seasonalFortune.spring.score}점 - ${seasonalFortune.spring.fortune}`, '🌸'),
+      createCardHtml(seasonalFortune.summer.name, `${seasonalFortune.summer.score}점 - ${seasonalFortune.summer.fortune}`, '☀️'),
+      createCardHtml(seasonalFortune.autumn.name, `${seasonalFortune.autumn.score}점 - ${seasonalFortune.autumn.fortune}`, '🍂'),
+      createCardHtml(seasonalFortune.winter.name, `${seasonalFortune.winter.score}점 - ${seasonalFortune.winter.fortune}`, '❄️'),
+    ]), '🗓️');
+
+    const categoryHtml = createSectionHtml('분야별 운세', createGridHtml([
+      createCardHtml('재물운', `${categoryFortunes.wealth.score}점`, '💰'),
+      createCardHtml('애정운', `${categoryFortunes.love.score}점`, '💕'),
+      createCardHtml('건강운', `${categoryFortunes.health.score}점`, '🏃'),
+      createCardHtml('직업운', `${categoryFortunes.career.score}점`, '💼'),
+    ]), '📊');
+
+    const fullHtml = headerHtml + gwaeHtml + yearHtml + seasonHtml + categoryHtml;
+    downloadAsHtml(fullHtml, `토정비결_2026년_${name}`);
+  };
+
+  // 이메일 전송 함수
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] 2026년 토정비결 - ${name}님`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+📚 2026 토정비결
+병오년(丙午年) ${name}님의 한 해 운세
+━━━━━━━━━━━━━━━━━━━━
+
+⚊ 괘(卦) 정보
+• 상괘: ${gwaeInterpretations[sangGwae]?.name} - ${gwaeInterpretations[sangGwae]?.meaning}
+• 중괘: ${gwaeInterpretations[jungGwae]?.name} - ${gwaeInterpretations[jungGwae]?.meaning}
+• 하괘: ${gwaeInterpretations[haGwae]?.name} - ${gwaeInterpretations[haGwae]?.meaning}
+• 총괘: ${totalGwae}괘
+• 운세 등급: ${yearlyFortune.title}
+
+━━ 2026년 총운 ━━
+${yearlyFortune.description}
+
+━━ 계절별 운세 ━━
+🌸 ${seasonalFortune.spring.name}: ${seasonalFortune.spring.score}점
+${seasonalFortune.spring.fortune}
+
+☀️ ${seasonalFortune.summer.name}: ${seasonalFortune.summer.score}점
+${seasonalFortune.summer.fortune}
+
+🍂 ${seasonalFortune.autumn.name}: ${seasonalFortune.autumn.score}점
+${seasonalFortune.autumn.fortune}
+
+❄️ ${seasonalFortune.winter.name}: ${seasonalFortune.winter.score}점
+${seasonalFortune.winter.fortune}
+
+━━ 분야별 운세 ━━
+💰 재물운: ${categoryFortunes.wealth.score}점
+💕 애정운: ${categoryFortunes.love.score}점
+🏃 건강운: ${categoryFortunes.health.score}점
+💼 직업운: ${categoryFortunes.career.score}점
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+
+    sendByEmail(subject, body);
+  };
+
+  // 홈으로 이동
+  const handleGoHome = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      onBack();
+    }
   };
 
   return (
@@ -650,21 +751,44 @@ export default function TojeongResult2026({
           </p>
         </motion.div>
 
-        {/* 버튼 */}
-        <motion.div variants={itemVariants} className="flex gap-4">
-          <button
-            onClick={onBack}
-            className="flex-1 py-4 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            메뉴로
-          </button>
+        {/* 프리미엄 심층 분석 */}
+        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
+          <TojeongPremiumSection result={result} name={name} birthDate={birthDate} />
+        </motion.div>
+
+        {/* 내보내기 버튼 */}
+        <motion.div variants={itemVariants} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>저장하기</span>
+            </button>
+            <button
+              onClick={handleSendEmail}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일 보내기</span>
+            </button>
+          </div>
+
           <button
             onClick={onReset}
-            className="flex-1 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl text-white font-bold hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl text-white font-bold hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2"
           >
             <RefreshCw className="w-5 h-5" />
             다시 보기
+          </button>
+
+          <button
+            onClick={handleGoHome}
+            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+          >
+            <Home className="w-5 h-5" />
+            홈으로
           </button>
         </motion.div>
       </div>
