@@ -7,6 +7,10 @@ import OverviewSection from './sections/OverviewSection';
 import PersonalitySection from './sections/PersonalitySection';
 import PillarsSection from './sections/PillarsSection';
 import ElementsSection from './sections/ElementsSection';
+import PremiumWealthSection from './sections/PremiumWealthSection';
+import PremiumCareerSection from './sections/PremiumCareerSection';
+import PremiumLoveSection from './sections/PremiumLoveSection';
+import PremiumHealthSection from './sections/PremiumHealthSection';
 import SectionCard from './ui/SectionCard';
 import SectionHeader from './ui/SectionHeader';
 import InfoBox from './ui/InfoBox';
@@ -213,6 +217,12 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
       <PersonalitySection result={result} />
       <PillarsSection result={result} />
       <ElementsSection result={result} />
+
+      {/* 프리미엄 운세 분석 섹션 */}
+      <PremiumWealthSection result={result} />
+      <PremiumCareerSection result={result} />
+      <PremiumLoveSection result={result} />
+      <PremiumHealthSection result={result} />
 
       {/* 신강/신약 & 12운성 */}
       <div className="grid md:grid-cols-2 gap-8">
