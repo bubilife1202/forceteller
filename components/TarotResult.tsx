@@ -365,33 +365,68 @@ export default function TarotResult({ formData, onReset, onBack, onHome }: Tarot
   // HTML 다운로드 함수
   const handleDownloadHtml = () => {
     if (!selectedCard) return;
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+
     const htmlContent = `
       <div class="header">
-        <h1>🃏 오늘의 타로</h1>
-        <p>${selectedCard.name}${isReversed ? ' (역방향)' : ''}</p>
+        <h1>🃏 오늘의 타로 리딩</h1>
+        <p>${dateStr} • ${selectedCard.name}${isReversed ? ' (역방향)' : ' (정방향)'}</p>
       </div>
+
       <div class="section">
         <h2 class="section-title">${selectedCard.emoji} ${selectedCard.name}</h2>
-        <p style="text-align: center; color: #a78bfa; margin-bottom: 16px;">
-          키워드: ${selectedCard.keywords.join(', ')}
+        <p style="text-align: center; color: #a78bfa; margin-bottom: 16px; font-size: 1.1rem;">
+          ✨ 키워드: ${selectedCard.keywords.join(' • ')}
         </p>
+        <div style="background: rgba(251,191,36,0.1); padding: 20px; border-radius: 12px; text-align: center; margin-top: 16px;">
+          <p style="color: #fbbf24; font-size: 1.2rem; font-weight: bold;">"${selectedCard.advice}"</p>
+        </div>
       </div>
+
       <div class="section">
-        <h2 class="section-title">🔮 메시지</h2>
-        <p>${selectedCard.meaning.general}</p>
+        <h2 class="section-title">🔮 종합 메시지</h2>
+        <p style="line-height: 1.8;">${selectedCard.meaning.general}</p>
       </div>
+
       <div class="section">
-        <h2 class="section-title">💡 조언</h2>
-        <p style="font-weight: bold; color: #fbbf24;">${selectedCard.advice}</p>
+        <h2 class="section-title">💕 연애운</h2>
+        <p style="line-height: 1.8;">${selectedCard.meaning.love}</p>
       </div>
+
+      <div class="section">
+        <h2 class="section-title">💰 재물운</h2>
+        <p style="line-height: 1.8;">${selectedCard.meaning.money}</p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">💼 직장/사업운</h2>
+        <p style="line-height: 1.8;">${selectedCard.meaning.work}</p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">🏃 건강운</h2>
+        <p style="line-height: 1.8;">${selectedCard.meaning.health}</p>
+      </div>
+
       ${isReversed ? `
-      <div class="section">
-        <h2 class="section-title">🔄 역방향 메시지</h2>
-        <p>${selectedCard.reversed}</p>
+      <div class="section" style="border: 2px solid rgba(239,68,68,0.3); background: rgba(239,68,68,0.1);">
+        <h2 class="section-title" style="color: #f87171;">🔄 역방향 특별 메시지</h2>
+        <p style="line-height: 1.8;">${selectedCard.reversed}</p>
+        <p style="margin-top: 12px; color: #94a3b8; font-size: 0.9rem;">역방향 카드는 에너지의 막힘이나 내면으로 향한 에너지를 의미합니다. 이 메시지에 특별히 귀 기울여 주세요.</p>
       </div>
       ` : ''}
+
+      <div class="section">
+        <h2 class="section-title">📝 오늘의 실천 포인트</h2>
+        <ul>
+          <li><span class="check">✓</span><span>카드의 핵심 키워드 "${selectedCard.keywords[0]}"을(를) 하루 동안 의식하기</span></li>
+          <li><span class="check">✓</span><span>조언 메시지를 메모해두고 수시로 되새기기</span></li>
+          <li><span class="check">✓</span><span>오늘 중요한 결정이 있다면 카드의 메시지 참고하기</span></li>
+        </ul>
+      </div>
     `;
-    downloadAsHtml(htmlContent, `타로_${selectedCard.name.replace(/[()]/g, '')}`);
+    downloadAsHtml(htmlContent, `타로리딩_${dateStr.replace(/\s/g, '_')}_${selectedCard.name.replace(/[()]/g, '').replace(/\s/g, '')}`);
   };
 
   // 이메일 전송 함수

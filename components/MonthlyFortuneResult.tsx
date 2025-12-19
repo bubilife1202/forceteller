@@ -695,37 +695,56 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack, onHome
     }
   };
 
-  // HTML 다운로드 함수
+  // HTML 다운로드 함수 - 전체 내용 포함
   const handleDownloadHtml = () => {
     const headerHtml = `
       <div class="header">
         <h1>📅 2026년 ${targetMonth}월 운세</h1>
-        <p>${userDayStem.ko}일간 • ${userElement} 오행 • ${tenGod}의 달</p>
+        <p>${userDayStem.ko}일간 (${userElement} 오행) • ${tenGod}의 달</p>
       </div>
     `;
 
     const scoreHtml = createSectionHtml('종합 운세', `
       ${createScoreBadgeHtml(finalScore)}
-      <p style="text-align: center; color: #a78bfa; margin-top: 12px;">키워드: #${fortune.keyword}</p>
-      <p style="text-align: center; margin-top: 12px;">${fortune.summary}</p>
+      <p style="text-align: center; color: #a78bfa; margin-top: 12px;">이달의 키워드: #${fortune.keyword}</p>
+      <p style="text-align: center; margin-top: 12px; font-size: 1.1rem;">${fortune.summary}</p>
+      <p style="text-align: center; margin-top: 16px; color: #fbbf24; font-weight: bold;">"${fortune.advice}"</p>
     `, '⭐');
 
-    const categoryHtml = createSectionHtml('분야별 운세', createGridHtml([
-      createProgressBarHtml(fortune.money.score, '💰 재물운', 'yellow'),
-      createProgressBarHtml(fortune.love.score, '💕 애정운', 'pink'),
-      createProgressBarHtml(fortune.work.score, '💼 직장운', 'blue'),
-      createProgressBarHtml(fortune.health.score, '🏃 건강운', 'green'),
-    ]), '📊');
+    // 분야별 상세 운세
+    const categoryDetailHtml = createSectionHtml('분야별 상세 운세', `
+      <div style="margin-bottom: 24px;">
+        <h3 style="color: #fbbf24; margin-bottom: 8px;">💰 재물운 (${fortune.money.score}점)</h3>
+        <p style="margin-bottom: 8px;">${fortune.money.detail}</p>
+        <p style="color: #4ade80; font-size: 0.9rem;">💡 실천: ${fortune.money.action.join(', ')}</p>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <h3 style="color: #f472b6; margin-bottom: 8px;">💕 애정운 (${fortune.love.score}점)</h3>
+        <p style="margin-bottom: 8px;">${fortune.love.detail}</p>
+        <p style="color: #4ade80; font-size: 0.9rem;">💡 실천: ${fortune.love.action.join(', ')}</p>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <h3 style="color: #60a5fa; margin-bottom: 8px;">💼 직장운 (${fortune.work.score}점)</h3>
+        <p style="margin-bottom: 8px;">${fortune.work.detail}</p>
+        <p style="color: #4ade80; font-size: 0.9rem;">💡 실천: ${fortune.work.action.join(', ')}</p>
+      </div>
+      <div>
+        <h3 style="color: #4ade80; margin-bottom: 8px;">🏃 건강운 (${fortune.health.score}점)</h3>
+        <p style="margin-bottom: 8px;">${fortune.health.detail}</p>
+        <p style="color: #4ade80; font-size: 0.9rem;">💡 실천: ${fortune.health.action.join(', ')}</p>
+      </div>
+    `, '📊');
 
     const weeklyHtml = createSectionHtml('주간별 운세', `
       <div style="display: grid; gap: 12px;">
         ${Object.entries(weeklyFortune).map(([key, data]) => `
           <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span style="color: #a78bfa;">${key === 'week1' ? '1주차' : key === 'week2' ? '2주차' : key === 'week3' ? '3주차' : '4주차'} - #${data.theme}</span>
+              <span style="color: #a78bfa; font-weight: bold;">${key === 'week1' ? '1주차 (1~7일)' : key === 'week2' ? '2주차 (8~14일)' : key === 'week3' ? '3주차 (15~21일)' : '4주차 (22~말일)'}</span>
               <span style="font-weight: bold; color: ${data.score >= 70 ? '#4ade80' : data.score >= 50 ? '#fbbf24' : '#f87171'};">${data.score}점</span>
             </div>
-            <p style="font-size: 0.875rem; color: #94a3b8;">${data.tip}</p>
+            <p style="color: #fbbf24; font-size: 0.9rem; margin-bottom: 8px;">#${data.theme}</p>
+            <p style="font-size: 0.9rem; color: #e2e8f0;">${data.tip}</p>
           </div>
         `).join('')}
       </div>
@@ -735,24 +754,25 @@ export default function MonthlyFortuneResult({ formData, onReset, onBack, onHome
     const dontHtml = createSectionHtml('이달 피해야 할 일', createListHtml(fortune.dontList, 'cross'), '⚠️');
 
     const goalHtml = createSectionHtml('이달의 목표', `
-      <div style="background: rgba(34,197,94,0.1); padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 16px;">
-        <p style="color: #4ade80; font-weight: bold;">"${monthlyGoals.mainGoal}"</p>
+      <div style="background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(16,185,129,0.3)); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 16px; border: 1px solid rgba(34,197,94,0.3);">
+        <p style="color: #4ade80; font-weight: bold; font-size: 1.2rem;">🎯 "${monthlyGoals.mainGoal}"</p>
       </div>
+      <h4 style="color: #a78bfa; margin-bottom: 12px;">세부 목표:</h4>
       ${createListHtml(monthlyGoals.subGoals, 'check')}
     `, '🎯');
 
     const luckyHtml = createSectionHtml('행운 아이템', createGridHtml([
-      createCardHtml('행운의 색', luckyItems.colors.slice(0, 2).join(', '), '🎨'),
-      createCardHtml('행운의 숫자', luckyItems.numbers.slice(0, 3).join(', '), '🔢'),
+      createCardHtml('행운의 색', luckyItems.colors.join(', '), '🎨'),
+      createCardHtml('행운의 숫자', luckyItems.numbers.join(', '), '🔢'),
       createCardHtml('행운의 방향', luckyItems.directions.join(', '), '🧭'),
-      createCardHtml('추천 활동', luckyItems.activities.slice(0, 2).join(', '), '⭐'),
+      createCardHtml('추천 활동', luckyItems.activities.join(', '), '⭐'),
     ]), '✨');
 
     const messageHtml = createSectionHtml('이달의 명언', `
-      ${mantras.map(m => `<p style="text-align: center; margin: 12px 0; font-style: italic;">"${m}"</p>`).join('')}
+      ${mantras.map(m => `<p style="text-align: center; margin: 16px 0; font-style: italic; font-size: 1.1rem; color: #e2e8f0;">"${m}"</p>`).join('')}
     `, '💬');
 
-    const fullHtml = headerHtml + scoreHtml + categoryHtml + weeklyHtml + doHtml + dontHtml + goalHtml + luckyHtml + messageHtml;
+    const fullHtml = headerHtml + scoreHtml + categoryDetailHtml + weeklyHtml + doHtml + dontHtml + goalHtml + luckyHtml + messageHtml;
     downloadAsHtml(fullHtml, `월간운세_2026년_${targetMonth}월_${userDayStem.ko}일간`);
   };
 

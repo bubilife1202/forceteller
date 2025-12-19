@@ -366,47 +366,104 @@ export default function TojeongResult2026({
     return 'bg-slate-500/20';
   };
 
-  // HTML 다운로드 함수
+  // HTML 다운로드 함수 - 전체 내용 포함
   const handleDownloadHtml = () => {
     const headerHtml = `
       <div class="header">
         <h1>📚 2026 토정비결</h1>
         <p>병오년(丙午年) ${name}님의 한 해 운세</p>
+        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">생년: ${birthDate.year}년 | 생월: ${birthDate.month}월 | 생일: ${birthDate.day}일</p>
       </div>
     `;
 
     const gwaeHtml = createSectionHtml('괘(卦) 정보', `
-      <div style="text-align: center; margin-bottom: 20px;">
-        <h3 style="font-size: 1.5rem; color: #fbbf24;">${yearlyFortune.title}</h3>
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h3 style="font-size: 1.8rem; color: #fbbf24; margin-bottom: 8px;">${yearlyFortune.title}</h3>
+        <p style="font-size: 1.1rem; color: #a78bfa;">총괘수: ${totalGwae}괘</p>
       </div>
       ${createGridHtml([
-        createCardHtml('상괘(上卦)', `${gwaeInterpretations[sangGwae]?.name} - ${gwaeInterpretations[sangGwae]?.meaning}`, '☰'),
-        createCardHtml('중괘(中卦)', `${gwaeInterpretations[jungGwae]?.name} - ${gwaeInterpretations[jungGwae]?.meaning}`, '☵'),
-        createCardHtml('하괘(下卦)', `${gwaeInterpretations[haGwae]?.name} - ${gwaeInterpretations[haGwae]?.meaning}`, '☱'),
-        createCardHtml('총괘(總卦)', `${totalGwae}괘`, '⚊'),
+        createCardHtml('상괘(上卦)', `${gwaeInterpretations[sangGwae]?.name}`, '☰'),
+        createCardHtml('중괘(中卦)', `${gwaeInterpretations[jungGwae]?.name}`, '☵'),
+        createCardHtml('하괘(下卦)', `${gwaeInterpretations[haGwae]?.name}`, '☱'),
       ])}
+      <div style="margin-top: 16px;">
+        <p style="color: #94a3b8; font-size: 0.9rem;">• 상괘: ${gwaeInterpretations[sangGwae]?.meaning}</p>
+        <p style="color: #94a3b8; font-size: 0.9rem;">• 중괘: ${gwaeInterpretations[jungGwae]?.meaning}</p>
+        <p style="color: #94a3b8; font-size: 0.9rem;">• 하괘: ${gwaeInterpretations[haGwae]?.meaning}</p>
+      </div>
     `, '⚊');
 
     const yearHtml = createSectionHtml('2026년 총운', `
-      <p style="text-align: center; font-size: 1.25rem; color: #a78bfa; margin-bottom: 16px;">${yearlyFortune.title}</p>
-      <p style="margin-top: 16px;">${yearlyFortune.description}</p>
+      <div style="background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(245,158,11,0.3)); padding: 24px; border-radius: 16px; text-align: center; border: 1px solid rgba(251,191,36,0.3);">
+        <p style="font-size: 1.3rem; color: #fbbf24; font-weight: bold; margin-bottom: 12px;">${yearlyFortune.title}</p>
+        <p style="color: #e2e8f0; line-height: 1.8;">${yearlyFortune.description}</p>
+      </div>
     `, '📜');
 
-    const seasonHtml = createSectionHtml('계절별 운세', createGridHtml([
-      createCardHtml(seasonalFortune.spring.name, `${seasonalFortune.spring.score}점 - ${seasonalFortune.spring.fortune}`, '🌸'),
-      createCardHtml(seasonalFortune.summer.name, `${seasonalFortune.summer.score}점 - ${seasonalFortune.summer.fortune}`, '☀️'),
-      createCardHtml(seasonalFortune.autumn.name, `${seasonalFortune.autumn.score}점 - ${seasonalFortune.autumn.fortune}`, '🍂'),
-      createCardHtml(seasonalFortune.winter.name, `${seasonalFortune.winter.score}점 - ${seasonalFortune.winter.fortune}`, '❄️'),
-    ]), '🗓️');
+    // 계절별 상세 운세
+    const seasonDetailHtml = createSectionHtml('계절별 상세 운세', `
+      <div style="margin-bottom: 24px; background: rgba(236,72,153,0.1); padding: 20px; border-radius: 12px;">
+        <h3 style="color: #f472b6; margin-bottom: 12px;">🌸 ${seasonalFortune.spring.name} (${seasonalFortune.spring.score}점)</h3>
+        <p>${seasonalFortune.spring.fortune}</p>
+      </div>
+      <div style="margin-bottom: 24px; background: rgba(251,191,36,0.1); padding: 20px; border-radius: 12px;">
+        <h3 style="color: #fbbf24; margin-bottom: 12px;">☀️ ${seasonalFortune.summer.name} (${seasonalFortune.summer.score}점)</h3>
+        <p>${seasonalFortune.summer.fortune}</p>
+      </div>
+      <div style="margin-bottom: 24px; background: rgba(249,115,22,0.1); padding: 20px; border-radius: 12px;">
+        <h3 style="color: #fb923c; margin-bottom: 12px;">🍂 ${seasonalFortune.autumn.name} (${seasonalFortune.autumn.score}점)</h3>
+        <p>${seasonalFortune.autumn.fortune}</p>
+      </div>
+      <div style="background: rgba(96,165,250,0.1); padding: 20px; border-radius: 12px;">
+        <h3 style="color: #60a5fa; margin-bottom: 12px;">❄️ ${seasonalFortune.winter.name} (${seasonalFortune.winter.score}점)</h3>
+        <p>${seasonalFortune.winter.fortune}</p>
+      </div>
+    `, '🗓️');
 
-    const categoryHtml = createSectionHtml('분야별 운세', createGridHtml([
-      createCardHtml('재물운', `${categoryFortunes.wealth.score}점`, '💰'),
-      createCardHtml('애정운', `${categoryFortunes.love.score}점`, '💕'),
-      createCardHtml('건강운', `${categoryFortunes.health.score}점`, '🏃'),
-      createCardHtml('직업운', `${categoryFortunes.career.score}점`, '💼'),
-    ]), '📊');
+    // 분야별 상세 운세 - getMatchingVerse를 사용하여 해당하는 verse 가져오기
+    const wealthVerse = getMatchingVerse(categoryFortunes.wealth);
+    const loveVerse = getMatchingVerse(categoryFortunes.love);
+    const healthVerse = getMatchingVerse(categoryFortunes.health);
+    const careerVerse = getMatchingVerse(categoryFortunes.career);
 
-    const fullHtml = headerHtml + gwaeHtml + yearHtml + seasonHtml + categoryHtml;
+    const categoryDetailHtml = createSectionHtml('분야별 상세 운세', `
+      <div style="margin-bottom: 24px;">
+        <h3 style="color: #fbbf24; margin-bottom: 8px;">💰 ${categoryFortunes.wealth.title} (${categoryFortunes.wealth.score}점)</h3>
+        <p style="margin-bottom: 8px; white-space: pre-line; font-style: italic; color: #a78bfa;">${wealthVerse.verse}</p>
+        <p style="line-height: 1.7;">${wealthVerse.detail}</p>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <h3 style="color: #f472b6; margin-bottom: 8px;">💕 ${categoryFortunes.love.title} (${categoryFortunes.love.score}점)</h3>
+        <p style="margin-bottom: 8px; white-space: pre-line; font-style: italic; color: #a78bfa;">${loveVerse.verse}</p>
+        <p style="line-height: 1.7;">${loveVerse.detail}</p>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <h3 style="color: #4ade80; margin-bottom: 8px;">🏃 ${categoryFortunes.health.title} (${categoryFortunes.health.score}점)</h3>
+        <p style="margin-bottom: 8px; white-space: pre-line; font-style: italic; color: #a78bfa;">${healthVerse.verse}</p>
+        <p style="line-height: 1.7;">${healthVerse.detail}</p>
+      </div>
+      <div>
+        <h3 style="color: #60a5fa; margin-bottom: 8px;">💼 ${categoryFortunes.career.title} (${categoryFortunes.career.score}점)</h3>
+        <p style="margin-bottom: 8px; white-space: pre-line; font-style: italic; color: #a78bfa;">${careerVerse.verse}</p>
+        <p style="line-height: 1.7;">${careerVerse.detail}</p>
+      </div>
+    `, '📊');
+
+    // 2026년 종합 조언
+    const bestSeason = [seasonalFortune.spring, seasonalFortune.summer, seasonalFortune.autumn, seasonalFortune.winter].sort((a, b) => b.score - a.score)[0].name;
+    const bestCategory = [{name: '재물', score: categoryFortunes.wealth.score}, {name: '애정', score: categoryFortunes.love.score}, {name: '건강', score: categoryFortunes.health.score}, {name: '직업', score: categoryFortunes.career.score}].sort((a,b) => b.score - a.score)[0].name;
+    const worstCategory = [{name: '재물', score: categoryFortunes.wealth.score}, {name: '애정', score: categoryFortunes.love.score}, {name: '건강', score: categoryFortunes.health.score}, {name: '직업', score: categoryFortunes.career.score}].sort((a,b) => a.score - b.score)[0].name;
+
+    const adviceHtml = createSectionHtml('2026년 종합 조언', `
+      <ul>
+        <li><span class="check">✓</span><span>가장 운이 좋은 시기: ${bestSeason}</span></li>
+        <li><span class="check">✓</span><span>가장 기대되는 분야: ${bestCategory}운</span></li>
+        <li><span class="check">✓</span><span>특별히 신경 써야 할 분야: ${worstCategory}운</span></li>
+        <li><span class="check">✓</span><span>2026년 병오년(丙午年)은 불의 기운이 강한 해입니다. 열정과 활력을 긍정적으로 활용하세요.</span></li>
+      </ul>
+    `, '📝');
+
+    const fullHtml = headerHtml + gwaeHtml + yearHtml + seasonDetailHtml + categoryDetailHtml + adviceHtml;
     downloadAsHtml(fullHtml, `토정비결_2026년_${name}`);
   };
 
