@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Sparkles, Share2, RotateCcw, Heart, Briefcase, Wallet, Activity, Star } from 'lucide-react';
+import { ArrowLeft, Sparkles, Share2, RotateCcw, Heart, Briefcase, Wallet, Activity, Star, Download, Mail, Home } from 'lucide-react';
 import { TarotFormData } from './TarotForm';
+import { downloadAsHtml, sendByEmail } from '@/lib/utils/export-utils';
 
 interface TarotResultProps {
   formData: TarotFormData;
   onReset: () => void;
   onBack: () => void;
+  onHome?: () => void;
 }
 
 // 22장 메이저 아르카나 카드 데이터
@@ -345,11 +347,79 @@ const majorArcana = [
   }
 ];
 
-export default function TarotResult({ formData, onReset, onBack }: TarotResultProps) {
+export default function TarotResult({ formData, onReset, onBack, onHome }: TarotResultProps) {
   const [stage, setStage] = useState<'shuffling' | 'picking' | 'revealing' | 'result'>('shuffling');
   const [selectedCard, setSelectedCard] = useState<typeof majorArcana[0] | null>(null);
   const [isReversed, setIsReversed] = useState(false);
   const [displayedCards, setDisplayedCards] = useState<number[]>([]);
+
+  // 홈으로 이동
+  const handleGoHome = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      onBack();
+    }
+  };
+
+  // HTML 다운로드 함수
+  const handleDownloadHtml = () => {
+    if (!selectedCard) return;
+    const htmlContent = `
+      <div class="header">
+        <h1>🃏 오늘의 타로</h1>
+        <p>${selectedCard.name}${isReversed ? ' (역방향)' : ''}</p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">${selectedCard.emoji} ${selectedCard.name}</h2>
+        <p style="text-align: center; color: #a78bfa; margin-bottom: 16px;">
+          키워드: ${selectedCard.keywords.join(', ')}
+        </p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">🔮 메시지</h2>
+        <p>${selectedCard.meaning.general}</p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">💡 조언</h2>
+        <p style="font-weight: bold; color: #fbbf24;">${selectedCard.advice}</p>
+      </div>
+      ${isReversed ? `
+      <div class="section">
+        <h2 class="section-title">🔄 역방향 메시지</h2>
+        <p>${selectedCard.reversed}</p>
+      </div>
+      ` : ''}
+    `;
+    downloadAsHtml(htmlContent, `타로_${selectedCard.name.replace(/[()]/g, '')}`);
+  };
+
+  // 이메일 전송 함수
+  const handleSendEmail = () => {
+    if (!selectedCard) return;
+    const subject = `[ForceTeller] 오늘의 타로 - ${selectedCard.name}`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+🃏 오늘의 타로
+${selectedCard.name}${isReversed ? ' (역방향)' : ''}
+━━━━━━━━━━━━━━━━━━━━
+
+${selectedCard.emoji} 키워드: ${selectedCard.keywords.join(', ')}
+
+🔮 메시지:
+${selectedCard.meaning.general}
+
+💡 조언:
+${selectedCard.advice}
+
+${isReversed ? `🔄 역방향 메시지:
+${selectedCard.reversed}` : ''}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+    sendByEmail(subject, body);
+  };
 
   // 카드 섞기 애니메이션
   useEffect(() => {
@@ -807,26 +877,53 @@ export default function TarotResult({ formData, onReset, onBack }: TarotResultPr
               </motion.div>
             )}
 
-            {/* 공유 및 다시하기 버튼 */}
+            {/* 내보내기 버튼 */}
             <motion.div
-              className="flex gap-4"
+              className="space-y-3"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
             >
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={handleDownloadHtml}
+                  className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+                >
+                  <Download className="w-5 h-5" />
+                  <span>저장하기</span>
+                </button>
+                <button
+                  onClick={handleSendEmail}
+                  className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+                >
+                  <Mail className="w-5 h-5" />
+                  <span>메일 보내기</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={handleKakaoShare}
+                  className="flex items-center justify-center gap-2 py-3 px-4 bg-yellow-500 rounded-xl text-black font-medium hover:bg-yellow-400 transition-colors shadow-lg"
+                >
+                  <Share2 className="w-5 h-5" />
+                  <span>카톡 공유</span>
+                </button>
+                <button
+                  onClick={onReset}
+                  className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl text-white font-medium hover:opacity-90 transition-opacity shadow-lg"
+                >
+                  <RotateCcw className="w-5 h-5" />
+                  <span>다시 뽑기</span>
+                </button>
+              </div>
+
               <button
-                onClick={handleKakaoShare}
-                className="flex-1 py-4 bg-yellow-500 rounded-2xl text-black font-bold text-lg shadow-lg hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2"
+                onClick={handleGoHome}
+                className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
               >
-                <Share2 className="w-5 h-5" />
-                카카오톡 공유
-              </button>
-              <button
-                onClick={onReset}
-                className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl text-white font-bold text-lg shadow-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-              >
-                <RotateCcw className="w-5 h-5" />
-                다시 뽑기
+                <Home className="w-5 h-5" />
+                홈으로
               </button>
             </motion.div>
 

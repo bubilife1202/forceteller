@@ -8,12 +8,13 @@ import {
   Briefcase, Activity, Sparkles, ArrowLeft,
   Sun, Compass, Gem, Users, GraduationCap,
   Home, Crown, Mail, TrendingUp, Truck,
-  Plane, Scale
+  Plane, Scale, Download
 } from 'lucide-react';
 import MonthlyForecast2026 from './premium/MonthlyForecast2026';
 import YearlyGuidance2026 from './premium/YearlyGuidance2026';
 import LuckyCalendar2026 from './premium/LuckyCalendar2026';
 import EmailModal from './ui/EmailModal';
+import { downloadAsHtml } from '@/lib/utils/export-utils';
 
 interface NewYearResult2026Props {
   result: SajuResult;
@@ -22,6 +23,7 @@ interface NewYearResult2026Props {
   birthDate: { year: number; month: number; day: number };
   onReset: () => void;
   onBack: () => void;
+  onHome?: () => void;
 }
 
 export default function NewYearResult2026({
@@ -30,10 +32,50 @@ export default function NewYearResult2026({
   gender,
   birthDate,
   onReset,
-  onBack
+  onBack,
+  onHome
 }: NewYearResult2026Props) {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const dayElement = result.day.stem.element;
+
+  // 홈으로 이동
+  const handleGoHome = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      onBack();
+    }
+  };
+
+  // HTML 다운로드 함수
+  const handleDownloadHtml = () => {
+    const htmlContent = `
+      <div class="header">
+        <h1>🐴 2026 신년운세</h1>
+        <p>丙午年 • 붉은 말의 해 • ${name}님</p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">📊 2026년 총운</h2>
+        <div class="score high">${overallScore}점</div>
+        <p style="text-align: center; margin-top: 16px; color: #a78bfa;">일간: ${dayElement}(${result.day.stem.ko})</p>
+        <p style="margin-top: 16px;">${yearRelation.summary}</p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">🎯 분야별 운세</h2>
+        <div class="grid">
+          <div class="card"><div class="card-title">💰 재물운</div><div class="card-value">${fortuneCategories.wealth}점</div></div>
+          <div class="card"><div class="card-title">💕 애정운</div><div class="card-value">${fortuneCategories.love}점</div></div>
+          <div class="card"><div class="card-title">💼 직장운</div><div class="card-value">${fortuneCategories.career}점</div></div>
+          <div class="card"><div class="card-title">💪 건강운</div><div class="card-value">${fortuneCategories.health}점</div></div>
+        </div>
+      </div>
+      <div class="section">
+        <h2 class="section-title">✨ 2026년 종합 분석</h2>
+        <p>${yearRelation.detail}</p>
+      </div>
+    `;
+    downloadAsHtml(htmlContent, `2026신년운세_${name}`);
+  };
 
   // 일간과 병오년(화화)의 관계 분석
   const getYearRelation = () => {
@@ -1395,33 +1437,46 @@ export default function NewYearResult2026({
           </div>
         </motion.div>
 
-        {/* 버튼 */}
-        <div className="flex flex-wrap justify-center gap-4 pt-4">
-          <motion.button
-            onClick={onBack}
-            className="px-6 py-3 glass rounded-2xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all flex items-center gap-2"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            메뉴로
-          </motion.button>
-          <motion.button
-            onClick={() => setIsEmailModalOpen(true)}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all flex items-center gap-2"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Mail className="w-4 h-4" />
-            이메일로 받기
-          </motion.button>
+        {/* 내보내기 버튼 */}
+        <div className="space-y-3 pt-4">
+          <div className="grid grid-cols-2 gap-3">
+            <motion.button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Download className="w-5 h-5" />
+              <span>저장하기</span>
+            </motion.button>
+            <motion.button
+              onClick={() => setIsEmailModalOpen(true)}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일 보내기</span>
+            </motion.button>
+          </div>
+
           <motion.button
             onClick={onReset}
-            className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl text-white font-medium hover:from-red-600 hover:to-orange-600 transition-all"
+            className="w-full py-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl text-white font-bold text-lg hover:from-red-600 hover:to-orange-600 transition-all flex items-center justify-center gap-2 shadow-lg"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
             다시 입력하기
+          </motion.button>
+
+          <motion.button
+            onClick={handleGoHome}
+            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Home className="w-5 h-5" />
+            홈으로
           </motion.button>
         </div>
       </div>

@@ -4,9 +4,10 @@ import { motion } from 'framer-motion';
 import { SajuResult } from '@/lib/saju-calculator';
 import {
   Heart, Users, Home, Wallet, AlertTriangle,
-  ArrowLeft, ThumbsUp, Sun, Calendar, MapPin, MessageCircle, Gift, Star, Coffee, Sparkles, Target, Shield, Flame, Clock
+  ArrowLeft, ThumbsUp, Sun, Calendar, MapPin, MessageCircle, Gift, Star, Coffee, Sparkles, Target, Shield, Flame, Clock, Download, Mail
 } from 'lucide-react';
 import { CompatibilityFormData } from './CompatibilityForm';
+import { downloadAsHtml, sendByEmail } from '@/lib/utils/export-utils';
 
 interface CompatibilityResultProps {
   result1: SajuResult;
@@ -14,6 +15,7 @@ interface CompatibilityResultProps {
   formData: CompatibilityFormData;
   onReset: () => void;
   onBack: () => void;
+  onHome?: () => void;
 }
 
 export default function CompatibilityResult({
@@ -21,9 +23,19 @@ export default function CompatibilityResult({
   result2,
   formData,
   onReset,
-  onBack
+  onBack,
+  onHome
 }: CompatibilityResultProps) {
   const { person1, person2, relationshipType } = formData;
+
+  // 홈으로 이동
+  const handleGoHome = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      onBack();
+    }
+  };
 
   // 천간 정보
   const stem1 = result1.day.stem;
@@ -619,6 +631,58 @@ export default function CompatibilityResult({
     return `${person1.name}님과 ${person2.name}님의 관계는 많은 노력이 필요한 조합입니다. 하지만 사주는 참고일 뿐, 실제 관계는 두 분의 마음과 노력에 달려 있습니다. 서로를 존중하고 이해하려는 자세가 있다면, 어떤 궁합도 극복할 수 있습니다. 갈등이 생겼을 때는 감정적으로 대응하지 말고, 하루 정도 시간을 두고 대화하세요.`;
   };
 
+  // HTML 다운로드 함수
+  const handleDownloadHtml = () => {
+    const htmlContent = `
+      <div class="header">
+        <h1>💑 사주 궁합 분석</h1>
+        <p>${person1.name}님 ❤️ ${person2.name}님</p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">❤️ 종합 궁합 점수</h2>
+        <div class="score ${overallScore >= 70 ? 'high' : overallScore >= 50 ? 'medium' : 'low'}">${overallScore}점</div>
+        <p style="text-align: center; margin-top: 16px;">${getOverallAdvice().substring(0, 200)}...</p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">🔮 분야별 궁합</h2>
+        <div class="grid">
+          <div class="card"><div class="card-title">천간 궁합</div><div class="card-value">${stemAnalysis.score}점</div></div>
+          <div class="card"><div class="card-title">지지 궁합</div><div class="card-value">${branchAnalysis.score}점</div></div>
+          <div class="card"><div class="card-title">전체 궁합</div><div class="card-value">${overallScore}점</div></div>
+        </div>
+      </div>
+      <div class="section">
+        <h2 class="section-title">💕 관계 유형</h2>
+        <p>${relationshipType === 'lover' ? '연인' : relationshipType === 'spouse' ? '배우자' : relationshipType === 'business' ? '사업 파트너' : '친구/동료'}</p>
+      </div>
+    `;
+    downloadAsHtml(htmlContent, `궁합_${person1.name}_${person2.name}`);
+  };
+
+  // 이메일 전송 함수
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] 사주 궁합 분석 - ${person1.name} ❤️ ${person2.name}`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+💑 사주 궁합 분석
+${person1.name}님 ❤️ ${person2.name}님
+━━━━━━━━━━━━━━━━━━━━
+
+❤️ 종합 궁합 점수: ${overallScore}점
+
+━━ 분야별 궁합 ━━
+• 천간 궁합: ${stemAnalysis.score}점 (${stemAnalysis.description})
+• 지지 궁합: ${branchAnalysis.score}점 (${branchAnalysis.description})
+
+━━ 종합 조언 ━━
+${getOverallAdvice()}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+    sendByEmail(subject, body);
+  };
+
   return (
     <div className="min-h-screen px-4 py-8 md:py-12">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -989,24 +1053,46 @@ export default function CompatibilityResult({
           </div>
         </motion.div>
 
-        {/* 버튼 */}
-        <div className="flex justify-center gap-4 pt-4">
-          <motion.button
-            onClick={onBack}
-            className="px-6 py-3 glass rounded-2xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all flex items-center gap-2"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            메뉴로
-          </motion.button>
+        {/* 내보내기 버튼 */}
+        <div className="space-y-3 pt-4">
+          <div className="grid grid-cols-2 gap-3">
+            <motion.button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Download className="w-5 h-5" />
+              <span>저장하기</span>
+            </motion.button>
+            <motion.button
+              onClick={handleSendEmail}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일 보내기</span>
+            </motion.button>
+          </div>
+
           <motion.button
             onClick={onReset}
-            className="px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl text-white font-medium hover:from-pink-600 hover:to-rose-600 transition-all"
+            className="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl text-white font-bold text-lg hover:from-pink-600 hover:to-rose-600 transition-all flex items-center justify-center gap-2 shadow-lg"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
             다시 입력하기
+          </motion.button>
+
+          <motion.button
+            onClick={handleGoHome}
+            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Home className="w-5 h-5" />
+            홈으로
           </motion.button>
         </div>
       </div>

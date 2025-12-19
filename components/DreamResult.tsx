@@ -1,13 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Cloud, ArrowLeft, RefreshCw, Star, Sparkles, AlertCircle, TrendingUp, Moon, Sun, Heart, Zap, Target, Gift, Crown, Clover, Brain, BookOpen } from 'lucide-react';
+import { Cloud, ArrowLeft, RefreshCw, Star, Sparkles, AlertCircle, TrendingUp, Moon, Sun, Heart, Zap, Target, Gift, Crown, Clover, Brain, BookOpen, Download, Mail, Home } from 'lucide-react';
 import { DreamFormData } from './DreamForm';
+import { downloadAsHtml, sendByEmail } from '@/lib/utils/export-utils';
 
 interface DreamResultProps {
   formData: DreamFormData;
   onReset: () => void;
   onBack: () => void;
+  onHome?: () => void;
 }
 
 // 꿈의 카테고리 정보
@@ -1195,7 +1197,7 @@ const getOverallInterpretation = (interpretations: typeof dreamInterpretations[s
   }
 };
 
-export default function DreamResult({ formData, onReset, onBack }: DreamResultProps) {
+export default function DreamResult({ formData, onReset, onBack, onHome }: DreamResultProps) {
   // 각 키워드에 대한 해석 가져오기
   const interpretations = formData.keywords.map(keyword => {
     return dreamInterpretations[keyword] || getDefaultInterpretation(keyword);
@@ -1210,6 +1212,70 @@ export default function DreamResult({ formData, onReset, onBack }: DreamResultPr
   const mainLuckyNumber = luckyNumbers.length > 0
     ? luckyNumbers[Math.floor(Math.random() * luckyNumbers.length)]
     : Math.floor(Math.random() * 9) + 1;
+
+  // 홈으로 이동
+  const handleGoHome = () => {
+    if (onHome) {
+      onHome();
+    } else {
+      onBack();
+    }
+  };
+
+  // HTML 다운로드 함수
+  const handleDownloadHtml = () => {
+    const htmlContent = `
+      <div class="header">
+        <h1>🌙 꿈 해몽 결과</h1>
+        <p>키워드: ${formData.keywords.join(', ')}</p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">✨ 종합 해몽</h2>
+        <h3 style="text-align: center; font-size: 1.5rem; color: #a78bfa; margin-bottom: 12px;">${overallInterpretation.title}</h3>
+        <p style="text-align: center;">${overallInterpretation.description}</p>
+        <div style="text-align: center; margin-top: 20px;">
+          <span style="font-size: 2rem; font-weight: bold; color: #a78bfa;">🔮 행운의 숫자: ${mainLuckyNumber}</span>
+        </div>
+      </div>
+      ${interpretations.map(int => `
+        <div class="section">
+          <h2 class="section-title">${int.title}</h2>
+          <p>${int.meaning}</p>
+          <p style="margin-top: 12px; color: #94a3b8;">${int.detail}</p>
+          <p style="margin-top: 12px; color: #4ade80;">💡 조언: ${int.advice}</p>
+        </div>
+      `).join('')}
+    `;
+    downloadAsHtml(htmlContent, `꿈해몽_${formData.keywords.join('_')}`);
+  };
+
+  // 이메일 전송 함수
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] 꿈 해몽 결과 - ${formData.keywords.join(', ')}`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+🌙 꿈 해몽 결과
+키워드: ${formData.keywords.join(', ')}
+━━━━━━━━━━━━━━━━━━━━
+
+✨ 종합 해몽: ${overallInterpretation.title}
+${overallInterpretation.description}
+
+🔮 행운의 숫자: ${mainLuckyNumber}
+
+━━ 상세 해몽 ━━
+${interpretations.map(int => `
+◆ ${int.title}
+${int.meaning}
+${int.detail}
+💡 조언: ${int.advice}
+`).join('\n')}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+    sendByEmail(subject, body);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -1539,21 +1605,39 @@ export default function DreamResult({ formData, onReset, onBack }: DreamResultPr
           </p>
         </motion.div>
 
-        {/* 버튼 */}
-        <motion.div variants={itemVariants} className="flex gap-4">
-          <button
-            onClick={onBack}
-            className="flex-1 py-4 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            메뉴로
-          </button>
+        {/* 내보내기 버튼 */}
+        <motion.div variants={itemVariants} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>저장하기</span>
+            </button>
+            <button
+              onClick={handleSendEmail}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일 보내기</span>
+            </button>
+          </div>
+
           <button
             onClick={onReset}
-            className="flex-1 py-4 bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl text-white font-bold hover:from-violet-600 hover:to-purple-700 transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl text-white font-bold hover:from-violet-600 hover:to-purple-700 transition-all flex items-center justify-center gap-2 shadow-lg"
           >
             <RefreshCw className="w-5 h-5" />
             다른 꿈 풀이
+          </button>
+
+          <button
+            onClick={handleGoHome}
+            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+          >
+            <Home className="w-5 h-5" />
+            홈으로
           </button>
         </motion.div>
       </div>
