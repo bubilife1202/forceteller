@@ -1222,6 +1222,20 @@ export default function DreamResult({ formData, onReset, onBack, onHome }: Dream
     }
   };
 
+  // 로또 번호 생성
+  const lottoNumbers = getLottoNumbers(formData.keywords, mainLuckyNumber);
+  const todayFortune = DAY_FORTUNE[new Date().getDay()];
+
+  // 카테고리 집계
+  const categoryStats = interpretations.reduce((acc, interp) => {
+    const cat = interp.category || 'emotion';
+    acc[cat] = (acc[cat] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // 심리학적 해석이 있는 키워드
+  const psychKeywords = formData.keywords.filter(k => PSYCHOLOGY_INTERPRETATION[k]);
+
   // HTML 다운로드 함수
   const handleDownloadHtml = () => {
     const htmlContent = `
@@ -1229,6 +1243,8 @@ export default function DreamResult({ formData, onReset, onBack, onHome }: Dream
         <h1>🌙 꿈 해몽 결과</h1>
         <p>키워드: ${formData.keywords.join(', ')}</p>
       </div>
+
+      <!-- 종합 해몽 -->
       <div class="section">
         <h2 class="section-title">✨ 종합 해몽</h2>
         <h3 style="text-align: center; font-size: 1.5rem; color: #a78bfa; margin-bottom: 12px;">${overallInterpretation.title}</h3>
@@ -1237,14 +1253,125 @@ export default function DreamResult({ formData, onReset, onBack, onHome }: Dream
           <span style="font-size: 2rem; font-weight: bold; color: #a78bfa;">🔮 행운의 숫자: ${mainLuckyNumber}</span>
         </div>
       </div>
-      ${interpretations.map(int => `
-        <div class="section">
-          <h2 class="section-title">${int.title}</h2>
-          <p>${int.meaning}</p>
-          <p style="margin-top: 12px; color: #94a3b8;">${int.detail}</p>
-          <p style="margin-top: 12px; color: #4ade80;">💡 조언: ${int.advice}</p>
+
+      <!-- 오늘의 꿈 운세 요약 -->
+      <div class="section">
+        <h2 class="section-title">☀️ 오늘의 꿈 운세 요약</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="card-title">전체 운세</div>
+            <div class="card-value">${overallInterpretation.type === 'good' ? '🌟 길몽' : overallInterpretation.type === 'bad' ? '⚠️ 주의' : '🔮 평몽'}</div>
+          </div>
+          <div class="card">
+            <div class="card-title">행운의 숫자</div>
+            <div class="card-value">${mainLuckyNumber}</div>
+          </div>
+          <div class="card">
+            <div class="card-title">오늘 요일</div>
+            <div class="card-value">${todayFortune.title.replace(' 꿈', '')}</div>
+          </div>
+          <div class="card">
+            <div class="card-title">꿈 키워드</div>
+            <div class="card-value">${formData.keywords.length}개</div>
+          </div>
         </div>
-      `).join('')}
+      </div>
+
+      <!-- 상세 해몽 -->
+      <div class="section">
+        <h2 class="section-title">⭐ 상세 해몽</h2>
+        ${interpretations.map((int, idx) => `
+          <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: #fff; font-weight: bold;">${formData.keywords[idx]}</span>
+              <span style="padding: 2px 8px; border-radius: 50px; font-size: 0.75rem; ${
+                int.type === 'good' ? 'background: rgba(234,179,8,0.2); color: #fde047;' :
+                int.type === 'bad' ? 'background: rgba(239,68,68,0.2); color: #fca5a5;' :
+                'background: rgba(139,92,246,0.2); color: #c4b5fd;'
+              }">${int.type === 'good' ? '길몽' : int.type === 'bad' ? '흉몽' : '평몽'}</span>
+            </div>
+            <h4 style="color: #a78bfa; margin-bottom: 8px;">${int.title}</h4>
+            <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 8px;">${int.meaning}</p>
+            <p style="color: #cbd5e1; font-size: 0.875rem; margin-bottom: 8px;">${int.detail}</p>
+            <p style="color: #4ade80; font-size: 0.875rem;">💡 조언: ${int.advice}</p>
+            ${int.luckyNumber ? `<p style="color: #64748b; font-size: 0.75rem; margin-top: 8px;">행운의 숫자: ${int.luckyNumber}</p>` : ''}
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- 요일별 꿈 운세 -->
+      <div class="section">
+        <h2 class="section-title">🌙 요일별 꿈 운세</h2>
+        <div style="background: rgba(99,102,241,0.1); border-radius: 12px; padding: 16px;">
+          <p style="color: #a5b4fc; font-weight: bold; margin-bottom: 8px;">${todayFortune.title}</p>
+          <p style="color: #cbd5e1; font-size: 0.875rem;">${todayFortune.meaning}</p>
+        </div>
+      </div>
+
+      ${psychKeywords.length > 0 ? `
+      <!-- 심리학적 해석 -->
+      <div class="section">
+        <h2 class="section-title">🧠 심리학적 해석</h2>
+        ${psychKeywords.map(keyword => `
+          <div style="background: rgba(236,72,153,0.1); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+            <h4 style="color: #f9a8d4; font-weight: bold; margin-bottom: 8px;">${keyword}</h4>
+            <p style="color: #cbd5e1; font-size: 0.875rem;">${PSYCHOLOGY_INTERPRETATION[keyword]}</p>
+          </div>
+        `).join('')}
+      </div>
+      ` : ''}
+
+      <!-- 꿈에서 온 행운 번호 -->
+      <div class="section">
+        <h2 class="section-title">🍀 꿈에서 온 행운 번호 (재미용)</h2>
+        <p style="color: #64748b; font-size: 0.75rem; margin-bottom: 12px;">※ 꿈 키워드를 바탕으로 생성된 번호입니다. 재미로만 참고하세요!</p>
+        <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+          ${lottoNumbers.map(num => `
+            <span style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; ${
+              num <= 10 ? 'background: rgba(234,179,8,0.3); color: #fde047;' :
+              num <= 20 ? 'background: rgba(59,130,246,0.3); color: #93c5fd;' :
+              num <= 30 ? 'background: rgba(239,68,68,0.3); color: #fca5a5;' :
+              num <= 40 ? 'background: rgba(100,116,139,0.3); color: #cbd5e1;' :
+              'background: rgba(34,197,94,0.3); color: #86efac;'
+            }">${num}</span>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- 꿈 카테고리 -->
+      <div class="section">
+        <h2 class="section-title">📖 꿈 카테고리</h2>
+        <div class="grid">
+          ${Object.entries(categoryStats).map(([cat, count]) => {
+            const category = DREAM_CATEGORIES[cat as keyof typeof DREAM_CATEGORIES];
+            return `
+              <div class="card">
+                <div class="card-title">${category?.icon || '💭'} ${category?.name || '기타'} (${count}개)</div>
+                <div class="card-value" style="font-size: 0.75rem; color: #94a3b8;">${category?.description || ''}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- 꿈 해석 팁 -->
+      <div class="section">
+        <h2 class="section-title">🎯 꿈 해석 팁</h2>
+        <ul>
+          <li><span class="check">1.</span> 꿈에서 느낀 감정이 가장 중요합니다. 같은 상징도 감정에 따라 의미가 달라집니다.</li>
+          <li><span class="check">2.</span> 반복되는 꿈은 무의식이 강하게 전하려는 메시지입니다. 기록해두세요.</li>
+          <li><span class="check">3.</span> 꿈은 미래 예언보다는 현재 마음 상태를 반영하는 경우가 많습니다.</li>
+          <li><span class="check">4.</span> 악몽도 나쁜 것만은 아닙니다. 경고나 해소의 의미일 수 있습니다.</li>
+          <li><span class="check">5.</span> 꿈 일기를 쓰면 패턴을 발견하고 자기 이해가 깊어집니다.</li>
+        </ul>
+      </div>
+
+      <!-- 행운 메시지 -->
+      <div class="message-box">
+        <p class="message-text">
+          ${FORTUNE_MESSAGES[overallInterpretation.type as 'good' | 'bad' | 'neutral'][0]}
+        </p>
+      </div>
     `;
     downloadAsHtml(htmlContent, `꿈해몽_${formData.keywords.join('_')}`);
   };
