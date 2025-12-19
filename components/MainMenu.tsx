@@ -12,7 +12,7 @@ interface MainMenuProps {
 
 // 호버 미리보기 데이터
 const PREVIEW_DATA: Record<MenuOption, { line1: string; line2: string }> = {
-  wealth: { line1: '당신의 2026년 재물 점수는...', line2: '8월에 큰돈이 들어오며...' },
+  wealth: { line1: '당신의 평생 재물 점수는...', line2: '40대에 대박 기회가...' },
   daily: { line1: '오늘 당신의 총운 점수는...', line2: '오후 2시에 행운이 찾아와...' },
   newyear2026: { line1: '2026년 당신의 운세 등급은...', line2: '3월과 9월에 큰 변화가...' },
   compatibility: { line1: '두 분의 궁합 점수는...', line2: '감정선에서 85% 일치하며...' },
