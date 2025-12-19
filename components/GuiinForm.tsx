@@ -183,8 +183,22 @@ export default function GuiinForm({ onSubmit, onBack }: GuiinFormProps) {
                 disabled={formData.timeUnknown}
                 className="w-full px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:border-emerald-500 focus:outline-none disabled:opacity-50"
               >
-                {Array.from({ length: 24 }, (_, i) => (
-                  <option key={i} value={i}>{i}시 ({Math.floor(i/2) % 12 === 0 ? 12 : Math.floor(i/2) % 12}시 {i % 2 === 0 ? '정각~' : '30분~'})</option>
+                {[
+                  { value: 0, label: '00시~01시 (자시 子時)' },
+                  { value: 1, label: '01시~03시 (축시 丑時)' },
+                  { value: 3, label: '03시~05시 (인시 寅時)' },
+                  { value: 5, label: '05시~07시 (묘시 卯時)' },
+                  { value: 7, label: '07시~09시 (진시 辰時)' },
+                  { value: 9, label: '09시~11시 (사시 巳時)' },
+                  { value: 11, label: '11시~13시 (오시 午時)' },
+                  { value: 13, label: '13시~15시 (미시 未時)' },
+                  { value: 15, label: '15시~17시 (신시 申時)' },
+                  { value: 17, label: '17시~19시 (유시 酉時)' },
+                  { value: 19, label: '19시~21시 (술시 戌時)' },
+                  { value: 21, label: '21시~23시 (해시 亥時)' },
+                  { value: 23, label: '23시~24시 (자시 子時)' },
+                ].map(({ value, label }) => (
+                  <option key={value} value={value}>{label}</option>
                 ))}
               </select>
               <label className="flex items-center gap-2 text-slate-400 text-sm cursor-pointer">
