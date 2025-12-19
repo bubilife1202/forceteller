@@ -11,6 +11,8 @@ import {
   Plane, Scale
 } from 'lucide-react';
 import MonthlyForecast2026 from './premium/MonthlyForecast2026';
+import YearlyGuidance2026 from './premium/YearlyGuidance2026';
+import LuckyCalendar2026 from './premium/LuckyCalendar2026';
 import EmailModal from './ui/EmailModal';
 
 interface NewYearResult2026Props {
@@ -1101,6 +1103,32 @@ export default function NewYearResult2026({
 
         {/* 월별 운세 */}
         <MonthlyForecast2026 result={result} />
+
+        {/* 2026년 인생 가이드 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8 md:p-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 gradient-text" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+            🧭 2026년 인생 가이드
+          </h2>
+          <YearlyGuidance2026 result={result} name={name} />
+        </motion.div>
+
+        {/* 2026년 길일 캘린더 */}
+        <motion.div
+          className="glass-strong rounded-3xl p-8 md:p-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 gradient-text" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+            📆 2026년 길일 캘린더
+          </h2>
+          <LuckyCalendar2026 result={result} name={name} />
+        </motion.div>
 
         {/* 분기별 상세 분석 */}
         <motion.div
