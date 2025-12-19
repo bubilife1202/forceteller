@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, ArrowLeft, RefreshCw, Calendar, Target, Heart, Briefcase, Coins, Activity, Crown, Zap } from 'lucide-react';
+import { TrendingUp, ArrowLeft, RefreshCw, Calendar, Target, Heart, Briefcase, Coins, Activity, Crown, Zap, Download, Mail, Shield, AlertTriangle, CheckCircle, TrendingDown, Compass, Clock, Palette, Hash, MapPin, Brain, Lightbulb, Star, Award } from 'lucide-react';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { DaeunFormData } from './DaeunForm';
 
@@ -274,6 +274,211 @@ const TEN_GOD_LIFE_GUIDE: Record<string, {
   }
 };
 
+// 십성별 SWOT 분석
+const TEN_GOD_SWOT: Record<string, {
+  strengths: string[];
+  weaknesses: string[];
+  opportunities: string[];
+  threats: string[];
+}> = {
+  '비견': {
+    strengths: ['협업 능력 향상', '동료와의 시너지', '자기 주도성', '팀워크 강화'],
+    weaknesses: ['경쟁 심화', '독단적 결정 어려움', '재물 분산', '리더십 충돌'],
+    opportunities: ['동업 기회', '네트워크 확장', '공동 프로젝트', '파트너십 형성'],
+    threats: ['형제간 갈등', '동료와의 분쟁', '재물 손실', '과도한 경쟁']
+  },
+  '겁재': {
+    strengths: ['도전 정신', '위기 대응력', '강한 의지력', '극복 능력'],
+    weaknesses: ['충동적 결정', '재물 손실 위험', '관계 갈등', '감정 조절 어려움'],
+    opportunities: ['역경을 통한 성장', '내면 강화', '위기관리 능력 습득', '인내심 배양'],
+    threats: ['사기 피해', '보증 문제', '금전 손실', '건강 악화']
+  },
+  '식신': {
+    strengths: ['창의력 발산', '풍부한 아이디어', '매력 증가', '안정적 수입'],
+    weaknesses: ['과소비 경향', '나태함', '체중 증가', '안주하는 습관'],
+    opportunities: ['취미의 수익화', '요식업 성공', '예술 활동', '콘텐츠 창작'],
+    threats: ['건강 방심', '기회 낭비', '과식/과음', '안일함']
+  },
+  '상관': {
+    strengths: ['창의적 사고', '표현력', '혁신 능력', '독창성'],
+    weaknesses: ['충돌 위험', '말실수', '권위에 대한 반항', '감정 기복'],
+    opportunities: ['프리랜서 성공', '예술 창작', '자기 브랜딩', '혁신 프로젝트'],
+    threats: ['직장 내 마찰', '상사와의 충돌', '법적 문제', '인간관계 파탄']
+  },
+  '편재': {
+    strengths: ['사업 수완', '투자 감각', '인맥 형성', '기회 포착력'],
+    weaknesses: ['충동 투자', '바람기', '과소비', '투기 유혹'],
+    opportunities: ['사업 확장', '투자 수익', '횡재 가능', '새로운 인연'],
+    threats: ['사기 피해', '과도한 투기', '재물 낭비', '불륜 위험']
+  },
+  '정재': {
+    strengths: ['안정적 수입', '꾸준한 성장', '계획성', '신뢰성'],
+    weaknesses: ['보수적 사고', '기회 놓침', '변화 두려움', '느린 성장'],
+    opportunities: ['부동산 투자', '장기 자산 형성', '결혼/가정', '정기 수입 증가'],
+    threats: ['큰 기회 상실', '급격한 변화 부적응', '과도한 안정 추구', '성장 정체']
+  },
+  '편관': {
+    strengths: ['인내력', '위기 극복력', '책임감', '강인함'],
+    weaknesses: ['극심한 스트레스', '건강 악화', '권위자와의 마찰', '법적 위험'],
+    opportunities: ['시련을 통한 성장', '리더십 개발', '인내심 강화', '후반 도약'],
+    threats: ['건강 문제', '법적 분쟁', '사고', '권력 갈등']
+  },
+  '정관': {
+    strengths: ['사회적 인정', '안정적 지위', '명예', '신뢰'],
+    weaknesses: ['보수성', '형식주의', '변화 저항', '과도한 책임감'],
+    opportunities: ['승진', '자격증', '공직', '결혼'],
+    threats: ['명예 실추', '책임 과중', '규칙 위반 시 불이익', '스트레스']
+  },
+  '편인': {
+    strengths: ['학습 능력', '분석력', '깊이 있는 사고', '전문성'],
+    weaknesses: ['현실 감각 부족', '고립', '실행력 저하', '사회성 부족'],
+    opportunities: ['학위 취득', '연구 성과', '전문 지식 습득', '멘토 만남'],
+    threats: ['현실 도피', '불면증', '우울', '인간관계 단절']
+  },
+  '정인': {
+    strengths: ['귀인의 도움', '학문 성취', '안정감', '지혜'],
+    weaknesses: ['의존성', '주도성 부족', '수동적 태도', '안일함'],
+    opportunities: ['멘토링', '학업 성공', '가족의 지원', '윗사람의 추천'],
+    threats: ['기회 거절', '의존성 증가', '주체성 상실', '교만']
+  }
+};
+
+// 십성별 오행 균형 데이터
+const TEN_GOD_FIVE_ELEMENTS: Record<string, {
+  wood: number;
+  fire: number;
+  earth: number;
+  metal: number;
+  water: number;
+}> = {
+  '비견': { wood: 70, fire: 60, earth: 65, metal: 65, water: 60 },
+  '겁재': { wood: 85, fire: 75, earth: 50, metal: 55, water: 50 },
+  '식신': { wood: 65, fire: 80, earth: 75, metal: 60, water: 65 },
+  '상관': { wood: 60, fire: 85, earth: 55, metal: 65, water: 60 },
+  '편재': { wood: 70, fire: 70, earth: 80, metal: 75, water: 65 },
+  '정재': { wood: 65, fire: 65, earth: 85, metal: 70, water: 60 },
+  '편관': { wood: 55, fire: 60, earth: 65, metal: 85, water: 70 },
+  '정관': { wood: 60, fire: 65, earth: 70, metal: 80, water: 65 },
+  '편인': { wood: 65, fire: 55, earth: 60, metal: 70, water: 85 },
+  '정인': { wood: 70, fire: 60, earth: 65, metal: 65, water: 80 }
+};
+
+// 십성별 행운의 요소
+const TEN_GOD_LUCKY_ELEMENTS: Record<string, {
+  colors: string[];
+  directions: string[];
+  numbers: number[];
+  times: string[];
+}> = {
+  '비견': {
+    colors: ['청록색', '하늘색', '민트', '연두색'],
+    directions: ['동쪽', '남동쪽'],
+    numbers: [3, 8, 13, 18],
+    times: ['오전 5-7시', '오전 7-9시']
+  },
+  '겁재': {
+    colors: ['녹색', '청색', '남색'],
+    directions: ['동쪽'],
+    numbers: [3, 4, 13, 14],
+    times: ['오전 5-7시', '오전 3-5시']
+  },
+  '식신': {
+    colors: ['빨강', '주황', '자주', '핑크'],
+    directions: ['남쪽', '남동쪽'],
+    numbers: [2, 7, 12, 17],
+    times: ['오전 11-13시', '오후 13-15시']
+  },
+  '상관': {
+    colors: ['주황', '빨강', '와인', '버건디'],
+    directions: ['남쪽'],
+    numbers: [2, 9, 12, 19],
+    times: ['오전 11-13시', '오후 19-21시']
+  },
+  '편재': {
+    colors: ['노랑', '갈색', '베이지', '황토'],
+    directions: ['중앙', '남서쪽'],
+    numbers: [5, 10, 15, 20],
+    times: ['오전 7-9시', '오후 19-21시']
+  },
+  '정재': {
+    colors: ['밝은 노랑', '크림', '아이보리'],
+    directions: ['중앙', '남서쪽', '북동쪽'],
+    numbers: [5, 8, 15, 18],
+    times: ['오전 7-9시', '오전 13-15시']
+  },
+  '편관': {
+    colors: ['흰색', '은색', '회색', '금색'],
+    directions: ['서쪽', '북서쪽'],
+    numbers: [6, 7, 16, 17],
+    times: ['오후 15-17시', '오후 17-19시']
+  },
+  '정관': {
+    colors: ['흰색', '밝은 회색', '진주색'],
+    directions: ['서쪽', '북서쪽'],
+    numbers: [6, 9, 16, 19],
+    times: ['오후 15-17시', '오후 21-23시']
+  },
+  '편인': {
+    colors: ['검정', '진남색', '보라', '어두운 회색'],
+    directions: ['북쪽'],
+    numbers: [1, 4, 11, 14],
+    times: ['오전 23-1시', '오전 3-5시']
+  },
+  '정인': {
+    colors: ['검정', '진청색', '네이비'],
+    directions: ['북쪽', '북동쪽'],
+    numbers: [1, 6, 11, 16],
+    times: ['오전 23-1시', '오후 15-17시']
+  }
+};
+
+// 연령대별 조언
+const getAgeGroupAdvice = (age: number) => {
+  if (age < 20) {
+    return {
+      title: '10대 청소년기',
+      advice: '학업에 충실하고 다양한 경험을 통해 자신의 적성을 찾아보세요. 인격 형성의 중요한 시기입니다.',
+      focus: ['학업', '자아 정체성 확립', '인성 교육', '진로 탐색']
+    };
+  } else if (age < 30) {
+    return {
+      title: '20대 자립기',
+      advice: '자신의 길을 찾고 독립하는 시기입니다. 실패를 두려워하지 말고 도전하세요. 이 시기의 경험이 평생의 자산이 됩니다.',
+      focus: ['커리어 시작', '경제적 독립', '인간관계 구축', '자기계발']
+    };
+  } else if (age < 40) {
+    return {
+      title: '30대 성장기',
+      advice: '커리어와 가정을 안정시키는 시기입니다. 장기적 계획을 세우고 실행하세요. 결혼과 육아를 고려할 수 있는 때입니다.',
+      focus: ['승진/이직', '결혼/출산', '자산 형성', '전문성 강화']
+    };
+  } else if (age < 50) {
+    return {
+      title: '40대 전성기',
+      advice: '인생의 전성기입니다. 경험과 능력이 최고조에 달하는 때입니다. 후배를 양성하고 사회에 기여하세요.',
+      focus: ['리더십 발휘', '자산 증식', '자녀 교육', '건강 관리']
+    };
+  } else if (age < 60) {
+    return {
+      title: '50대 원숙기',
+      advice: '경험의 지혜를 나누는 시기입니다. 은퇴를 준비하고 제2의 인생을 설계하세요. 건강이 무엇보다 중요합니다.',
+      focus: ['은퇴 준비', '건강 최우선', '취미 활동', '멘토링']
+    };
+  } else if (age < 70) {
+    return {
+      title: '60대 성숙기',
+      advice: '인생의 결실을 즐기는 시기입니다. 건강을 유지하며 여유있는 생활을 즐기세요. 봉사와 나눔도 좋습니다.',
+      focus: ['건강 유지', '여가 생활', '손자녀와의 시간', '봉사 활동']
+    };
+  } else {
+    return {
+      title: '70대 이상 황금기',
+      advice: '인생의 황금기를 맞이하셨습니다. 건강을 최우선으로 하며 가족과 함께 행복한 시간을 보내세요.',
+      focus: ['건강 관리', '가족과의 시간', '영적 성장', '평온한 생활']
+    };
+  }
+};
+
 // 대운 점수 계산
 const calculateDaeunScore = (tenGod: string, age: number, currentAge: number) => {
   const godInfo = TEN_GOD_MEANING[tenGod];
@@ -301,6 +506,93 @@ const findPeakPeriods = (daeuns: { age: number; tenGod: string }[], currentAge: 
     .sort((a, b) => b.score - a.score)
     .slice(0, 3);
   return peaks;
+};
+
+// 세운 계산 (연도별 운세)
+const calculateYearlyFortune = (year: number, dayStem: string, daeunTenGod: string) => {
+  const yearStem = STEMS[(year + 6) % 10];
+  const yearTenGod = calculateTenGod(dayStem, yearStem);
+
+  // 대운과 세운의 조화 점수
+  const harmony = calculateHarmonyScore(daeunTenGod, yearTenGod);
+
+  return {
+    year,
+    stem: yearStem,
+    tenGod: yearTenGod,
+    harmony,
+    keywords: getYearKeywords(yearTenGod, harmony)
+  };
+};
+
+const calculateHarmonyScore = (daeunTenGod: string, yearTenGod: string) => {
+  // 대운과 세운의 조화도 계산
+  const goodCombos = [
+    ['식신', '편재'], ['식신', '정재'],
+    ['정인', '정관'], ['정인', '편관'],
+    ['편재', '식신'], ['정재', '식신'],
+    ['비견', '식신'], ['비견', '편재']
+  ];
+
+  const badCombos = [
+    ['겁재', '편관'], ['겁재', '정관'],
+    ['상관', '정관'], ['상관', '편관'],
+    ['편인', '식신'], ['정인', '상관']
+  ];
+
+  if (goodCombos.some(([a, b]) => (a === daeunTenGod && b === yearTenGod) || (b === daeunTenGod && a === yearTenGod))) {
+    return 85;
+  }
+
+  if (badCombos.some(([a, b]) => (a === daeunTenGod && b === yearTenGod) || (b === daeunTenGod && a === yearTenGod))) {
+    return 45;
+  }
+
+  return 65;
+};
+
+const getYearKeywords = (tenGod: string, harmony: number) => {
+  const base = TEN_GOD_MEANING[tenGod]?.keyword || '변화';
+  if (harmony >= 80) return `${base} • 대길`;
+  if (harmony >= 60) return `${base} • 길`;
+  return `${base} • 주의`;
+};
+
+// 인생 전환점 찾기
+const findTurningPoints = (daeuns: { age: number; tenGod: string; score: number }[], currentAge: number) => {
+  const turningPoints = [];
+
+  for (let i = 1; i < daeuns.length; i++) {
+    const scoreDiff = Math.abs(daeuns[i].score - daeuns[i-1].score);
+    if (scoreDiff >= 20) {
+      turningPoints.push({
+        age: daeuns[i].age,
+        from: daeuns[i-1].tenGod,
+        to: daeuns[i].tenGod,
+        impact: scoreDiff >= 30 ? '큰 변화' : '중요 변화',
+        isUpward: daeuns[i].score > daeuns[i-1].score,
+        description: daeuns[i].score > daeuns[i-1].score
+          ? '상승 전환: 운세가 크게 좋아지는 시기입니다.'
+          : '하강 전환: 신중한 대처가 필요한 시기입니다.'
+      });
+    }
+  }
+
+  return turningPoints.slice(0, 5);
+};
+
+// 중요 결정 시기 추천
+const getDecisionTimings = (daeuns: { age: number; tenGod: string; score: number }[], currentAge: number) => {
+  const goodPeriods = daeuns.filter(d => d.score >= 75 && d.age >= currentAge).slice(0, 3);
+
+  return {
+    career: goodPeriods[0] ? `${goodPeriods[0].age}~${goodPeriods[0].age + 2}세` : '현재',
+    marriage: goodPeriods.find(d => ['정재', '정관', '정인'].includes(d.tenGod))
+      ? `${goodPeriods.find(d => ['정재', '정관', '정인'].includes(d.tenGod))!.age}세 전후` : '안정기 추천',
+    investment: goodPeriods.find(d => ['편재', '식신'].includes(d.tenGod))
+      ? `${goodPeriods.find(d => ['편재', '식신'].includes(d.tenGod))!.age}~${goodPeriods.find(d => ['편재', '식신'].includes(d.tenGod))!.age + 3}세` : '신중히',
+    business: goodPeriods[0] ? `${goodPeriods[0].age}세 이후` : '준비 필요'
+  };
 };
 
 export default function DaeunResult({ formData, onReset, onBack }: DaeunResultProps) {
@@ -342,12 +634,320 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
     currentAge
   );
 
+  // 현재 대운 SWOT 분석
+  const currentSwot = TEN_GOD_SWOT[currentDaeun.tenGod] || TEN_GOD_SWOT['비견'];
+
+  // 향후 5년 세운 분석
+  const currentYearNum = new Date().getFullYear();
+  const yearlyFortunes = Array.from({ length: 5 }, (_, i) =>
+    calculateYearlyFortune(currentYearNum + i, dayStem, currentDaeun.tenGod)
+  );
+
+  // 대운별 통합 분석
+  const integratedAnalysis = daeunData.slice(0, 6).map(d => ({
+    ...d,
+    healthScore: calculateDaeunScore(d.tenGod, d.age, currentAge) + ((d.tenGod === '식신' || d.tenGod === '정인') ? 10 : (d.tenGod === '편관' || d.tenGod === '겁재') ? -10 : 0),
+    wealthScore: calculateDaeunScore(d.tenGod, d.age, currentAge) + ((d.tenGod === '편재' || d.tenGod === '정재') ? 15 : (d.tenGod === '겁재') ? -15 : 0),
+    loveScore: calculateDaeunScore(d.tenGod, d.age, currentAge) + ((d.tenGod === '식신' || d.tenGod === '편재') ? 10 : (d.tenGod === '상관' || d.tenGod === '편관') ? -10 : 0),
+  }));
+
+  // 인생 전환점
+  const turningPoints = findTurningPoints(daeunData, currentAge);
+
+  // 오행 균형
+  const currentFiveElements = TEN_GOD_FIVE_ELEMENTS[currentDaeun.tenGod] || TEN_GOD_FIVE_ELEMENTS['비견'];
+  const fiveElementsData = daeunData.slice(0, 6).map(d => ({
+    age: `${d.age}세`,
+    ...TEN_GOD_FIVE_ELEMENTS[d.tenGod]
+  }));
+
+  // 연령대별 조언
+  const ageGroupAdvice = getAgeGroupAdvice(currentAge);
+
+  // 행운의 요소
+  const luckyElements = TEN_GOD_LUCKY_ELEMENTS[currentDaeun.tenGod] || TEN_GOD_LUCKY_ELEMENTS['비견'];
+
+  // 중요 결정 시기
+  const decisionTimings = getDecisionTimings(daeunData, currentAge);
+
   // 점수에 따른 색상
   const getScoreColor = (score: number) => {
     if (score >= 80) return { text: 'text-emerald-400', bg: 'bg-emerald-500', bar: 'bg-emerald-400' };
     if (score >= 70) return { text: 'text-blue-400', bg: 'bg-blue-500', bar: 'bg-blue-400' };
     if (score >= 60) return { text: 'text-yellow-400', bg: 'bg-yellow-500', bar: 'bg-yellow-400' };
     return { text: 'text-orange-400', bg: 'bg-orange-500', bar: 'bg-orange-400' };
+  };
+
+  // HTML 다운로드 함수
+  const handleDownloadHtml = () => {
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${formData.name}님의 인생 그래프 분석</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #e2e8f0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container { max-width: 800px; margin: 0 auto; background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 40px; }
+    h1 { color: #67e8f9; font-size: 32px; margin-bottom: 10px; text-align: center; }
+    h2 { color: #38bdf8; font-size: 24px; margin: 30px 0 15px; border-bottom: 2px solid #38bdf8; padding-bottom: 10px; }
+    h3 { color: #7dd3fc; font-size: 20px; margin: 20px 0 10px; }
+    .info { text-align: center; color: #94a3b8; margin-bottom: 30px; }
+    .section { background: rgba(51, 65, 85, 0.5); border-radius: 15px; padding: 20px; margin: 20px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0; }
+    .card { background: rgba(71, 85, 105, 0.5); padding: 15px; border-radius: 10px; }
+    .card-title { color: #67e8f9; font-weight: bold; margin-bottom: 8px; }
+    .score-bar { background: #334155; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+    .score-fill { background: linear-gradient(90deg, #10b981, #34d399); height: 100%; border-radius: 10px; }
+    .badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12px; margin: 5px 5px 5px 0; }
+    .badge-green { background: rgba(16, 185, 129, 0.3); color: #34d399; }
+    .badge-red { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+    .badge-yellow { background: rgba(245, 158, 11, 0.3); color: #fcd34d; }
+    .badge-blue { background: rgba(59, 130, 246, 0.3); color: #93c5fd; }
+    ul { list-style: none; padding-left: 20px; }
+    li:before { content: "• "; color: #67e8f9; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #475569; }
+    th { background: rgba(51, 65, 85, 0.5); color: #67e8f9; font-weight: bold; }
+    .highlight { background: rgba(34, 211, 238, 0.1); border-left: 3px solid #22d3ee; padding: 15px; margin: 15px 0; border-radius: 8px; }
+    .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #334155; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>${formData.name}님의 인생 그래프 분석</h1>
+    <div class="info">
+      <p>${result.day.stem.ko}일간 • ${result.day.stem.element} 오행</p>
+      <p>현재 ${currentAge}세 (만 ${currentAge - 1}세) • 생년월일: ${formData.year}.${formData.month}.${formData.day}</p>
+      <p>분석일: ${new Date().toLocaleDateString('ko-KR')}</p>
+    </div>
+
+    <div class="section">
+      <h2>🎯 현재 대운 SWOT 분석 (${currentDaeun.age}~${currentDaeun.age + 9}세)</h2>
+      <h3>${currentTenGodInfo.name} - ${currentTenGodInfo.keyword}</h3>
+      <p>${currentTenGodInfo.description}</p>
+
+      <div class="grid" style="margin-top: 20px;">
+        <div class="card">
+          <div class="card-title">✅ 강점 (Strengths)</div>
+          <ul>${currentSwot.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
+        </div>
+        <div class="card">
+          <div class="card-title">⚠️ 약점 (Weaknesses)</div>
+          <ul>${currentSwot.weaknesses.map(w => `<li>${w}</li>`).join('')}</ul>
+        </div>
+        <div class="card">
+          <div class="card-title">💡 기회 (Opportunities)</div>
+          <ul>${currentSwot.opportunities.map(o => `<li>${o}</li>`).join('')}</ul>
+        </div>
+        <div class="card">
+          <div class="card-title">⛔ 위협 (Threats)</div>
+          <ul>${currentSwot.threats.map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📅 향후 5년 세운 분석</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>연도</th>
+            <th>세운</th>
+            <th>십성</th>
+            <th>조화도</th>
+            <th>키워드</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${yearlyFortunes.map(yf => `
+            <tr>
+              <td>${yf.year}년</td>
+              <td>${yf.stem}</td>
+              <td>${yf.tenGod}</td>
+              <td>${yf.harmony}점</td>
+              <td>${yf.keywords}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>💫 대운별 건강운·재물운·연애운 통합 분석</h2>
+      ${integratedAnalysis.map(d => `
+        <div class="card" style="margin-bottom: 15px;">
+          <div class="card-title">${d.stem.ko}${d.branch.ko} 대운 (${d.age}~${d.age + 9}세) - ${d.tenGod}</div>
+          <div style="margin-top: 10px;">
+            <div>건강운: ${Math.min(100, Math.max(0, d.healthScore))}점</div>
+            <div class="score-bar"><div class="score-fill" style="width: ${Math.min(100, Math.max(0, d.healthScore))}%"></div></div>
+            <div>재물운: ${Math.min(100, Math.max(0, d.wealthScore))}점</div>
+            <div class="score-bar"><div class="score-fill" style="width: ${Math.min(100, Math.max(0, d.wealthScore))}%"></div></div>
+            <div>연애운: ${Math.min(100, Math.max(0, d.loveScore))}점</div>
+            <div class="score-bar"><div class="score-fill" style="width: ${Math.min(100, Math.max(0, d.loveScore))}%"></div></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="section">
+      <h2>🔄 인생 전환점 시기 분석</h2>
+      ${turningPoints.length > 0 ? turningPoints.map(tp => `
+        <div class="highlight">
+          <h3>${tp.age}세 - ${tp.impact}</h3>
+          <p>${tp.from} → ${tp.to}</p>
+          <p>${tp.description}</p>
+        </div>
+      `).join('') : '<p>큰 전환점이 발견되지 않았습니다. 완만한 변화가 예상됩니다.</p>'}
+    </div>
+
+    <div class="section">
+      <h2>🎯 대운별 권장 활동 및 주의사항</h2>
+      ${daeunData.slice(0, 6).map(d => {
+        const guide = TEN_GOD_LIFE_GUIDE[d.tenGod] || TEN_GOD_LIFE_GUIDE['비견'];
+        return `
+          <div class="card" style="margin-bottom: 15px;">
+            <div class="card-title">${d.age}~${d.age + 9}세 (${d.tenGod})</div>
+            <h4 style="color: #10b981; margin-top: 10px;">권장 활동:</h4>
+            <ul>${guide.doList.map(item => `<li>${item}</li>`).join('')}</ul>
+            <h4 style="color: #ef4444; margin-top: 10px;">주의사항:</h4>
+            <ul>${guide.dontList.map(item => `<li>${item}</li>`).join('')}</ul>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <div class="section">
+      <h2>🌳 오행 균형 변화</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>대운</th>
+            <th>목(木)</th>
+            <th>화(火)</th>
+            <th>토(土)</th>
+            <th>금(金)</th>
+            <th>수(水)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${fiveElementsData.map(d => `
+            <tr>
+              <td>${d.age}</td>
+              <td>${d.wood}</td>
+              <td>${d.fire}</td>
+              <td>${d.earth}</td>
+              <td>${d.metal}</td>
+              <td>${d.water}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>💡 ${ageGroupAdvice.title}</h2>
+      <p style="font-size: 16px; margin: 15px 0;">${ageGroupAdvice.advice}</p>
+      <h3>이 시기 중점 과제:</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+        ${ageGroupAdvice.focus.map(f => `<span class="badge badge-blue">${f}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🍀 현재 대운의 행운의 요소</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">🎨 행운의 색상</div>
+          <div style="margin-top: 10px;">
+            ${luckyElements.colors.map(c => `<span class="badge badge-yellow">${c}</span>`).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🧭 행운의 방향</div>
+          <div style="margin-top: 10px;">
+            ${luckyElements.directions.map(d => `<span class="badge badge-green">${d}</span>`).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🔢 행운의 숫자</div>
+          <div style="margin-top: 10px;">
+            ${luckyElements.numbers.map(n => `<span class="badge badge-blue">${n}</span>`).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">⏰ 행운의 시간대</div>
+          <div style="margin-top: 10px;">
+            ${luckyElements.times.map(t => `<span class="badge badge-yellow">${t}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🎯 중요 결정 시기 추천</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">💼 커리어 결정</div>
+          <p style="font-size: 18px; color: #67e8f9;">${decisionTimings.career}</p>
+        </div>
+        <div class="card">
+          <div class="card-title">💒 결혼 결정</div>
+          <p style="font-size: 18px; color: #67e8f9;">${decisionTimings.marriage}</p>
+        </div>
+        <div class="card">
+          <div class="card-title">💰 투자 결정</div>
+          <p style="font-size: 18px; color: #67e8f9;">${decisionTimings.investment}</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🏢 사업 결정</div>
+          <p style="font-size: 18px; color: #67e8f9;">${decisionTimings.business}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📊 인생 그래프 요약</h2>
+      ${daeunData.map(d => `
+        <div style="margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+            <span>${d.age}~${d.age + 9}세 (${d.stem.ko}${d.branch.ko} - ${d.tenGod})</span>
+            <span style="color: #67e8f9; font-weight: bold;">${d.score}점</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-fill" style="width: ${d.score}%"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="footer">
+      <p>※ 본 분석은 전통 명리학을 기반으로 한 참고 자료입니다.</p>
+      <p>인생의 중요한 결정은 다양한 요소를 고려하여 신중하게 내리시기 바랍니다.</p>
+      <p>생성일시: ${new Date().toLocaleString('ko-KR')}</p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${formData.name}_인생그래프_${new Date().getTime()}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const containerVariants = {
@@ -876,6 +1476,548 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
             })()}
           </motion.div>
         )}
+
+        {/* 1. 현재 대운 SWOT 분석 */}
+        <motion.div variants={itemVariants} className="glass rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-purple-400" />
+            현재 대운 SWOT 분석
+          </h2>
+          <p className="text-slate-400 text-sm mb-4">
+            강점을 극대화하고 약점을 보완하여, 기회를 잡고 위협을 피하세요.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 강점 */}
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+              <h3 className="text-emerald-400 font-medium mb-3 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                강점 (Strengths)
+              </h3>
+              <ul className="space-y-2">
+                {currentSwot.strengths.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-slate-300 text-sm">
+                    <span className="text-emerald-400 mt-1">▸</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 약점 */}
+            <div className="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4">
+              <h3 className="text-orange-400 font-medium mb-3 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                약점 (Weaknesses)
+              </h3>
+              <ul className="space-y-2">
+                {currentSwot.weaknesses.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-slate-300 text-sm">
+                    <span className="text-orange-400 mt-1">▸</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 기회 */}
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+              <h3 className="text-blue-400 font-medium mb-3 flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                기회 (Opportunities)
+              </h3>
+              <ul className="space-y-2">
+                {currentSwot.opportunities.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-slate-300 text-sm">
+                    <span className="text-blue-400 mt-1">▸</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 위협 */}
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+              <h3 className="text-red-400 font-medium mb-3 flex items-center gap-2">
+                <TrendingDown className="w-5 h-5" />
+                위협 (Threats)
+              </h3>
+              <ul className="space-y-2">
+                {currentSwot.threats.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-slate-300 text-sm">
+                    <span className="text-red-400 mt-1">▸</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 2. 향후 5년 세운 분석 */}
+        <motion.div variants={itemVariants} className="glass rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-teal-400" />
+            향후 5년 세운 분석
+          </h2>
+          <p className="text-slate-400 text-sm mb-4">
+            대운 안에서도 매년 변화하는 세운(歲運)을 살펴보세요.
+          </p>
+
+          <div className="space-y-3">
+            {yearlyFortunes.map((yf, idx) => {
+              const color = yf.harmony >= 80 ? 'emerald' : yf.harmony >= 60 ? 'blue' : 'orange';
+              return (
+                <div key={idx} className={`bg-${color}-500/10 border border-${color}-500/30 rounded-xl p-4`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <span className="text-white font-bold text-lg">{yf.year}년</span>
+                      <span className="text-slate-400">({yf.stem})</span>
+                      <span className={`px-2 py-1 bg-${color}-500/30 text-${color}-300 text-xs rounded-full`}>
+                        {yf.tenGod}
+                      </span>
+                    </div>
+                    <span className={`font-bold text-${color}-400`}>{yf.harmony}점</span>
+                  </div>
+                  <p className="text-slate-300 text-sm">{yf.keywords}</p>
+                  <p className="text-slate-400 text-xs mt-2">
+                    {TEN_GOD_MEANING[yf.tenGod]?.description || ''}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* 3. 대운별 건강운, 재물운, 연애운 통합 분석 */}
+        <motion.div variants={itemVariants} className="glass rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Award className="w-5 h-5 text-amber-400" />
+            대운별 3대 운세 통합 분석
+          </h2>
+          <p className="text-slate-400 text-sm mb-4">
+            각 대운 시기별 건강운, 재물운, 연애운을 종합적으로 분석했습니다.
+          </p>
+
+          <div className="space-y-4">
+            {integratedAnalysis.map((d, idx) => (
+              <div key={idx} className={`rounded-xl p-4 ${
+                d.isCurrent ? 'bg-cyan-500/20 border-2 border-cyan-500/50' : 'bg-slate-800/50 border border-slate-700'
+              }`}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-bold">
+                      {d.stem.ko}{d.branch.ko} ({d.age}~{d.age + 9}세)
+                    </span>
+                    <span className="text-slate-400 text-sm">{d.tenGod}</span>
+                    {d.isCurrent && (
+                      <span className="px-2 py-1 bg-cyan-500 text-white text-xs rounded-full">현재</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {/* 건강운 */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-green-400" />
+                        <span className="text-green-400 text-sm">건강운</span>
+                      </div>
+                      <span className={`font-bold ${getScoreColor(Math.min(100, Math.max(0, d.healthScore))).text}`}>
+                        {Math.min(100, Math.max(0, d.healthScore))}점
+                      </span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-green-400"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, Math.max(0, d.healthScore))}%` }}
+                        transition={{ duration: 0.8, delay: idx * 0.1 }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* 재물운 */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <Coins className="w-4 h-4 text-yellow-400" />
+                        <span className="text-yellow-400 text-sm">재물운</span>
+                      </div>
+                      <span className={`font-bold ${getScoreColor(Math.min(100, Math.max(0, d.wealthScore))).text}`}>
+                        {Math.min(100, Math.max(0, d.wealthScore))}점
+                      </span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-yellow-400"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, Math.max(0, d.wealthScore))}%` }}
+                        transition={{ duration: 0.8, delay: idx * 0.1 }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* 연애운 */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-pink-400" />
+                        <span className="text-pink-400 text-sm">연애운</span>
+                      </div>
+                      <span className={`font-bold ${getScoreColor(Math.min(100, Math.max(0, d.loveScore))).text}`}>
+                        {Math.min(100, Math.max(0, d.loveScore))}점
+                      </span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-pink-400"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, Math.max(0, d.loveScore))}%` }}
+                        transition={{ duration: 0.8, delay: idx * 0.1 }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 4. 인생 전환점 시기 분석 */}
+        <motion.div variants={itemVariants} className="glass rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-indigo-400" />
+            인생 전환점 시기 분석
+          </h2>
+          <p className="text-slate-400 text-sm mb-4">
+            운세가 크게 변화하는 중요한 시기를 미리 파악하세요.
+          </p>
+
+          {turningPoints.length > 0 ? (
+            <div className="space-y-3">
+              {turningPoints.map((tp, idx) => (
+                <div key={idx} className={`rounded-xl p-4 border-l-4 ${
+                  tp.isUpward
+                    ? 'bg-emerald-500/10 border-emerald-500'
+                    : 'bg-orange-500/10 border-orange-500'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{tp.isUpward ? '📈' : '📉'}</span>
+                      <span className="text-white font-bold">{tp.age}세</span>
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        tp.impact === '큰 변화'
+                          ? 'bg-purple-500/30 text-purple-300'
+                          : 'bg-blue-500/30 text-blue-300'
+                      }`}>
+                        {tp.impact}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-slate-300 text-sm mb-2">
+                    {tp.from} → {tp.to}
+                  </div>
+                  <p className="text-slate-400 text-sm">{tp.description}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-slate-800/50 rounded-xl p-4 text-center">
+              <p className="text-slate-400">
+                큰 전환점이 발견되지 않았습니다. 완만한 변화가 예상됩니다.
+              </p>
+            </div>
+          )}
+        </motion.div>
+
+        {/* 5. 오행 균형 변화 그래프 */}
+        <motion.div variants={itemVariants} className="glass rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Compass className="w-5 h-5 text-lime-400" />
+            오행 균형 변화
+          </h2>
+          <p className="text-slate-400 text-sm mb-4">
+            대운에 따라 오행(木火土金水)의 균형이 어떻게 변화하는지 확인하세요.
+          </p>
+
+          <div className="space-y-4">
+            {fiveElementsData.map((d, idx) => (
+              <div key={idx} className="bg-slate-800/50 rounded-xl p-4">
+                <div className="text-white font-medium mb-3">{d.age}</div>
+                <div className="space-y-2">
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-green-400">木 (목)</span>
+                      <span className="text-green-400">{d.wood}</span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-green-400"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${d.wood}%` }}
+                        transition={{ duration: 0.6, delay: idx * 0.05 }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-red-400">火 (화)</span>
+                      <span className="text-red-400">{d.fire}</span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-red-400"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${d.fire}%` }}
+                        transition={{ duration: 0.6, delay: idx * 0.05 }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-yellow-400">土 (토)</span>
+                      <span className="text-yellow-400">{d.earth}</span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-yellow-400"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${d.earth}%` }}
+                        transition={{ duration: 0.6, delay: idx * 0.05 }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-gray-400">金 (금)</span>
+                      <span className="text-gray-400">{d.metal}</span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-gray-400"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${d.metal}%` }}
+                        transition={{ duration: 0.6, delay: idx * 0.05 }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-blue-400">水 (수)</span>
+                      <span className="text-blue-400">{d.water}</span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-blue-400"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${d.water}%` }}
+                        transition={{ duration: 0.6, delay: idx * 0.05 }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 6. 연령대별 인생 조언 */}
+        <motion.div variants={itemVariants} className="glass rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Brain className="w-5 h-5 text-rose-400" />
+            {ageGroupAdvice.title}
+          </h2>
+
+          <div className="bg-gradient-to-br from-rose-500/20 to-pink-500/20 border border-rose-500/30 rounded-xl p-4 mb-4">
+            <p className="text-rose-100 leading-relaxed text-base">
+              {ageGroupAdvice.advice}
+            </p>
+          </div>
+
+          <div className="bg-slate-800/50 rounded-xl p-4">
+            <h3 className="text-rose-400 font-medium mb-3 flex items-center gap-2">
+              <Lightbulb className="w-5 h-5" />
+              이 시기 중점 과제
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {ageGroupAdvice.focus.map((item, idx) => (
+                <span
+                  key={idx}
+                  className="px-4 py-2 bg-rose-500/20 border border-rose-500/30 text-rose-300 rounded-full text-sm"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 7. 행운의 요소 */}
+        <motion.div variants={itemVariants} className="glass rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Star className="w-5 h-5 text-yellow-400" />
+            현재 대운의 행운의 요소
+          </h2>
+          <p className="text-slate-400 text-sm mb-4">
+            이 요소들을 일상에 활용하면 대운의 기운을 더욱 강화할 수 있습니다.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 행운의 색상 */}
+            <div className="bg-gradient-to-br from-pink-500/10 to-purple-500/10 border border-pink-500/30 rounded-xl p-4">
+              <h3 className="text-pink-400 font-medium mb-3 flex items-center gap-2">
+                <Palette className="w-5 h-5" />
+                행운의 색상
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {luckyElements.colors.map((color, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-2 bg-pink-500/20 text-pink-200 rounded-lg text-sm"
+                  >
+                    {color}
+                  </span>
+                ))}
+              </div>
+              <p className="text-slate-400 text-xs mt-3">
+                옷, 소품, 인테리어에 활용하세요
+              </p>
+            </div>
+
+            {/* 행운의 방향 */}
+            <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 rounded-xl p-4">
+              <h3 className="text-emerald-400 font-medium mb-3 flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
+                행운의 방향
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {luckyElements.directions.map((dir, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-2 bg-emerald-500/20 text-emerald-200 rounded-lg text-sm"
+                  >
+                    {dir}
+                  </span>
+                ))}
+              </div>
+              <p className="text-slate-400 text-xs mt-3">
+                이동, 여행, 중요한 일 방향으로 추천
+              </p>
+            </div>
+
+            {/* 행운의 숫자 */}
+            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-xl p-4">
+              <h3 className="text-blue-400 font-medium mb-3 flex items-center gap-2">
+                <Hash className="w-5 h-5" />
+                행운의 숫자
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {luckyElements.numbers.map((num, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-2 bg-blue-500/20 text-blue-200 rounded-lg text-sm font-bold"
+                  >
+                    {num}
+                  </span>
+                ))}
+              </div>
+              <p className="text-slate-400 text-xs mt-3">
+                비밀번호, 복권, 중요한 선택에 활용
+              </p>
+            </div>
+
+            {/* 행운의 시간대 */}
+            <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/30 rounded-xl p-4">
+              <h3 className="text-amber-400 font-medium mb-3 flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                행운의 시간대
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {luckyElements.times.map((time, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-2 bg-amber-500/20 text-amber-200 rounded-lg text-sm"
+                  >
+                    {time}
+                  </span>
+                ))}
+              </div>
+              <p className="text-slate-400 text-xs mt-3">
+                중요한 결정, 회의, 면접에 추천
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 8. 중요 결정 시기 추천 */}
+        <motion.div variants={itemVariants} className="glass rounded-3xl p-5 mb-6">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-fuchsia-400" />
+            중요 결정 시기 추천
+          </h2>
+          <p className="text-slate-400 text-sm mb-4">
+            인생의 중요한 결정은 대운이 좋을 때 내리는 것이 유리합니다.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Briefcase className="w-5 h-5 text-blue-400" />
+                <h3 className="text-blue-400 font-medium">커리어 결정</h3>
+              </div>
+              <p className="text-white text-2xl font-bold mb-1">{decisionTimings.career}</p>
+              <p className="text-slate-400 text-xs">
+                이직, 승진, 독립 등의 결정에 좋은 시기
+              </p>
+            </div>
+
+            <div className="bg-pink-500/10 border border-pink-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Heart className="w-5 h-5 text-pink-400" />
+                <h3 className="text-pink-400 font-medium">결혼 결정</h3>
+              </div>
+              <p className="text-white text-2xl font-bold mb-1">{decisionTimings.marriage}</p>
+              <p className="text-slate-400 text-xs">
+                결혼, 약혼 등 평생의 약속에 좋은 시기
+              </p>
+            </div>
+
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Coins className="w-5 h-5 text-yellow-400" />
+                <h3 className="text-yellow-400 font-medium">투자 결정</h3>
+              </div>
+              <p className="text-white text-2xl font-bold mb-1">{decisionTimings.investment}</p>
+              <p className="text-slate-400 text-xs">
+                부동산, 주식 등 큰 투자 결정에 좋은 시기
+              </p>
+            </div>
+
+            <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Crown className="w-5 h-5 text-purple-400" />
+                <h3 className="text-purple-400 font-medium">사업 결정</h3>
+              </div>
+              <p className="text-white text-2xl font-bold mb-1">{decisionTimings.business}</p>
+              <p className="text-slate-400 text-xs">
+                창업, 사업 확장 등의 결정에 좋은 시기
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 다운로드 버튼 */}
+        <motion.div variants={itemVariants} className="mb-6">
+          <button
+            onClick={handleDownloadHtml}
+            className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl text-white font-bold text-lg hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 shadow-lg"
+          >
+            <Download className="w-5 h-5" />
+            전체 분석 결과 다운로드
+          </button>
+        </motion.div>
 
         {/* 면책 조항 */}
         <motion.div variants={itemVariants} className="glass rounded-2xl p-4 mb-6">
