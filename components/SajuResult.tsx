@@ -67,7 +67,7 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
                 title="HTML로 저장"
               >
                 <Download className="w-4 h-4" />
-                저장하기
+                결과 저장하기
               </button>
               <button
                 onClick={onReset}

@@ -332,7 +332,7 @@ export default function CareerResult({ formData, onReset, onBack }: CareerResult
             className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl text-white font-bold text-lg hover:from-amber-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg"
           >
             <Download className="w-5 h-5" />
-            저장하기
+            결과 저장하기
           </button>
           <div className="flex gap-3">
             <button

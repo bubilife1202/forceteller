@@ -801,7 +801,7 @@ export default function GuiinResult({ formData, onReset, onBack }: GuiinResultPr
               className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg transition-colors"
             >
               <Download className="w-4 h-4" />
-              <span>내보내기</span>
+              <span>결과 저장하기</span>
             </button>
             <button onClick={onReset} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
               <RefreshCw className="w-5 h-5" />

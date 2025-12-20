@@ -592,7 +592,7 @@ ForceTeller - AI 운세 서비스
                   className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
                 >
                   <Download className="w-5 h-5" />
-                  <span>저장하기</span>
+                  <span>결과 저장하기</span>
                 </button>
                 <button
                   onClick={handleSendEmail}

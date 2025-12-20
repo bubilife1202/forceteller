@@ -214,7 +214,7 @@ export default function SajuResultPremium({
             whileTap={{ scale: 0.95 }}
           >
             <Download className="w-4 h-4" />
-            저장하기
+            결과 저장하기
           </motion.button>
           <motion.button
             onClick={onReset}

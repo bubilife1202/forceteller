@@ -1750,7 +1750,7 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
             className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl text-white font-bold text-lg hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 shadow-lg"
           >
             <Download className="w-5 h-5" />
-            전체 분석 결과 다운로드
+            결과 저장하기
           </button>
         </motion.div>
 
@@ -1769,7 +1769,7 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
             className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl text-white font-bold text-lg hover:from-emerald-600 hover:to-teal-700 transition-all flex items-center justify-center gap-2 shadow-lg"
           >
             <Download className="w-5 h-5" />
-            저장하기
+            결과 저장하기
           </button>
           <button
             onClick={onReset}

@@ -423,14 +423,14 @@ export function analyzeHapchung(pillars: {
 }): HapchungResult[] {
   const results: HapchungResult[] = [];
 
-  const stems = [
+  const stems: string[] = [
     pillars.year.stem.ko,
     pillars.month.stem.ko,
     pillars.day.stem.ko,
     pillars.hour.stem.ko,
   ];
 
-  const branches = [
+  const branches: string[] = [
     pillars.year.branch.ko,
     pillars.month.branch.ko,
     pillars.day.branch.ko,

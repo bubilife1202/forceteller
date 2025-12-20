@@ -1514,7 +1514,7 @@ export default function NewYearResult2026({
               whileTap={{ scale: 0.98 }}
             >
               <Download className="w-5 h-5" />
-              <span>저장하기</span>
+              <span>결과 저장하기</span>
             </motion.button>
             <motion.button
               onClick={() => setIsEmailModalOpen(true)}
