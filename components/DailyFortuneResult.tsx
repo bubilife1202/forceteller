@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sun, ArrowLeft, RefreshCw, Coins, Heart, Briefcase, Activity, Star, Compass, Palette, Sparkles, Clock, TrendingUp, AlertTriangle, CheckCircle, XCircle, Zap, Users, Moon, Sunrise, Download, Mail, Home } from 'lucide-react';
+import { Sun, ArrowLeft, RefreshCw, Coins, Heart, Briefcase, Activity, Star, Compass, Palette, Sparkles, Clock, TrendingUp, AlertTriangle, CheckCircle, XCircle, Zap, Users, Moon, Sunrise, Download, Mail, Home, Share2 } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { DailyFortuneFormData } from './DailyFortuneForm';
 import { downloadAsHtml, sendByEmail, createSectionHtml, createScoreBadgeHtml, createProgressBarHtml, createGridHtml, createCardHtml, createListHtml, createMessageBoxHtml } from '@/lib/utils/export-utils';
@@ -251,6 +251,48 @@ ForceTeller - AI 운세 서비스
     `.trim();
 
     sendByEmail(subject, body);
+  };
+
+  // 카카오톡 공유 함수
+  const handleKakaoShare = () => {
+    const shareUrl = window.location.href;
+    const shareText = `☀️ ${todayStr} 오늘의 운세\n\n${gradeInfo.grade} (${finalScore}점)\n#${fortune.keyword}\n\n나도 운세 보러가기 👉`;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const kakao = (window as any).Kakao;
+    if (typeof window !== 'undefined' && kakao) {
+      kakao.Link.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: `☀️ ${todayStr} 오늘의 운세`,
+          description: `${gradeInfo.grade} (${finalScore}점) - ${fortune.keyword}`,
+          imageUrl: 'https://forceteller.vercel.app/og-image.png',
+          link: {
+            mobileWebUrl: shareUrl,
+            webUrl: shareUrl,
+          },
+        },
+        buttons: [
+          {
+            title: '나도 운세 보기',
+            link: {
+              mobileWebUrl: shareUrl,
+              webUrl: shareUrl,
+            },
+          },
+        ],
+      });
+    } else {
+      if (navigator.share) {
+        navigator.share({
+          title: `☀️ ${todayStr} 오늘의 운세`,
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        alert('카카오톡 공유 기능을 사용하려면 모바일 앱에서 접속해주세요.');
+      }
+    }
   };
 
   // 홈으로 이동
@@ -627,20 +669,27 @@ ForceTeller - AI 운세 서비스
 
         {/* 내보내기 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <button
               onClick={handleDownloadHtml}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+              className="flex items-center justify-center gap-2 py-3 px-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
             >
               <Download className="w-5 h-5" />
-              <span>결과 저장하기</span>
+              <span>저장</span>
             </button>
             <button
               onClick={handleSendEmail}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+              className="flex items-center justify-center gap-2 py-3 px-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
             >
               <Mail className="w-5 h-5" />
-              <span>메일 보내기</span>
+              <span>메일</span>
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-3 bg-yellow-500 rounded-xl text-black font-medium hover:bg-yellow-400 transition-colors shadow-lg"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>카톡</span>
             </button>
           </div>
 

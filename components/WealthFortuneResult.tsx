@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, RefreshCw, Coins, TrendingUp, Calendar, Star, Sparkles, Target, Clock, Gift, Gem, Crown, DollarSign, PiggyBank, Wallet, Download } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Coins, TrendingUp, Calendar, Star, Sparkles, Target, Clock, Gift, Gem, Crown, DollarSign, PiggyBank, Wallet, Download, Share2 } from 'lucide-react';
 import { WealthFortuneFormData } from './WealthFortuneForm';
 import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
@@ -230,6 +230,48 @@ export default function WealthFortuneResult({ formData, onReset, onBack }: Wealt
   const handleDownloadHtml = () => {
     const today = new Date().toISOString().split('T')[0];
     downloadElementAsHtml('wealth-result', `${formData.name}_재물운_${today}`);
+  };
+
+  // 카카오톡 공유 함수
+  const handleKakaoShare = () => {
+    const shareUrl = window.location.href;
+    const shareText = `💰 ${name}님의 재물운\n\n${dayStem.ko}일간 재물 분석 결과\n\n나도 재물운 보러가기 👉`;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const kakao = (window as any).Kakao;
+    if (typeof window !== 'undefined' && kakao) {
+      kakao.Link.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: `💰 ${name}님의 재물운`,
+          description: `${dayStem.ko}일간 - ${wealthProfile.wealthPeak}`,
+          imageUrl: 'https://forceteller.vercel.app/og-image.png',
+          link: {
+            mobileWebUrl: shareUrl,
+            webUrl: shareUrl,
+          },
+        },
+        buttons: [
+          {
+            title: '나도 재물운 보기',
+            link: {
+              mobileWebUrl: shareUrl,
+              webUrl: shareUrl,
+            },
+          },
+        ],
+      });
+    } else {
+      if (navigator.share) {
+        navigator.share({
+          title: `💰 ${name}님의 재물운`,
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        alert('카카오톡 공유 기능을 사용하려면 모바일 앱에서 접속해주세요.');
+      }
+    }
   };
 
   return (
@@ -736,13 +778,22 @@ export default function WealthFortuneResult({ formData, onReset, onBack }: Wealt
 
         {/* 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
-          <button
-            onClick={handleDownloadHtml}
-            className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl text-white font-bold text-lg hover:from-amber-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg"
-          >
-            <Download className="w-5 h-5" />
-            결과 저장하기
-          </button>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>저장</span>
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-yellow-500 rounded-xl text-black font-medium hover:bg-yellow-400 transition-colors shadow-lg"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>카톡 공유</span>
+            </button>
+          </div>
           <button
             onClick={onReset}
             className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-2xl text-black font-bold text-lg hover:from-yellow-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg"

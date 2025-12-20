@@ -150,7 +150,25 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
 
         {/* Row 1: 시선 집중 */}
 
-        {/* 1. 오늘의 운세 (미끼) */}
+        {/* 1. 오늘의 타로 (바이럴 미끼) - 맨 위 */}
+        <MenuCard
+          option="tarot"
+          onSelect={onSelect}
+          icon={<span className="text-2xl">🃏</span>}
+          title="오늘의 타로"
+          subtitle="카드 한장 뽑기"
+          description="22장의 메이저 아르카나 중 오늘 당신에게 전하는 카드 한 장. 직관으로 선택하세요!"
+          tags={['연애운', '재물운', '직장운']}
+          buttonText="타로 뽑기"
+          gradient="bg-gradient-to-br from-purple-400 to-indigo-600"
+          textColor="text-purple-400"
+          tagBg="bg-purple-500/20 text-purple-300"
+          badge={{ text: '🔥 인기', color: 'bg-purple-500' }}
+          delay={0.15}
+          hoverGlow="0 0 40px rgba(168, 85, 247, 0.3)"
+        />
+
+        {/* 2. 오늘의 운세 */}
         <MenuCard
           option="daily"
           onSelect={onSelect}
@@ -164,7 +182,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
           textColor="text-orange-400"
           tagBg="bg-orange-500/20 text-orange-300"
           badge={{ text: '인기', color: 'bg-orange-500' }}
-          delay={0.15}
+          delay={0.2}
           hoverGlow="0 0 40px rgba(251, 146, 60, 0.2)"
         />
 
@@ -297,27 +315,9 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
           hoverGlow="0 0 40px rgba(244, 63, 94, 0.2)"
         />
 
-        {/* 9. 오늘의 타로 (바이럴 미끼) */}
-        <MenuCard
-          option="tarot"
-          onSelect={onSelect}
-          icon={<span className="text-2xl">🃏</span>}
-          title="오늘의 타로"
-          subtitle="카드 한장 뽑기"
-          description="22장의 메이저 아르카나 중 오늘 당신에게 전하는 카드 한 장. 직관으로 선택하세요!"
-          tags={['연애운', '재물운', '직장운']}
-          buttonText="타로 뽑기"
-          gradient="bg-gradient-to-br from-purple-400 to-indigo-600"
-          textColor="text-purple-400"
-          tagBg="bg-purple-500/20 text-purple-300"
-          badge={{ text: '🔥 바이럴', color: 'bg-purple-500' }}
-          delay={0.55}
-          hoverGlow="0 0 40px rgba(168, 85, 247, 0.3)"
-        />
-
         {/* Row 4: 기본 기능 */}
 
-        {/* 10. 월별 운세 */}
+        {/* 9. 월별 운세 */}
         <MenuCard
           option="monthly"
           onSelect={onSelect}
