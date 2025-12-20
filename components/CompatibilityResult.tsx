@@ -4,10 +4,11 @@ import { motion } from 'framer-motion';
 import { SajuResult } from '@/lib/saju-calculator';
 import {
   Heart, Users, Home, Wallet, AlertTriangle,
-  ArrowLeft, ThumbsUp, Sun, Calendar, MapPin, MessageCircle, Gift, Star, Coffee, Sparkles, Target, Shield, Flame, Clock, Download, Mail
+  ArrowLeft, ThumbsUp, Sun, Calendar, MapPin, MessageCircle, Gift, Star, Coffee, Sparkles, Target, Shield, Flame, Clock, Download, Mail, Share2
 } from 'lucide-react';
 import { CompatibilityFormData } from './CompatibilityForm';
 import { downloadAsHtml, sendByEmail } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 
 interface CompatibilityResultProps {
   result1: SajuResult;
@@ -1259,6 +1260,13 @@ ForceTeller - AI 운세 서비스
     sendByEmail(subject, body);
   };
 
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `💕 ${person1.name}님과 ${person2.name}님의 궁합 결과`,
+      description: `사주 궁합 점수: ${overallScore}점 | ${getOverallAdvice()}`,
+    });
+  };
+
   return (
     <div className="min-h-screen px-4 py-8 md:py-12">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -2036,7 +2044,7 @@ ForceTeller - AI 운세 서비스
 
         {/* 내보내기 버튼 */}
         <div className="space-y-3 pt-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <motion.button
               onClick={handleDownloadHtml}
               className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
@@ -2044,7 +2052,7 @@ ForceTeller - AI 운세 서비스
               whileTap={{ scale: 0.98 }}
             >
               <Download className="w-5 h-5" />
-              <span>결과 저장하기</span>
+              <span>저장</span>
             </motion.button>
             <motion.button
               onClick={handleSendEmail}
@@ -2053,7 +2061,16 @@ ForceTeller - AI 운세 서비스
               whileTap={{ scale: 0.98 }}
             >
               <Mail className="w-5 h-5" />
-              <span>메일 보내기</span>
+              <span>메일</span>
+            </motion.button>
+            <motion.button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl text-white font-medium hover:from-yellow-600 hover:to-amber-700 transition-all shadow-lg"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Share2 className="w-5 h-5" />
+              <span>카톡</span>
             </motion.button>
           </div>
 

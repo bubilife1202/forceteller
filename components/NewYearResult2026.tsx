@@ -8,13 +8,14 @@ import {
   Briefcase, Activity, Sparkles, ArrowLeft,
   Sun, Compass, Gem, Users, GraduationCap,
   Home, Crown, Mail, TrendingUp, Truck,
-  Plane, Scale, Download
+  Plane, Scale, Download, Share2
 } from 'lucide-react';
 import MonthlyForecast2026 from './premium/MonthlyForecast2026';
 import YearlyGuidance2026 from './premium/YearlyGuidance2026';
 import LuckyCalendar2026 from './premium/LuckyCalendar2026';
 import EmailModal from './ui/EmailModal';
 import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 
 interface NewYearResult2026Props {
   result: SajuResult;
@@ -883,6 +884,14 @@ export default function NewYearResult2026({
     `;
   };
 
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `🐴 ${name}님의 2026 신년운세`,
+      description: `2026년 병오년(丙午年) 붉은 말의 해! 나의 운세를 확인해보세요.`,
+      buttonText: '나도 신년운세 보기'
+    });
+  };
+
   return (
     <div className="min-h-screen px-4 py-8 md:py-12">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -1506,24 +1515,33 @@ export default function NewYearResult2026({
 
         {/* 내보내기 버튼 */}
         <div className="space-y-3 pt-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <motion.button
               onClick={handleDownloadHtml}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+              className="flex items-center justify-center gap-2 py-3 px-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <Download className="w-5 h-5" />
-              <span>결과 저장하기</span>
+              <span className="text-sm">저장</span>
             </motion.button>
             <motion.button
               onClick={() => setIsEmailModalOpen(true)}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+              className="flex items-center justify-center gap-2 py-3 px-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <Mail className="w-5 h-5" />
-              <span>메일 보내기</span>
+              <span className="text-sm">메일</span>
+            </motion.button>
+            <motion.button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-3 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl text-black font-medium hover:from-yellow-500 hover:to-yellow-600 transition-all shadow-lg"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Share2 className="w-5 h-5" />
+              <span className="text-sm">카톡</span>
             </motion.button>
           </div>
 

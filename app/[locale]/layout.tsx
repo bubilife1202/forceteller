@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales } from '@/i18n';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import ThemeToggle from '@/components/ThemeToggle';
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -115,6 +117,15 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="dark">
       <head>
+        {/* PWA Meta Tags */}
+        <meta name="application-name" content="팔자왕" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="팔자왕" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#7c3aed" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+
         {/* JSON-LD Structured Data */}
         <Script
           id="json-ld"
@@ -132,9 +143,12 @@ export default async function LocaleLayout({
         />
       </head>
       <body className="antialiased">
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <ThemeProvider>
+          <NextIntlClientProvider messages={messages}>
+            <ThemeToggle />
+            {children}
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

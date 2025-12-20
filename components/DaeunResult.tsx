@@ -1,10 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, ArrowLeft, RefreshCw, Calendar, Target, Heart, Briefcase, Coins, Activity, Crown, Zap, Download, Shield, AlertTriangle, CheckCircle, TrendingDown, Compass, Clock, Palette, Hash, MapPin, Brain, Lightbulb, Star, Award } from 'lucide-react';
+import { TrendingUp, ArrowLeft, RefreshCw, Calendar, Target, Heart, Briefcase, Coins, Activity, Crown, Zap, Download, Shield, AlertTriangle, CheckCircle, TrendingDown, Compass, Clock, Palette, Hash, MapPin, Brain, Lightbulb, Star, Award, Mail, Share2 } from 'lucide-react';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { DaeunFormData } from './DaeunForm';
-import { downloadElementAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml, sendByEmail } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 
 // 천간 목록
 const STEMS = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'];
@@ -696,6 +697,37 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
   const handleDownloadHtml = () => {
     const today = new Date().toISOString().split('T')[0];
     downloadElementAsHtml('daeun-result', `${formData.name}_대운분석_${today}`);
+  };
+
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] 인생 전성기 분석 - ${formData.name}님`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+📈 인생 전성기 분석
+${formData.name}님 (${currentAge}세)
+${result.day.stem.ko}일간 • ${result.day.stem.element} 오행
+━━━━━━━━━━━━━━━━━━━━
+
+⭐ 인생 전성기: ${bestPeriod.age}세~${bestPeriod.age + 9}세
+${bestPeriod.description}
+
+━━ 주요 대운 분석 ━━
+${result.daeun.slice(0, 3).map(d => `
+${d.age}세~${d.age + 9}세: ${d.stem.ko}${d.branch.ko} 대운
+십성: ${calculateTenGod(result.day.stem.ko, d.stem.ko)}
+`).join('\n')}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+    sendByEmail(subject, body);
+  };
+
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `📈 ${formData.name}님의 인생 전성기 분석`,
+      description: `${result.day.stem.ko}일간 | 전성기: ${bestPeriod.age}세~${bestPeriod.age + 9}세`,
+    });
   };
 
   return (
@@ -1743,15 +1775,31 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
           </div>
         </motion.div>
 
-        {/* 다운로드 버튼 */}
+        {/* 내보내기 버튼 */}
         <motion.div variants={itemVariants} className="mb-6">
-          <button
-            onClick={handleDownloadHtml}
-            className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl text-white font-bold text-lg hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 shadow-lg"
-          >
-            <Download className="w-5 h-5" />
-            결과 저장하기
-          </button>
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>저장</span>
+            </button>
+            <button
+              onClick={handleSendEmail}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일</span>
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl text-white font-medium hover:from-yellow-600 hover:to-amber-700 transition-all shadow-lg"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>카톡</span>
+            </button>
+          </div>
         </motion.div>
 
         {/* 면책 조항 */}
@@ -1764,13 +1812,30 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
 
         {/* 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
-          <button
-            onClick={handleDownloadHtml}
-            className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl text-white font-bold text-lg hover:from-emerald-600 hover:to-teal-700 transition-all flex items-center justify-center gap-2 shadow-lg"
-          >
-            <Download className="w-5 h-5" />
-            결과 저장하기
-          </button>
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>저장</span>
+            </button>
+            <button
+              onClick={handleSendEmail}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일</span>
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl text-white font-medium hover:from-yellow-600 hover:to-amber-700 transition-all shadow-lg"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>카톡</span>
+            </button>
+          </div>
+
           <button
             onClick={onReset}
             className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-bold text-lg hover:from-blue-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2 shadow-lg"

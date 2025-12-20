@@ -1,10 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Heart, ArrowLeft, RefreshCw, Star, AlertTriangle, Sparkles, TrendingUp, Clock, MessageCircle, Lightbulb, Target, Shield, Flame, Moon, Sun, Calendar, Phone, MapPin, Coffee, Gift, Users, Zap, CheckCircle, XCircle, Eye, ThumbsUp, ThumbsDown, Download, Mail } from 'lucide-react';
+import { Heart, ArrowLeft, RefreshCw, Star, AlertTriangle, Sparkles, TrendingUp, Clock, MessageCircle, Lightbulb, Target, Shield, Flame, Moon, Sun, Calendar, Phone, MapPin, Coffee, Gift, Users, Zap, CheckCircle, XCircle, Eye, ThumbsUp, ThumbsDown, Download, Mail, Share2 } from 'lucide-react';
 import { RekindlingFormData } from './RekindlingForm';
 import { getDayPillar } from '@/lib/saju-calculator';
 import { downloadElementAsHtml, sendByEmail } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 
 interface RekindlingResultProps {
   formData: RekindlingFormData;
@@ -712,6 +713,13 @@ ForceTeller - AI 운세 서비스
     sendByEmail(subject, body);
   };
 
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `💔 ${myName}님과 ${partnerName}님의 재회 운세 결과`,
+      description: `재회 가능성: ${rekindlingScore}% (${interpretation.level}) | ${interpretation.desc}`,
+    });
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -1095,20 +1103,27 @@ ForceTeller - AI 운세 서비스
             <Download className="w-5 h-5 text-pink-400" />
             결과 내보내기
           </h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <button
               onClick={handleDownloadHtml}
               className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-xl text-pink-300 font-medium hover:from-pink-500/30 hover:to-rose-500/30 transition-all"
             >
               <Download className="w-4 h-4" />
-              결과 저장하기
+              저장
             </button>
             <button
               onClick={handleSendEmail}
               className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-violet-500/20 to-purple-500/20 border border-violet-500/30 rounded-xl text-violet-300 font-medium hover:from-violet-500/30 hover:to-purple-500/30 transition-all"
             >
               <Mail className="w-4 h-4" />
-              이메일 보내기
+              메일
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-xl text-yellow-300 font-medium hover:from-yellow-500/30 hover:to-amber-500/30 transition-all"
+            >
+              <Share2 className="w-4 h-4" />
+              카톡
             </button>
           </div>
         </motion.div>

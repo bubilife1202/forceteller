@@ -12,8 +12,9 @@ import HapchungAnalysis from './premium/HapchungAnalysis';
 import ShinsalAnalysis from './premium/ShinsalAnalysis';
 import HealthAdvice from './premium/HealthAdvice';
 import DaeunTimeline from './premium/DaeunTimeline';
-import { RotateCcw, Download } from 'lucide-react';
-import { downloadElementAsHtml } from '@/lib/utils/export-utils';
+import { RotateCcw, Download, Mail, Share2 } from 'lucide-react';
+import { downloadElementAsHtml, sendByEmail } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 
 interface SajuResultPremiumProps {
   result: SajuResultType;
@@ -113,6 +114,50 @@ export default function SajuResultPremium({
     downloadElementAsHtml('saju-result-premium', `${name}_사주프리미엄_${today}`);
   };
 
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] 사주 분석 결과 - ${name}님`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+🔮 사주 분석 결과
+${name}님 (${t(`gender.${gender}`)})
+${result.day.stem.ko}일간 • ${result.day.stem.element} 오행
+━━━━━━━━━━━━━━━━━━━━
+
+⭐ 종합 점수: ${sajuScore}점
+📊 격국: ${gyeokguk}
+💎 용신: ${result.yongsin}
+✨ 희신: ${heesin}
+
+━━ 핵심 평가 ━━
+${coreEvaluation}
+
+━━ 오행 분포 ━━
+목: ${result.elements.목}%
+화: ${result.elements.화}%
+토: ${result.elements.토}%
+금: ${result.elements.금}%
+수: ${result.elements.수}%
+
+━━ 십성 분석 ━━
+비겁: ${result.tenGodsCount.비겁}
+식상: ${result.tenGodsCount.식상}
+재성: ${result.tenGodsCount.재성}
+관성: ${result.tenGodsCount.관성}
+인성: ${result.tenGodsCount.인성}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+    sendByEmail(subject, body);
+  };
+
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `🔮 ${name}님의 사주 분석 결과`,
+      description: `${result.day.stem.ko}일간 | 종합 점수 ${sajuScore}점 | ${gyeokguk}`,
+    });
+  };
+
   return (
     <div id="saju-result-premium" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4 relative">
       {/* Hero Section */}
@@ -206,19 +251,37 @@ export default function SajuResultPremium({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-3 flex-wrap">
           <motion.button
             onClick={handleDownloadHtml}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 rounded-xl font-semibold transition"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl font-semibold transition text-white"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Download className="w-4 h-4" />
-            결과 저장하기
+            저장
+          </motion.button>
+          <motion.button
+            onClick={handleSendEmail}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-xl font-semibold transition text-white"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Mail className="w-4 h-4" />
+            메일
+          </motion.button>
+          <motion.button
+            onClick={handleKakaoShare}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 rounded-xl font-semibold transition text-white"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Share2 className="w-4 h-4" />
+            카톡
           </motion.button>
           <motion.button
             onClick={onReset}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition text-white"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Briefcase, ArrowLeft, RefreshCw, Star, Target, TrendingUp, AlertTriangle, Clock, Zap, Award, Users, DollarSign, Lightbulb, Heart, Compass, Download } from 'lucide-react';
+import { Briefcase, ArrowLeft, RefreshCw, Star, Target, TrendingUp, AlertTriangle, Clock, Zap, Award, Users, DollarSign, Lightbulb, Heart, Compass, Download, Mail, Share2 } from 'lucide-react';
 import { calculateSaju } from '@/lib/saju-calculator';
-import { downloadElementAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml, sendByEmail } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 import { CareerFormData } from './CareerForm';
 import { DAY_STEM_CAREER, TEN_GOD_CAREER, YEAR_FORTUNE, STEMS, TEN_GODS } from '@/lib/data/career-data';
 
@@ -222,6 +223,40 @@ export default function CareerResult({ formData, onReset, onBack }: CareerResult
     downloadElementAsHtml('career-result', `${formData.name}_직업운_${today}`);
   };
 
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] 퇴사/이직 타이밍 분석 - ${formData.name}님`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+💼 직업운 분석
+${formData.name}님
+일간: ${dayStem} (${careerProfile.element})
+━━━━━━━━━━━━━━━━━━━━
+
+📊 현재 직업 적합도: ${jobScore}점
+
+━━ 직업 적성 ━━
+${careerProfile.personality}
+
+추천 직업: ${careerProfile.idealJobs.join(', ')}
+
+━━ ${currentYear}년 직업운 ━━
+${yearFortune.overall}
+
+💡 핵심 조언: ${yearFortune.advice}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+    sendByEmail(subject, body);
+  };
+
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `💼 ${formData.name}님의 퇴사/이직 타이밍 분석`,
+      description: `${dayStem}일간 | 직업 적합도 ${jobScore}점 | ${careerProfile.element}`,
+    });
+  };
+
   return (
     <motion.div
       className="min-h-screen px-4 py-8"
@@ -327,13 +362,30 @@ export default function CareerResult({ formData, onReset, onBack }: CareerResult
 
         {/* 하단 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
-          <button
-            onClick={handleDownloadHtml}
-            className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl text-white font-bold text-lg hover:from-amber-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg"
-          >
-            <Download className="w-5 h-5" />
-            결과 저장하기
-          </button>
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={handleDownloadHtml}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>저장</span>
+            </button>
+            <button
+              onClick={handleSendEmail}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+            >
+              <Mail className="w-5 h-5" />
+              <span>메일</span>
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl text-white font-medium hover:from-yellow-600 hover:to-amber-700 transition-all shadow-lg"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>카톡</span>
+            </button>
+          </div>
+
           <div className="flex gap-3">
             <button
               onClick={onBack}

@@ -1,10 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, ArrowLeft, RefreshCw, Star, TrendingUp, TrendingDown, Coins, Heart, Briefcase, Activity, Sparkles, Sun, Moon, Clock, Lightbulb, AlertTriangle, CheckCircle, Compass, Palette, Hash, Utensils, Target, Quote, Flame, Droplets, Leaf, Mountain, Zap, Download, Mail, Home } from 'lucide-react';
+import { Calendar, ArrowLeft, RefreshCw, Star, TrendingUp, TrendingDown, Coins, Heart, Briefcase, Activity, Sparkles, Sun, Moon, Clock, Lightbulb, AlertTriangle, CheckCircle, Compass, Palette, Hash, Utensils, Target, Quote, Flame, Droplets, Leaf, Mountain, Zap, Download, Mail, Home, Share2 } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { MonthlyFortuneFormData } from './MonthlyFortuneForm';
 import { downloadAsHtml, sendByEmail, createSectionHtml, createScoreBadgeHtml, createProgressBarHtml, createGridHtml, createCardHtml, createListHtml, createMessageBoxHtml } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 import {
   MONTHLY_STEMS_2026,
   TEN_GOD_DETAILS,
@@ -198,6 +199,13 @@ ForceTeller - AI 운세 서비스
     `.trim();
 
     sendByEmail(subject, body);
+  };
+
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `📅 2026년 ${targetMonth}월 운세`,
+      description: `${userDayStem.ko}일간 | 종합 운세 ${finalScore}점 | ${fortune.keyword}`,
+    });
   };
 
   // 홈으로 이동
@@ -729,20 +737,27 @@ ForceTeller - AI 운세 서비스
 
         {/* 내보내기 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <button
               onClick={handleDownloadHtml}
               className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
             >
               <Download className="w-5 h-5" />
-              <span>결과 저장하기</span>
+              <span>저장</span>
             </button>
             <button
               onClick={handleSendEmail}
               className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
             >
               <Mail className="w-5 h-5" />
-              <span>메일 보내기</span>
+              <span>메일</span>
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl text-white font-medium hover:from-yellow-600 hover:to-amber-700 transition-all shadow-lg"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>카톡</span>
             </button>
           </div>
 

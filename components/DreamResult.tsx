@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Cloud, ArrowLeft, RefreshCw, Star, Sparkles, AlertCircle, TrendingUp, Moon, Sun, Heart, Zap, Target, Gift, Crown, Clover, Brain, BookOpen, Download, Mail, Home } from 'lucide-react';
+import { Cloud, ArrowLeft, RefreshCw, Star, Sparkles, AlertCircle, TrendingUp, Moon, Sun, Heart, Zap, Target, Gift, Crown, Clover, Brain, BookOpen, Download, Mail, Home, Share2 } from 'lucide-react';
 import { DreamFormData } from './DreamForm';
 import { downloadAsHtml, sendByEmail } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 
 interface DreamResultProps {
   formData: DreamFormData;
@@ -1404,6 +1405,13 @@ ForceTeller - AI 운세 서비스
     sendByEmail(subject, body);
   };
 
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `🌙 꿈해몽 결과`,
+      description: `${formData.keywords.join(', ')} | ${overallInterpretation.title}`,
+    });
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -1734,20 +1742,27 @@ ForceTeller - AI 운세 서비스
 
         {/* 내보내기 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <button
               onClick={handleDownloadHtml}
               className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
             >
               <Download className="w-5 h-5" />
-              <span>결과 저장하기</span>
+              <span>저장</span>
             </button>
             <button
               onClick={handleSendEmail}
               className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
             >
               <Mail className="w-5 h-5" />
-              <span>메일 보내기</span>
+              <span>메일</span>
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl text-white font-medium hover:from-yellow-600 hover:to-amber-700 transition-all shadow-lg"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>카톡</span>
             </button>
           </div>
 

@@ -1,10 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Users, ArrowLeft, RefreshCw, Star, Heart, AlertTriangle, Shield, Sparkles, UserCheck, UserX, Handshake, Crown, Target, Zap, Gift, Clock, Download, MapPin, Calendar, TrendingUp, Lightbulb, Compass, Palette, Hash } from 'lucide-react';
+import { Users, ArrowLeft, RefreshCw, Star, Heart, AlertTriangle, Shield, Sparkles, UserCheck, UserX, Handshake, Crown, Target, Zap, Gift, Clock, Download, MapPin, Calendar, TrendingUp, Lightbulb, Compass, Palette, Hash, Mail, Share2 } from 'lucide-react';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { GuiinFormData } from './GuiinForm';
-import { downloadElementAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml, sendByEmail } from '@/lib/utils/export-utils';
+import { shareToKakao } from '@/lib/utils/kakao-share';
 
 interface GuiinResultProps {
   formData: GuiinFormData;
@@ -765,6 +766,38 @@ export default function GuiinResult({ formData, onReset, onBack }: GuiinResultPr
     downloadElementAsHtml('guiin-result', `${formData.name}_귀인분석_${today}`);
   };
 
+  const handleSendEmail = () => {
+    const subject = `[ForceTeller] 귀인/악연 분석 - ${formData.name}님`;
+    const body = `
+━━━━━━━━━━━━━━━━━━━━
+🤝 귀인/악연 분석
+${formData.name}님
+${result.day.stem.ko}일간 • ${result.day.stem.element} 오행
+━━━━━━━━━━━━━━━━━━━━
+
+━━ 귀인 분석 ━━
+${myGuiins.map(g => `• ${g.name}: ${g.description}`).join('\n')}
+
+━━ 악연 분석 ━━
+${myAkyeons.map(a => `• ${a.name}: ${a.description}`).join('\n')}
+
+━━ 이번 달 귀인운 ━━
+${monthlyGuiin.title}
+${monthlyGuiin.description}
+
+━━━━━━━━━━━━━━━━━━━━
+ForceTeller - AI 운세 서비스
+    `.trim();
+    sendByEmail(subject, body);
+  };
+
+  const handleKakaoShare = () => {
+    shareToKakao({
+      title: `🤝 ${formData.name}님의 귀인/악연 분석`,
+      description: `${result.day.stem.ko}일간 | 귀인: ${myGuiins.length}개 | 악연: ${myAkyeons.length}개`,
+    });
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -801,7 +834,21 @@ export default function GuiinResult({ formData, onReset, onBack }: GuiinResultPr
               className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg transition-colors"
             >
               <Download className="w-4 h-4" />
-              <span>결과 저장하기</span>
+              <span className="text-sm">저장</span>
+            </button>
+            <button
+              onClick={handleSendEmail}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors"
+            >
+              <Mail className="w-4 h-4" />
+              <span className="text-sm">메일</span>
+            </button>
+            <button
+              onClick={handleKakaoShare}
+              className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 rounded-lg transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+              <span className="text-sm">카톡</span>
             </button>
             <button onClick={onReset} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
               <RefreshCw className="w-5 h-5" />
