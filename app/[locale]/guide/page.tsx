@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
-import AdSense from '@/components/AdSense';
 
 export default function GuidePage() {
   const t = useTranslations('guide');
@@ -285,14 +284,6 @@ export default function GuidePage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* 광고 */}
-        <div className="my-8">
-          <AdSense
-            adSlot="9952740191"
-            className="text-center"
-          />
         </div>
 
         {/* 하단 안내 */}

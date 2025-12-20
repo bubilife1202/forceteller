@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
-import AdSense from './AdSense';
 
 export interface FormData {
   name: string;
@@ -410,13 +409,6 @@ export default function SajuForm({ onSubmit }: SajuFormProps) {
         </div>
       </form>
 
-      {/* 광고 */}
-      <div className="my-8">
-        <AdSense
-          adSlot="9952740191"
-          className="text-center"
-        />
-      </div>
 
       {/* 안내 문구 */}
       <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">

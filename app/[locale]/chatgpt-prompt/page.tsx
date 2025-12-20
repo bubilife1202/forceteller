@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import AdSense from '@/components/AdSense';
 import { useTranslations, useLocale } from 'next-intl';
 
 export default function ChatGPTPromptPage() {
@@ -149,14 +148,6 @@ export default function ChatGPTPromptPage() {
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* 광고 */}
-          <div className="my-8">
-            <AdSense
-              adSlot="9952740191"
-              className="text-center"
-            />
           </div>
 
           {/* 하단 정보 */}

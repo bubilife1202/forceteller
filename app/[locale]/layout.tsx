@@ -115,14 +115,6 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="dark">
       <head>
-        {/* Google AdSense */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8245597797545485"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-
         {/* JSON-LD Structured Data */}
         <Script
           id="json-ld"
