@@ -1,14 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Sparkles, Heart, Cloud, Sun, Calendar, Coins, TrendingUp, Briefcase, Users, Lock } from 'lucide-react';
 
 export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth' | 'daeun' | 'career' | 'guiin';
-
-interface MainMenuProps {
-  onSelect: (option: MenuOption) => void;
-}
 
 // 호버 미리보기 데이터
 const PREVIEW_DATA: Record<MenuOption, { line1: string; line2: string }> = {
@@ -29,7 +26,7 @@ const PREVIEW_DATA: Record<MenuOption, { line1: string; line2: string }> = {
 // 메뉴 카드 컴포넌트
 interface MenuCardProps {
   option: MenuOption;
-  onSelect: (option: MenuOption) => void;
+  href: string;
   icon: React.ReactNode;
   title: string;
   subtitle: string;
@@ -45,86 +42,87 @@ interface MenuCardProps {
 }
 
 function MenuCard({
-  option, onSelect, icon, title, subtitle, description, tags, buttonText,
+  option, href, icon, title, subtitle, description, tags, buttonText,
   gradient, textColor, tagBg, badge, delay, hoverGlow
 }: MenuCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const preview = PREVIEW_DATA[option];
 
   return (
-    <motion.button
-      onClick={() => onSelect(option)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay }}
-      whileHover={{ boxShadow: hoverGlow }}
-    >
-      {badge && (
-        <div className={`absolute top-4 right-4 px-2 py-0.5 ${badge.color} text-white text-xs font-bold rounded-full animate-pulse`}>
-          {badge.text}
-        </div>
-      )}
-
-      {/* 기본 콘텐츠 */}
+    <Link href={href}>
       <motion.div
-        animate={{ opacity: isHovered ? 0 : 1, y: isHovered ? -10 : 0 }}
-        transition={{ duration: 0.3 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="glass-strong rounded-3xl p-6 md:p-8 text-left group hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden cursor-pointer h-full"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay }}
+        whileHover={{ boxShadow: hoverGlow }}
       >
-        <div className="flex items-center gap-4 mb-5">
-          <div className={`w-14 h-14 rounded-2xl ${gradient} flex items-center justify-center shadow-lg`}>
-            {icon}
+        {badge && (
+          <div className={`absolute top-4 right-4 px-2 py-0.5 ${badge.color} text-white text-xs font-bold rounded-full animate-pulse`}>
+            {badge.text}
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-100">{title}</h2>
-            <p className={`${textColor} text-sm`}>{subtitle}</p>
+        )}
+
+        {/* 기본 콘텐츠 */}
+        <motion.div
+          animate={{ opacity: isHovered ? 0 : 1, y: isHovered ? -10 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex items-center gap-4 mb-5">
+            <div className={`w-14 h-14 rounded-2xl ${gradient} flex items-center justify-center shadow-lg`}>
+              {icon}
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-100">{title}</h2>
+              <p className={`${textColor} text-sm`}>{subtitle}</p>
+            </div>
           </div>
-        </div>
 
-        <p className="text-slate-300 text-sm mb-5 leading-relaxed">
-          {description}
-        </p>
-
-        <div className="flex flex-wrap gap-2 mb-5">
-          {tags.map((tag, i) => (
-            <span key={i} className={`px-2 py-1 ${tagBg} text-xs rounded-full`}>{tag}</span>
-          ))}
-        </div>
-
-        <div className={`flex items-center ${textColor} group-hover:translate-x-2 transition-transform`}>
-          <span className="text-sm font-medium">{buttonText}</span>
-          <span className="ml-2">→</span>
-        </div>
-      </motion.div>
-
-      {/* 호버 미리보기 */}
-      <motion.div
-        className="absolute inset-0 p-6 md:p-8 flex flex-col justify-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 20 }}
-        transition={{ duration: 0.3 }}
-        style={{ pointerEvents: isHovered ? 'auto' : 'none' }}
-      >
-        <div className="space-y-3">
-          <p className={`text-lg font-bold ${textColor}`}>
-            {preview.line1}
+          <p className="text-slate-300 text-sm mb-5 leading-relaxed">
+            {description}
           </p>
-          <p className="text-slate-400 blur-[2px]">
-            {preview.line2}
-          </p>
-        </div>
-        <div className="mt-6 flex items-center gap-2 text-slate-500">
-          <Lock className="w-4 h-4" />
-          <span className="text-sm">클릭하여 전체 내용 보기</span>
-        </div>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            {tags.map((tag, i) => (
+              <span key={i} className={`px-2 py-1 ${tagBg} text-xs rounded-full`}>{tag}</span>
+            ))}
+          </div>
+
+          <div className={`flex items-center ${textColor} group-hover:translate-x-2 transition-transform`}>
+            <span className="text-sm font-medium">{buttonText}</span>
+            <span className="ml-2">→</span>
+          </div>
+        </motion.div>
+
+        {/* 호버 미리보기 */}
+        <motion.div
+          className="absolute inset-0 p-6 md:p-8 flex flex-col justify-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 20 }}
+          transition={{ duration: 0.3 }}
+          style={{ pointerEvents: isHovered ? 'auto' : 'none' }}
+        >
+          <div className="space-y-3">
+            <p className={`text-lg font-bold ${textColor}`}>
+              {preview.line1}
+            </p>
+            <p className="text-slate-400 blur-[2px]">
+              {preview.line2}
+            </p>
+          </div>
+          <div className="mt-6 flex items-center gap-2 text-slate-500">
+            <Lock className="w-4 h-4" />
+            <span className="text-sm">클릭하여 전체 내용 보기</span>
+          </div>
+        </motion.div>
       </motion.div>
-    </motion.button>
+    </Link>
   );
 }
 
-export default function MainMenu({ onSelect }: MainMenuProps) {
+export default function MainMenu() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12">
       {/* Header */}
@@ -153,7 +151,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 1. 오늘의 타로 (바이럴 미끼) - 맨 위 */}
         <MenuCard
           option="tarot"
-          onSelect={onSelect}
+          href="/tarot"
           icon={<span className="text-2xl">🃏</span>}
           title="오늘의 타로"
           subtitle="카드 한장 뽑기"
@@ -171,7 +169,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 2. 오늘의 운세 */}
         <MenuCard
           option="daily"
-          onSelect={onSelect}
+          href="/daily"
           icon={<Sun className="w-7 h-7 text-white" />}
           title="오늘의 운세"
           subtitle="30초만에 확인"
@@ -189,7 +187,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 2. 대박 재물운 (매출 1등) */}
         <MenuCard
           option="wealth"
-          onSelect={onSelect}
+          href="/wealth"
           icon={<Coins className="w-7 h-7 text-white" />}
           title="대박 재물운"
           subtitle="평생 재물 팔자"
@@ -207,7 +205,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 3. 2026 신년운세 (시의성) */}
         <MenuCard
           option="newyear2026"
-          onSelect={onSelect}
+          href="/newyear2026"
           icon={<span className="text-2xl">🐴</span>}
           title="2026 신년운세"
           subtitle="토정 이지함의 전통 풀이"
@@ -227,7 +225,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 4. 궁합 보기 (HOT) */}
         <MenuCard
           option="compatibility"
-          onSelect={onSelect}
+          href="/compatibility"
           icon={<Heart className="w-7 h-7 text-white" />}
           title="궁합 보기"
           subtitle="사주 궁합 분석"
@@ -245,7 +243,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 5. 퇴사/이직 타이밍 (2030 필수) */}
         <MenuCard
           option="career"
-          onSelect={onSelect}
+          href="/career"
           icon={<Briefcase className="w-7 h-7 text-white" />}
           title="퇴사/이직 타이밍"
           subtitle="직업운 컨설팅"
@@ -263,7 +261,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 6. 인생 전성기 (고단가 유도) */}
         <MenuCard
           option="daeun"
-          onSelect={onSelect}
+          href="/daeun"
           icon={<TrendingUp className="w-7 h-7 text-white" />}
           title="인생 전성기"
           subtitle="10년 대운 분석"
@@ -283,7 +281,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 7. 귀인/악연 찾기 (흥미) */}
         <MenuCard
           option="guiin"
-          onSelect={onSelect}
+          href="/guiin"
           icon={<Users className="w-7 h-7 text-white" />}
           title="귀인/악연 찾기"
           subtitle="인간관계 처방전"
@@ -301,7 +299,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 8. 재회 운세 (니즈 확실) */}
         <MenuCard
           option="rekindling"
-          onSelect={onSelect}
+          href="/rekindling"
           icon={<span className="text-2xl">💔</span>}
           title="재회 운세"
           subtitle="다시 만날 수 있을까?"
@@ -320,7 +318,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 9. 월별 운세 */}
         <MenuCard
           option="monthly"
-          onSelect={onSelect}
+          href="/monthly"
           icon={<Calendar className="w-7 h-7 text-white" />}
           title="월별 운세"
           subtitle="12개월 상세 분석"
@@ -337,7 +335,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 11. 만세력 (기본 기능) */}
         <MenuCard
           option="saju"
-          onSelect={onSelect}
+          href="/saju"
           icon={<Sparkles className="w-7 h-7 text-white" />}
           title="만세력"
           subtitle="사주 풀이"
@@ -354,7 +352,7 @@ export default function MainMenu({ onSelect }: MainMenuProps) {
         {/* 12. 꿈해몽 (서비스) */}
         <MenuCard
           option="dream"
-          onSelect={onSelect}
+          href="/dream"
           icon={<Cloud className="w-7 h-7 text-white" />}
           title="꿈해몽"
           subtitle="꿈 풀이"
