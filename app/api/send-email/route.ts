@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
                 본 운세는 전통 명리학을 바탕으로 제작되었으며, 재미와 참고용으로 활용해 주세요.
               </p>
               <p style="color: #64748b; font-size: 12px; margin-top: 10px;">
-                <a href="https://forceteller.nomadlab.kr" style="color: #fbbf24; text-decoration: none;">
+                <a href="https://palzawang.co.kr" style="color: #fbbf24; text-decoration: none;">
                   팔자왕 바로가기 →
                 </a>
               </p>

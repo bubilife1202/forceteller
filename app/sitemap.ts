@@ -1,7 +1,37 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://forceteller.nomadlab.kr'
+  const baseUrl = 'https://palzawang.co.kr'
+
+  const categories = [
+    'tarot',
+    'daily',
+    'wealth',
+    'newyear2026',
+    'compatibility',
+    'career',
+    'daeun',
+    'guiin',
+    'rekindling',
+    'monthly',
+    'saju',
+    'dream',
+  ]
+
+  const categoryPages = categories.flatMap(cat => [
+    {
+      url: `${baseUrl}/ko/${cat}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/en/${cat}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
+  ])
 
   return [
     {
@@ -16,6 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 1,
     },
+    ...categoryPages,
     {
       url: `${baseUrl}/ko/guide`,
       lastModified: new Date(),

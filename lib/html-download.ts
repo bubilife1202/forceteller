@@ -229,7 +229,7 @@ export function generateStyledHTML(options: DownloadOptions): string {
 
     <div class="footer">
       <p>팔자왕 - 무료 사주 운세 서비스</p>
-      <p><a href="https://forceteller.nomadlab.kr">https://forceteller.nomadlab.kr</a></p>
+      <p><a href="https://palzawang.co.kr">https://palzawang.co.kr</a></p>
     </div>
   </div>
 </body>

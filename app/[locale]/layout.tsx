@@ -40,13 +40,13 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       locale: locale === 'ko' ? 'ko_KR' : 'en_US',
-      url: "https://forceteller.nomadlab.kr",
+      url: "https://palzawang.co.kr",
       title: metadata.title,
       description: metadata.description,
       siteName: locale === 'ko' ? "팔자왕" : "Paljawang",
       images: [
         {
-          url: "https://forceteller.nomadlab.kr/og-image.png",
+          url: "https://palzawang.co.kr/og-image.png",
           width: 1200,
           height: 1200,
           alt: locale === 'ko' ? "팔자왕 - 무료 사주 운세 서비스" : "Paljawang - Free Fortune Telling",
@@ -57,7 +57,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: metadata.title,
       description: metadata.description,
-      images: ["https://forceteller.nomadlab.kr/og-image.png"],
+      images: ["https://palzawang.co.kr/og-image.png"],
     },
     viewport: {
       width: "device-width",
@@ -92,7 +92,7 @@ export default async function LocaleLayout({
     '@type': 'WebApplication',
     name: metadata.title,
     description: metadata.description,
-    url: 'https://forceteller.nomadlab.kr',
+    url: 'https://palzawang.co.kr',
     applicationCategory: 'LifestyleApplication',
     operatingSystem: 'Any',
     offers: {

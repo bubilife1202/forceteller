@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://forceteller.nomadlab.kr/sitemap.xml',
+    sitemap: 'https://palzawang.co.kr/sitemap.xml',
   }
 }
