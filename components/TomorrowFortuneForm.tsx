@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Moon, ArrowLeft, Sparkles } from 'lucide-react';
+import { Moon, ArrowLeft, Sparkles, Calendar } from 'lucide-react';
+import { lunarToSolar } from '@/lib/lunar-converter';
 
 export interface TomorrowFortuneFormData {
   year: number;
@@ -22,9 +23,21 @@ export default function TomorrowFortuneForm({ onSubmit, onBack }: TomorrowFortun
     month: 1,
     day: 1,
   });
+  const [isLunar, setIsLunar] = useState(false);
 
   const handleSubmit = () => {
-    onSubmit(formData);
+    if (isLunar) {
+      // 음력을 양력으로 변환
+      const solarDate = lunarToSolar({
+        year: formData.year,
+        month: formData.month,
+        day: formData.day,
+        isLeapMonth: false,
+      });
+      onSubmit(solarDate);
+    } else {
+      onSubmit(formData);
+    }
   };
 
   const containerVariants = {
@@ -92,6 +105,43 @@ export default function TomorrowFortuneForm({ onSubmit, onBack }: TomorrowFortun
           <p className="text-slate-400 text-sm mb-4">
             태어난 날짜만 알면 내일의 운세를 미리 볼 수 있어요
           </p>
+
+          {/* 양력/음력 선택 */}
+          <div className="mb-4">
+            <label className="block text-slate-300 text-sm mb-2 flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              달력 유형
+            </label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setIsLunar(false)}
+                className={`flex-1 py-3 rounded-xl font-medium transition-all ${
+                  !isLunar
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg'
+                    : 'bg-slate-800/80 text-slate-400 border border-slate-600 hover:border-slate-500'
+                }`}
+              >
+                양력 (태양력)
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsLunar(true)}
+                className={`flex-1 py-3 rounded-xl font-medium transition-all ${
+                  isLunar
+                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg'
+                    : 'bg-slate-800/80 text-slate-400 border border-slate-600 hover:border-slate-500'
+                }`}
+              >
+                음력 (태음력)
+              </button>
+            </div>
+            {isLunar && (
+              <p className="text-purple-400 text-xs mt-2">
+                ※ 음력 날짜는 양력으로 변환하여 운세를 봅니다
+              </p>
+            )}
+          </div>
 
           <div className="space-y-4">
             {/* 년도 */}
