@@ -31,13 +31,13 @@ interface EmotionResultProps {
 export default function EmotionResult({
   result,
   name,
-  gender,
-  birthDate,
+  gender: _gender,
+  birthDate: _birthDate,
   onReset,
   onBack,
 }: EmotionResultProps) {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
-  const dayElement = result.day.stem.element;
+  const _dayElement = result.day.stem.element;
 
   // 감정 안정도 점수 계산
   const calculateEmotionScore = () => {

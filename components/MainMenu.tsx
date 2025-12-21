@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Sparkles, Heart, Cloud, Sun, Calendar, Coins, TrendingUp, Briefcase, Users, Lock } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth' | 'daeun' | 'career' | 'guiin' | 'wealth2026' | 'charm' | 'emotion' | 'taemong';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth' | 'daeun' | 'career' | 'guiin' | 'wealth2026' | 'charm' | 'emotion' | 'taemong' | 'health' | 'marriage' | 'study' | 'moving' | 'children';
 
 // 호버 미리보기 데이터
 const PREVIEW_DATA: Record<MenuOption, { line1: string; line2: string }> = {
@@ -25,6 +25,11 @@ const PREVIEW_DATA: Record<MenuOption, { line1: string; line2: string }> = {
   charm: { line1: '당신의 매력 유형은...', line2: '감성 매력 85점으로...' },
   emotion: { line1: '감정 안정도 점수는...', line2: '스트레스 해소법은...' },
   taemong: { line1: '태몽 등급은 대길!', line2: '리더형 아이가...' },
+  health: { line1: '당신의 건강 주의 장기는...', line2: '간 기능 관리에 주의가...' },
+  marriage: { line1: '결혼 적기 시기는...', line2: '이상적 배우자 오행은...' },
+  study: { line1: '당신의 학습 스타일은...', line2: '최적의 공부 시간대는...' },
+  moving: { line1: '이사 길한 방위는...', line2: '동쪽으로 이동하면...' },
+  children: { line1: '자녀 복 점수는...', line2: '첫째 아이 성격은...' },
 };
 
 // 메뉴 카드 컴포넌트
@@ -440,6 +445,96 @@ export default function MainMenu() {
           badge={{ text: '👶 NEW', color: 'bg-purple-500' }}
           delay={0.9}
           hoverGlow="0 0 40px rgba(168, 85, 247, 0.3)"
+        />
+
+        {/* 17. 건강운 (NEW) */}
+        <MenuCard
+          option="health"
+          href="/health"
+          icon={<span className="text-2xl">💪</span>}
+          title="건강운"
+          subtitle="체질과 건강 분석"
+          description="오행으로 알아보는 나의 체질! 주의해야 할 장기, 질병 예방법, 건강 관리 가이드."
+          tags={['체질 분석', '장기 건강', '건강 관리법']}
+          buttonText="건강운 보기"
+          gradient="bg-gradient-to-br from-green-400 to-emerald-600"
+          textColor="text-green-400"
+          tagBg="bg-green-500/20 text-green-300"
+          badge={{ text: '🏥 NEW', color: 'bg-green-500' }}
+          delay={0.95}
+          hoverGlow="0 0 40px rgba(34, 197, 94, 0.3)"
+        />
+
+        {/* 18. 결혼/배우자운 (NEW) */}
+        <MenuCard
+          option="marriage"
+          href="/marriage"
+          icon={<span className="text-2xl">💍</span>}
+          title="결혼/배우자운"
+          subtitle="혼인운 분석"
+          description="나의 결혼 적기는? 이상적인 배우자상, 시댁/처가 관계, 백년해로 운세까지!"
+          tags={['결혼 적기', '이상적 배우자', '시댁/처가']}
+          buttonText="결혼운 보기"
+          gradient="bg-gradient-to-br from-rose-400 to-pink-600"
+          textColor="text-rose-400"
+          tagBg="bg-rose-500/20 text-rose-300"
+          badge={{ text: '💒 NEW', color: 'bg-rose-500' }}
+          delay={1.0}
+          hoverGlow="0 0 40px rgba(251, 113, 133, 0.3)"
+        />
+
+        {/* 19. 학업운 (NEW) */}
+        <MenuCard
+          option="study"
+          href="/study"
+          icon={<span className="text-2xl">📚</span>}
+          title="학업운"
+          subtitle="학습 스타일 분석"
+          description="나에게 맞는 학습법은? 시험운, 자격증 운, 유학운까지 학업 전체를 분석!"
+          tags={['학습 스타일', '시험운', '유학운']}
+          buttonText="학업운 보기"
+          gradient="bg-gradient-to-br from-blue-400 to-indigo-600"
+          textColor="text-blue-400"
+          tagBg="bg-blue-500/20 text-blue-300"
+          badge={{ text: '📖 NEW', color: 'bg-blue-500' }}
+          delay={1.05}
+          hoverGlow="0 0 40px rgba(59, 130, 246, 0.3)"
+        />
+
+        {/* 20. 이사/방위운 (NEW) */}
+        <MenuCard
+          option="moving"
+          href="/moving"
+          icon={<span className="text-2xl">🏠</span>}
+          title="이사/방위운"
+          subtitle="풍수 이사 분석"
+          description="이사 가기 좋은 방위와 시기! 풍수 인테리어, 행운의 층수/호수까지 상세 분석."
+          tags={['길한 방위', '이사 시기', '풍수 인테리어']}
+          buttonText="이사운 보기"
+          gradient="bg-gradient-to-br from-orange-400 to-amber-600"
+          textColor="text-orange-400"
+          tagBg="bg-orange-500/20 text-orange-300"
+          badge={{ text: '🧭 NEW', color: 'bg-orange-500' }}
+          delay={1.1}
+          hoverGlow="0 0 40px rgba(251, 146, 60, 0.3)"
+        />
+
+        {/* 21. 자녀운 (NEW) */}
+        <MenuCard
+          option="children"
+          href="/children"
+          icon={<span className="text-2xl">👶</span>}
+          title="자녀운"
+          subtitle="자녀 복 분석"
+          description="자녀 수 예측, 출산 적기, 자녀 재능과 교육 방향까지! 자녀로 인한 복을 분석합니다."
+          tags={['자녀 수', '출산 시기', '자녀 교육']}
+          buttonText="자녀운 보기"
+          gradient="bg-gradient-to-br from-cyan-400 to-teal-600"
+          textColor="text-cyan-400"
+          tagBg="bg-cyan-500/20 text-cyan-300"
+          badge={{ text: '👨‍👩‍👧 NEW', color: 'bg-cyan-500' }}
+          delay={1.15}
+          hoverGlow="0 0 40px rgba(6, 182, 212, 0.3)"
         />
       </div>
 

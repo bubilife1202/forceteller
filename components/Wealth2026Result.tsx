@@ -31,8 +31,8 @@ interface Wealth2026ResultProps {
 export default function Wealth2026Result({
   result,
   name,
-  gender,
-  birthDate,
+  gender: _gender,
+  birthDate: _birthDate,
   onReset,
   onBack,
 }: Wealth2026ResultProps) {
@@ -42,7 +42,7 @@ export default function Wealth2026Result({
   // 재물운 총점 계산
   const calculateWealthScore = () => {
     let score = 50;
-    const { 재성, 식상, 관성, 비겁 } = result.tenGodsCount;
+    const { 재성, 식상, 관성: _관성, 비겁 } = result.tenGodsCount;
 
     // 재성 가점
     if (재성 >= 2) score += 15;
