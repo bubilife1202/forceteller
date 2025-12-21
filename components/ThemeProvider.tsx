@@ -42,9 +42,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  // 마운트 전에는 기본 테마로 렌더링
+  // 마운트 전에도 Provider로 감싸서 반환 (기본값 사용)
   if (!mounted) {
-    return <>{children}</>;
+    return (
+      <ThemeContext.Provider value={{ theme: 'dark', toggleTheme: () => {} }}>
+        {children}
+      </ThemeContext.Provider>
+    );
   }
 
   return (
