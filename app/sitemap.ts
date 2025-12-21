@@ -16,6 +16,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'monthly',
     'saju',
     'dream',
+    'wealth2026',
+    'charm',
+    'emotion',
+    'taemong',
   ]
 
   const categoryPages = categories.flatMap(cat => [

@@ -635,6 +635,7 @@ export default function DaeunResult({ formData, onReset, onBack }: DaeunResultPr
     daeunData.map(d => ({ age: d.age, tenGod: d.tenGod })),
     currentAge
   );
+  const bestPeriod = peakPeriods[0];
 
   // 현재 대운 SWOT 분석
   const currentSwot = TEN_GOD_SWOT[currentDaeun.tenGod] || TEN_GOD_SWOT['비견'];
@@ -709,7 +710,7 @@ ${result.day.stem.ko}일간 • ${result.day.stem.element} 오행
 ━━━━━━━━━━━━━━━━━━━━
 
 ⭐ 인생 전성기: ${bestPeriod.age}세~${bestPeriod.age + 9}세
-${bestPeriod.description}
+십성: ${bestPeriod.tenGod} | 점수: ${bestPeriod.score}점
 
 ━━ 주요 대운 분석 ━━
 ${result.daeun.slice(0, 3).map(d => `

@@ -776,14 +776,15 @@ ${result.day.stem.ko}일간 • ${result.day.stem.element} 오행
 ━━━━━━━━━━━━━━━━━━━━
 
 ━━ 귀인 분석 ━━
-${myGuiins.map(g => `• ${g.name}: ${g.description}`).join('\n')}
+• 천을귀인: ${guiinInfo.천을귀인.join(', ')}
+• 문창귀인: ${guiinInfo.문창귀인.join(', ')}
+• 천덕귀인: ${guiinInfo.천덕귀인.join(', ')}
+• 월덕귀인: ${guiinInfo.월덕귀인.join(', ')}
 
 ━━ 악연 분석 ━━
-${myAkyeons.map(a => `• ${a.name}: ${a.description}`).join('\n')}
-
-━━ 이번 달 귀인운 ━━
-${monthlyGuiin.title}
-${monthlyGuiin.description}
+• 겁살: ${akyeonInfo.겁살}
+• 원진살: ${akyeonInfo.원진살.join(', ')}
+• 파살: ${akyeonInfo.파살}
 
 ━━━━━━━━━━━━━━━━━━━━
 ForceTeller - AI 운세 서비스
@@ -792,9 +793,11 @@ ForceTeller - AI 운세 서비스
   };
 
   const handleKakaoShare = () => {
+    const guiinCount = guiinInfo.천을귀인.length + guiinInfo.문창귀인.length + guiinInfo.천덕귀인.length + guiinInfo.월덕귀인.length;
+    const akyeonCount = 1 + akyeonInfo.원진살.length + 1; // 겁살 1개 + 원진살 + 파살 1개
     shareToKakao({
       title: `🤝 ${formData.name}님의 귀인/악연 분석`,
-      description: `${result.day.stem.ko}일간 | 귀인: ${myGuiins.length}개 | 악연: ${myAkyeons.length}개`,
+      description: `${result.day.stem.ko}일간 | 귀인띠: ${guiinCount}개 | 악연띠: ${akyeonCount}개`,
     });
   };
 

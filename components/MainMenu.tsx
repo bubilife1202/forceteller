@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Sparkles, Heart, Cloud, Sun, Calendar, Coins, TrendingUp, Briefcase, Users, Lock } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth' | 'daeun' | 'career' | 'guiin';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth' | 'daeun' | 'career' | 'guiin' | 'wealth2026' | 'charm' | 'emotion' | 'taemong';
 
 // 호버 미리보기 데이터
 const PREVIEW_DATA: Record<MenuOption, { line1: string; line2: string }> = {
@@ -21,6 +21,10 @@ const PREVIEW_DATA: Record<MenuOption, { line1: string; line2: string }> = {
   monthly: { line1: '이번달 최고의 날은...', line2: '15일에 재물운 상승...' },
   saju: { line1: '당신의 일간 (日干)은...', line2: '갑목(甲木)으로 리더형...' },
   dream: { line1: '꿈의 해석 결과는...', line2: '길몽! 재물이 들어오는...' },
+  wealth2026: { line1: '2026년 재물운 점수는...', line2: '5월에 대박 기회가...' },
+  charm: { line1: '당신의 매력 유형은...', line2: '감성 매력 85점으로...' },
+  emotion: { line1: '감정 안정도 점수는...', line2: '스트레스 해소법은...' },
+  taemong: { line1: '태몽 등급은 대길!', line2: '리더형 아이가...' },
 };
 
 // 메뉴 카드 컴포넌트
@@ -364,6 +368,78 @@ export default function MainMenu() {
           tagBg="bg-violet-500/20 text-violet-300"
           delay={0.7}
           hoverGlow="0 0 40px rgba(139, 92, 246, 0.2)"
+        />
+
+        {/* 13. 2026 대박 재물운 (NEW) */}
+        <MenuCard
+          option="wealth2026"
+          href="/wealth2026"
+          icon={<span className="text-2xl">💎</span>}
+          title="2026 대박 재물운"
+          subtitle="병오년 재물 분석"
+          description="2026년 나의 재물운은? 월별 재물 흐름, 투자 적기, 횡재운까지 상세 분석!"
+          tags={['월별 재물운', '투자 타이밍', '횡재운']}
+          buttonText="재물운 분석하기"
+          gradient="bg-gradient-to-br from-amber-400 to-yellow-600"
+          textColor="text-amber-400"
+          tagBg="bg-amber-500/20 text-amber-300"
+          badge={{ text: '💰 NEW', color: 'bg-amber-500 text-black' }}
+          delay={0.75}
+          hoverGlow="0 0 40px rgba(245, 158, 11, 0.3)"
+        />
+
+        {/* 14. 내 안의 매력찾기 (NEW) */}
+        <MenuCard
+          option="charm"
+          href="/charm"
+          icon={<span className="text-2xl">✨</span>}
+          title="내 안의 매력찾기"
+          subtitle="숨은 매력 발굴"
+          description="나도 몰랐던 나의 매력! 사주로 알아보는 외적/내적/연애/직업 매력 총정리."
+          tags={['매력 유형', '강점 분석', '매력 업그레이드']}
+          buttonText="매력 찾기"
+          gradient="bg-gradient-to-br from-pink-400 to-rose-500"
+          textColor="text-pink-400"
+          tagBg="bg-pink-500/20 text-pink-300"
+          badge={{ text: '💖 NEW', color: 'bg-pink-500' }}
+          delay={0.8}
+          hoverGlow="0 0 40px rgba(236, 72, 153, 0.3)"
+        />
+
+        {/* 15. 감정 관리 (NEW) */}
+        <MenuCard
+          option="emotion"
+          href="/emotion"
+          icon={<span className="text-2xl">🧘</span>}
+          title="감정 관리"
+          subtitle="마음 처방전"
+          description="나의 감정 패턴을 이해하고 맞춤 힐링법을 찾아보세요. 스트레스 해소부터 월별 감정 예보까지!"
+          tags={['감정 유형', '힐링 가이드', '월별 예보']}
+          buttonText="감정 분석하기"
+          gradient="bg-gradient-to-br from-teal-400 to-cyan-600"
+          textColor="text-teal-400"
+          tagBg="bg-teal-500/20 text-teal-300"
+          badge={{ text: '🌿 NEW', color: 'bg-teal-500' }}
+          delay={0.85}
+          hoverGlow="0 0 40px rgba(20, 184, 166, 0.3)"
+        />
+
+        {/* 16. 태몽해설 (NEW) */}
+        <MenuCard
+          option="taemong"
+          href="/taemong"
+          icon={<span className="text-2xl">🌙</span>}
+          title="태몽해설"
+          subtitle="아이의 미래 예측"
+          description="태몽으로 알아보는 아이의 성격, 재능, 진로! 전통 태몽 해석과 태교 가이드."
+          tags={['태몽 분석', '성격 예측', '태교 가이드']}
+          buttonText="태몽 풀이하기"
+          gradient="bg-gradient-to-br from-purple-400 to-indigo-600"
+          textColor="text-purple-400"
+          tagBg="bg-purple-500/20 text-purple-300"
+          badge={{ text: '👶 NEW', color: 'bg-purple-500' }}
+          delay={0.9}
+          hoverGlow="0 0 40px rgba(168, 85, 247, 0.3)"
         />
       </div>
 

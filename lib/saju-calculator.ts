@@ -65,6 +65,10 @@ export interface SajuResult {
     관성: number;
     인성: number;
   };
+  yinYangBalance: {
+    yang: number;
+    yin: number;
+  };
 }
 
 // 월지 → 지지 인덱스 매핑 (1월=인, 2월=묘, ...)
@@ -463,6 +467,27 @@ export function calculateSaju(dateInfo: DateInfo, gender: 'male' | 'female' = 'm
   // 십성 개수 세기
   const tenGodsCount = countTenGods(tenGods);
 
+  // 음양 균형 계산 (천간 4글자 기준 - 지지는 yinyang 속성 없음)
+  const allStems = [yearPillar.stem, monthPillar.stem, dayPillar.stem, hourPillar.stem];
+  let yangCount = 0;
+  let yinCount = 0;
+
+  allStems.forEach(stem => {
+    if (stem.yinyang === '+') yangCount++;
+    else yinCount++;
+  });
+
+  // 지지의 음양은 인덱스 기준 (짝수=양, 홀수=음: 자=양, 축=음, 인=양, 묘=음...)
+  const branchOrder = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'];
+  const allBranches = [yearPillar.branch.ko, monthPillar.branch.ko, dayPillar.branch.ko, hourPillar.branch.ko];
+  allBranches.forEach(branchKo => {
+    const idx = branchOrder.indexOf(branchKo);
+    if (idx % 2 === 0) yangCount++;
+    else yinCount++;
+  });
+
+  const yinYangBalance = { yang: yangCount, yin: yinCount };
+
   return {
     year: yearPillar,
     month: monthPillar,
@@ -480,6 +505,7 @@ export function calculateSaju(dateInfo: DateInfo, gender: 'male' | 'female' = 'm
     elementBalance,
     yongsin,
     tenGodsCount,
+    yinYangBalance,
   };
 }
 
