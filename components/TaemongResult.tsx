@@ -17,6 +17,11 @@ import TaemongWealth from './premium/taemong/TaemongWealth';
 import TaemongRelation from './premium/taemong/TaemongRelation';
 import TaemongBirthday from './premium/taemong/TaemongBirthday';
 import TaemongGuide from './premium/taemong/TaemongGuide';
+import TaemongEducation from './premium/taemong/TaemongEducation';
+import TaemongFuture from './premium/taemong/TaemongFuture';
+import TaemongHealth from './premium/taemong/TaemongHealth';
+import TaemongSibling from './premium/taemong/TaemongSibling';
+import TaemongTalent from './premium/taemong/TaemongTalent';
 
 interface TaemongResultProps {
   formData: TaemongFormData;
@@ -290,6 +295,21 @@ export default function TaemongResult({
 
       {/* 태교 가이드 */}
       <TaemongGuide formData={formData} />
+
+      {/* 교육 가이드 */}
+      <TaemongEducation formData={formData} />
+
+      {/* 미래 운세 */}
+      <TaemongFuture formData={formData} />
+
+      {/* 건강 분석 */}
+      <TaemongHealth formData={formData} />
+
+      {/* 형제/자매 관계 */}
+      <TaemongSibling formData={formData} />
+
+      {/* 타고난 재능 */}
+      <TaemongTalent formData={formData} />
 
       {/* 하단 액션 버튼 */}
       <div className="flex justify-center gap-3 flex-wrap pt-8">

@@ -3,14 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Sparkles, Heart, Cloud, Sun, Calendar, Coins, TrendingUp, Briefcase, Users, Lock } from 'lucide-react';
+import { Sparkles, Heart, Cloud, Sun, Moon, Calendar, Coins, TrendingUp, Briefcase, Users, Lock } from 'lucide-react';
 
-export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'dream' | 'daily' | 'rekindling' | 'monthly' | 'tarot' | 'wealth' | 'daeun' | 'career' | 'guiin' | 'wealth2026' | 'charm' | 'emotion' | 'taemong' | 'health' | 'marriage' | 'study' | 'moving' | 'children';
+export type MenuOption = 'saju' | 'newyear2026' | 'compatibility' | 'dream' | 'daily' | 'tomorrow' | 'rekindling' | 'monthly' | 'tarot' | 'wealth' | 'daeun' | 'career' | 'guiin' | 'wealth2026' | 'charm' | 'emotion' | 'taemong' | 'health' | 'marriage' | 'study' | 'moving' | 'children';
 
 // 호버 미리보기 데이터
 const PREVIEW_DATA: Record<MenuOption, { line1: string; line2: string }> = {
   wealth: { line1: '당신의 평생 재물 점수는...', line2: '40대에 대박 기회가...' },
   daily: { line1: '오늘 당신의 총운 점수는...', line2: '오후 2시에 행운이 찾아와...' },
+  tomorrow: { line1: '내일 당신의 총운 점수는...', line2: '내일 오전에 좋은 기운이...' },
   newyear2026: { line1: '2026년 당신의 운세 등급은...', line2: '3월과 9월에 큰 변화가...' },
   compatibility: { line1: '두 분의 궁합 점수는...', line2: '감정선에서 85% 일치하며...' },
   career: { line1: '당신의 이직 적기는...', line2: '2026년 상반기에 기회가...' },
@@ -191,6 +192,24 @@ export default function MainMenu() {
           badge={{ text: '인기', color: 'bg-orange-500' }}
           delay={0.2}
           hoverGlow="0 0 40px rgba(251, 146, 60, 0.2)"
+        />
+
+        {/* 2-2. 내일의 운세 */}
+        <MenuCard
+          option="tomorrow"
+          href="/tomorrow"
+          icon={<Moon className="w-7 h-7 text-white" />}
+          title="내일의 운세"
+          subtitle="내일을 미리 준비"
+          description="내일의 운세를 미리 확인하고 하루를 준비하세요. 행운의 시간과 주의할 점을 알려드립니다!"
+          tags={['재물운', '애정운', '시간대별 운세']}
+          buttonText="내일의 운세 보기"
+          gradient="bg-gradient-to-br from-indigo-400 to-purple-600"
+          textColor="text-purple-400"
+          tagBg="bg-purple-500/20 text-purple-300"
+          badge={{ text: 'NEW', color: 'bg-indigo-500' }}
+          delay={0.22}
+          hoverGlow="0 0 40px rgba(139, 92, 246, 0.2)"
         />
 
         {/* 2. 대박 재물운 (매출 1등) */}

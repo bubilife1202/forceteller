@@ -18,6 +18,11 @@ import EmotionStress from './premium/emotion/EmotionStress';
 import EmotionPositive from './premium/emotion/EmotionPositive';
 import EmotionMonthly from './premium/emotion/EmotionMonthly';
 import EmotionHealing from './premium/emotion/EmotionHealing';
+import EmotionEnergy from './premium/emotion/EmotionEnergy';
+import EmotionMeditation from './premium/emotion/EmotionMeditation';
+import EmotionRelationship from './premium/emotion/EmotionRelationship';
+import EmotionTrigger from './premium/emotion/EmotionTrigger';
+import EmotionWork from './premium/emotion/EmotionWork';
 
 interface EmotionResultProps {
   result: SajuResult;
@@ -264,6 +269,21 @@ export default function EmotionResult({
 
       {/* 힐링 가이드 */}
       <EmotionHealing result={result} name={name} emotionType={emotionType} />
+
+      {/* 에너지 도둑 분석 */}
+      <EmotionEnergy result={result} name={name} />
+
+      {/* 명상/마음챙김 가이드 */}
+      <EmotionMeditation result={result} name={name} />
+
+      {/* 관계 속 감정 패턴 */}
+      <EmotionRelationship result={result} name={name} />
+
+      {/* 감정 트리거 분석 */}
+      <EmotionTrigger result={result} name={name} />
+
+      {/* 직장 감정 관리 */}
+      <EmotionWork result={result} name={name} />
 
       {/* 하단 액션 버튼 */}
       <div className="flex justify-center gap-3 flex-wrap pt-8">

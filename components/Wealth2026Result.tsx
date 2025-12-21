@@ -18,6 +18,11 @@ import Wealth2026Windfall from './premium/wealth2026/Wealth2026Windfall';
 import Wealth2026Monthly from './premium/wealth2026/Wealth2026Monthly';
 import Wealth2026Lucky from './premium/wealth2026/Wealth2026Lucky';
 import Wealth2026Advice from './premium/wealth2026/Wealth2026Advice';
+import Wealth2026Business from './premium/wealth2026/Wealth2026Business';
+import Wealth2026Debt from './premium/wealth2026/Wealth2026Debt';
+import Wealth2026Partner from './premium/wealth2026/Wealth2026Partner';
+import Wealth2026RealEstate from './premium/wealth2026/Wealth2026RealEstate';
+import Wealth2026Saving from './premium/wealth2026/Wealth2026Saving';
 
 interface Wealth2026ResultProps {
   result: SajuResult;
@@ -266,6 +271,21 @@ export default function Wealth2026Result({
 
       {/* 주의사항 & 조언 */}
       <Wealth2026Advice result={result} name={name} wealthScore={wealthScore} />
+
+      {/* 사업운 분석 */}
+      <Wealth2026Business result={result} name={name} baseScore={wealthScore} />
+
+      {/* 부채/빚 관리운 */}
+      <Wealth2026Debt result={result} name={name} baseScore={wealthScore} />
+
+      {/* 동업/파트너십운 */}
+      <Wealth2026Partner result={result} name={name} baseScore={wealthScore} />
+
+      {/* 부동산운 */}
+      <Wealth2026RealEstate result={result} name={name} baseScore={wealthScore} />
+
+      {/* 저축/절약운 */}
+      <Wealth2026Saving result={result} name={name} baseScore={wealthScore} />
 
       {/* 하단 액션 버튼 */}
       <div className="flex justify-center gap-3 flex-wrap pt-8">

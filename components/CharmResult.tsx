@@ -18,6 +18,11 @@ import CharmRomantic from './premium/charm/CharmRomantic';
 import CharmCareer from './premium/charm/CharmCareer';
 import CharmRadarChart from './premium/charm/CharmRadarChart';
 import CharmUpgrade from './premium/charm/CharmUpgrade';
+import CharmByAge from './premium/charm/CharmByAge';
+import CharmCompatibility from './premium/charm/CharmCompatibility';
+import CharmFirstImpression from './premium/charm/CharmFirstImpression';
+import CharmHidden from './premium/charm/CharmHidden';
+import CharmWeakness from './premium/charm/CharmWeakness';
 
 interface CharmResultProps {
   result: SajuResult;
@@ -277,6 +282,21 @@ export default function CharmResult({
 
       {/* 매력 업그레이드 가이드 */}
       <CharmUpgrade result={result} name={name} gender={gender} />
+
+      {/* 나이대별 매력 변화 */}
+      <CharmByAge result={result} name={name} gender={gender} />
+
+      {/* 매력 궁합 */}
+      <CharmCompatibility result={result} name={name} gender={gender} />
+
+      {/* 첫인상 분석 */}
+      <CharmFirstImpression result={result} name={name} gender={gender} />
+
+      {/* 숨겨진 매력 */}
+      <CharmHidden result={result} name={name} gender={gender} />
+
+      {/* 매력 약점 */}
+      <CharmWeakness result={result} name={name} gender={gender} />
 
       {/* 하단 액션 버튼 */}
       <div className="flex justify-center gap-3 flex-wrap pt-8">
