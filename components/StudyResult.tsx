@@ -3,7 +3,7 @@
 import { SajuResult } from '@/lib/saju-calculator';
 import { motion } from 'framer-motion';
 import { RotateCcw, Download, Mail, Share2, ArrowLeft } from 'lucide-react';
-import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
 import EmailModal from './ui/EmailModal';
 import { useState } from 'react';
@@ -112,60 +112,9 @@ export default function StudyResult({
   const studyGrade = getStudyGrade();
   const keywords = getKeywords();
 
-  // HTML 다운로드
+  // HTML 다운로드 (화면 그대로 저장)
   const handleDownloadHtml = () => {
-    const htmlContent = `
-      <div class="header">
-        <h1>📚 학업운 종합 분석</h1>
-        <p>${name}님의 학습 잠재력과 성공 전략</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">일간: ${dayElement}(${result.day.stem.ko}) | 학업운 점수: ${studyScore}점</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">📊 학업운 총괄</h2>
-        <div class="score ${studyScore >= 70 ? 'high' : studyScore >= 50 ? 'medium' : 'low'}">${studyScore}점 - ${studyGrade}</div>
-        <p style="text-align: center; margin-top: 16px; color: #fbbf24; font-weight: bold;">
-          ${studyGrade === '탁월' ? '최고의 학업 운세! 높은 목표를 설정하세요!' :
-            studyGrade === '우수' ? '우수한 학업 잠재력! 꾸준히 노력하세요.' :
-            studyGrade === '양호' ? '좋은 학업운! 전략적으로 학습하세요.' :
-            studyGrade === '보통' ? '기초를 탄탄히 다지세요.' :
-            '열정과 노력으로 극복 가능합니다.'}
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🎯 핵심 키워드</h2>
-        <div class="grid">
-          ${keywords.map(k => `<div class="card"><div class="card-value">${k}</div></div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💎 사주 분석</h2>
-        <p>인성 (학습력): ${result.tenGodsCount.인성}개</p>
-        <p>식상 (창의력): ${result.tenGodsCount.식상}개</p>
-        <p>관성 (집중력): ${result.tenGodsCount.관성}개</p>
-        <p style="margin-top: 12px;">
-          ${dayElement === '수' ? '수(水): 뛰어난 분석력과 지혜. 깊이 있는 학습에 강점이 있습니다.' :
-            dayElement === '화' ? '화(火): 열정과 순발력. 능동적 학습과 실천에 강합니다.' :
-            dayElement === '목' ? '목(木): 빠른 이해력과 창의성. 새로운 것을 배우는 속도가 빠릅니다.' :
-            dayElement === '금' ? '금(金): 논리적이고 체계적. 정확성과 완성도가 뛰어납니다.' :
-            '토(土): 안정적이고 꾸준함. 암기와 반복 학습에 강점이 있습니다.'}
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💡 학습 조언</h2>
-        <p>• ${dayElement === '수' ? '체계적 학습과 깊이 있는 이해를 추구하세요.' :
-              dayElement === '화' ? '실천과 경험을 통한 학습이 효과적입니다.' :
-              dayElement === '목' ? '다양한 분야를 접하며 시야를 넓히세요.' :
-              dayElement === '금' ? '단계별 학습으로 완벽하게 마스터하세요.' :
-              '꾸준한 반복 학습으로 기초를 탄탄히 하세요.'}</p>
-        <p>• 자신의 학습 스타일을 파악하고 활용하세요.</p>
-        <p>• 목표를 명확히 하고 계획적으로 학습하세요.</p>
-      </div>
-    `;
-    downloadAsHtml(htmlContent, `학업운_${name}`);
+    downloadElementAsHtml('study-result', `학업운_${name}`);
   };
 
   // 카카오 공유
@@ -179,7 +128,7 @@ export default function StudyResult({
   const birthDateObj = new Date(birthDate.year, birthDate.month - 1, birthDate.day);
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
+    <div id="study-result" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
       {/* 상단 네비게이션 */}
       <div className="flex justify-between items-center">
         <motion.button

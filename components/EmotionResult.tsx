@@ -3,7 +3,7 @@
 import { SajuResult } from '@/lib/saju-calculator';
 import { motion } from 'framer-motion';
 import { RotateCcw, Download, Mail, Share2, ArrowLeft } from 'lucide-react';
-import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
 import EmailModal from './ui/EmailModal';
 import { useState } from 'react';
@@ -128,51 +128,9 @@ export default function EmotionResult({
   const emotionType = getEmotionType();
   const keywords = getKeywords();
 
-  // HTML 다운로드
+  // HTML 다운로드 (화면 그대로 저장)
   const handleDownloadHtml = () => {
-    const htmlContent = `
-      <div class="header">
-        <h1>🧘 감정 관리</h1>
-        <p>사주로 보는 감정 패턴 분석 • ${name}님</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">감정 유형: ${emotionType} | 안정도: ${emotionScore}점</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">📊 감정 안정도</h2>
-        <div class="score ${emotionScore >= 70 ? 'high' : emotionScore >= 50 ? 'medium' : 'low'}">${emotionScore}점</div>
-        <p style="text-align: center; margin-top: 16px; color: #fbbf24; font-weight: bold;">
-          ${emotionScore >= 80 ? '매우 안정적인 감정 상태입니다!' :
-            emotionScore >= 60 ? '대체로 균형잡힌 감정을 가지고 있습니다.' :
-            emotionScore >= 40 ? '감정 관리 연습이 필요합니다.' :
-            '전문가의 도움을 받는 것을 권장합니다.'}
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🎯 감정 유형</h2>
-        <div class="card">
-          <div class="card-value">${emotionType}</div>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💫 핵심 키워드</h2>
-        <div class="grid">
-          ${keywords.map(k => `<div class="card"><div class="card-value">${k}</div></div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🌿 감정 관리 팁</h2>
-        <ul style="margin-left: 20px;">
-          <li>매일 5분 명상으로 마음 안정 찾기</li>
-          <li>감정 일기 작성으로 패턴 파악</li>
-          <li>규칙적인 운동으로 스트레스 해소</li>
-          <li>긍정적인 관계 유지하기</li>
-        </ul>
-      </div>
-    `;
-    downloadAsHtml(htmlContent, `감정관리_${name}`);
+    downloadElementAsHtml('emotion-result', `감정관리_${name}`);
   };
 
   // 카카오 공유
@@ -184,7 +142,7 @@ export default function EmotionResult({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
+    <div id="emotion-result" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
       {/* 상단 네비게이션 */}
       <div className="flex justify-between items-center">
         <motion.button

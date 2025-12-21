@@ -3,7 +3,7 @@
 import { SajuResult } from '@/lib/saju-calculator';
 import { motion } from 'framer-motion';
 import { RotateCcw, Download, Mail, Share2, ArrowLeft } from 'lucide-react';
-import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
 import EmailModal from './ui/EmailModal';
 import { useState } from 'react';
@@ -105,58 +105,9 @@ export default function HealthResult({
   const healthGrade = getHealthGrade();
   const keywords = getKeywords();
 
-  // HTML 다운로드
+  // HTML 다운로드 (화면 그대로 저장)
   const handleDownloadHtml = () => {
-    const htmlContent = `
-      <div class="header">
-        <h1>💚 ${name}님의 건강운</h1>
-        <p>오행 체질 분석 • 맞춤형 건강 가이드</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">일간: ${dayElement}(${result.day.stem.ko}) | 건강 점수: ${healthScore}점</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💪 건강운 총괄</h2>
-        <div class="score ${healthScore >= 70 ? 'high' : healthScore >= 50 ? 'medium' : 'low'}">${healthScore}점 - ${healthGrade}</div>
-        <p style="text-align: center; margin-top: 16px; color: #10b981; font-weight: bold;">
-          ${healthGrade === '최상' ? '매우 건강한 체질입니다!' :
-            healthGrade === '양호' ? '건강한 편입니다. 꾸준한 관리를 하세요.' :
-            healthGrade === '보통' ? '평균적인 건강 상태입니다.' :
-            '건강 관리가 필요합니다.'}
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🎯 핵심 키워드</h2>
-        <div class="grid">
-          ${keywords.map(k => `<div class="card"><div class="card-value">${k}</div></div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🧬 체질 분석</h2>
-        <p>주 체질: ${dayElement}(${result.day.stem.ko})</p>
-        <p>음양 균형: ${result.yinYangBalance}%</p>
-        <p style="margin-top: 12px;">
-          ${dayElement === '목' ? '목(木) 체질: 간과 신경계 관리가 중요합니다. 스트레스 조절과 규칙적인 생활이 핵심입니다.' :
-            dayElement === '화' ? '화(火) 체질: 심장과 순환기 관리가 중요합니다. 과열 주의하고 수분 섭취를 충분히 하세요.' :
-            dayElement === '토' ? '토(土) 체질: 비장과 소화기 관리가 중요합니다. 규칙적인 식사와 체중 관리가 필요합니다.' :
-            dayElement === '금' ? '금(金) 체질: 폐와 호흡기 관리가 중요합니다. 깨끗한 공기와 적절한 습도 유지가 필수입니다.' :
-            '수(水) 체질: 신장과 비뇨기 관리가 중요합니다. 따뜻하게 지내고 충분한 휴식이 필요합니다.'}
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">✨ 건강 조언</h2>
-        <ul style="margin-left: 20px;">
-          <li>규칙적인 생활 습관 유지</li>
-          <li>충분한 수면과 휴식</li>
-          <li>균형 잡힌 식사</li>
-          <li>적절한 운동</li>
-          <li>정기 건강 검진</li>
-        </ul>
-      </div>
-    `;
-    downloadAsHtml(htmlContent, `건강운_${name}`);
+    downloadElementAsHtml('health-result', `건강운_${name}`);
   };
 
   // 카카오 공유
@@ -168,7 +119,7 @@ export default function HealthResult({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
+    <div id="health-result" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
       {/* 상단 네비게이션 */}
       <div className="flex justify-between items-center">
         <motion.button

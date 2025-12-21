@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Moon, ArrowLeft, RefreshCw, Coins, Heart, Briefcase, Activity, Star, Compass, Palette, Sparkles, Clock, TrendingUp, AlertTriangle, CheckCircle, XCircle, Zap, Users, Sunrise, Sun, Download, Mail, Home, Share2 } from 'lucide-react';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
 import { TomorrowFortuneFormData } from './TomorrowFortuneForm';
-import { downloadAsHtml, sendByEmail, createSectionHtml, createScoreBadgeHtml, createGridHtml, createCardHtml, createListHtml, createMessageBoxHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml, sendByEmail, createSectionHtml, createScoreBadgeHtml, createGridHtml, createCardHtml, createListHtml, createMessageBoxHtml } from '@/lib/utils/export-utils';
 import {
   elementColors,
   elementNumbers,
@@ -89,129 +89,9 @@ export default function TomorrowFortuneResult({ formData, onReset, onBack, onHom
 
   const timeFortune = getTimeBasedFortune();
 
-  // HTML 다운로드 함수
+  // HTML 다운로드 함수 - 화면 그대로 저장
   const handleDownloadHtml = () => {
-    const headerHtml = `
-      <div class="header">
-        <h1>🌙 ${tomorrowStr} (${dayOfWeek}요일) 내일의 운세</h1>
-        <p>${userZodiac}띠 • ${userDayStem.ko}일간 (${userElement} 오행)</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">내일의 천간: ${tomorrowStem.ko} (${tomorrowElement}) | 십신: ${tenGod}</p>
-      </div>
-    `;
-
-    const scoreHtml = createSectionHtml('종합 운세', `
-      ${createScoreBadgeHtml(finalScore, gradeInfo.grade)}
-      <p style="text-align: center; color: #a78bfa; margin-top: 12px;">내일의 키워드: #${fortune.keyword}</p>
-      <p style="text-align: center; margin-top: 8px;">${elementRelation.type} - ${elementRelation.description}</p>
-      <p style="text-align: center; margin-top: 16px; font-size: 1.1rem; color: #a78bfa;">"${fortune.advice}"</p>
-    `, gradeInfo.emoji);
-
-    // 분야별 상세 운세
-    const categoryDetailHtml = createSectionHtml('분야별 상세 운세', `
-      <div style="margin-bottom: 24px;">
-        <h3 style="color: #fbbf24; margin-bottom: 8px;">💰 재물운 (${fortune.money.score}점)</h3>
-        <p style="margin-bottom: 8px;">${fortune.money.detail}</p>
-        <p style="color: #4ade80; font-size: 0.9rem;">💡 팁: ${fortune.money.tip}</p>
-      </div>
-      <div style="margin-bottom: 24px;">
-        <h3 style="color: #f472b6; margin-bottom: 8px;">💕 애정운 (${fortune.love.score}점)</h3>
-        <p style="margin-bottom: 8px;">${fortune.love.detail}</p>
-        <p style="color: #4ade80; font-size: 0.9rem;">💡 팁: ${fortune.love.tip}</p>
-      </div>
-      <div style="margin-bottom: 24px;">
-        <h3 style="color: #60a5fa; margin-bottom: 8px;">💼 직장운 (${fortune.work.score}점)</h3>
-        <p style="margin-bottom: 8px;">${fortune.work.detail}</p>
-        <p style="color: #4ade80; font-size: 0.9rem;">💡 팁: ${fortune.work.tip}</p>
-      </div>
-      <div style="margin-bottom: 24px;">
-        <h3 style="color: #4ade80; margin-bottom: 8px;">🏃 건강운 (${fortune.health.score}점)</h3>
-        <p style="margin-bottom: 8px;">${fortune.health.detail}</p>
-        <p style="color: #4ade80; font-size: 0.9rem;">💡 팁: ${fortune.health.tip}</p>
-      </div>
-      <div>
-        <h3 style="color: #a78bfa; margin-bottom: 8px;">👥 사회운 (${fortune.social.score}점)</h3>
-        <p>${fortune.social.detail}</p>
-      </div>
-    `, '📊');
-
-    // 시간대별 운세
-    const timeFortuneHtml = createSectionHtml('시간대별 운세', `
-      <div class="grid">
-        <div class="card">
-          <div class="card-title">🌅 오전</div>
-          <div class="card-value">${timeFortune.morning.score}점</div>
-          <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px;">${timeFortune.morning.time}</p>
-        </div>
-        <div class="card">
-          <div class="card-title">☀️ 오후</div>
-          <div class="card-value">${timeFortune.afternoon.score}점</div>
-          <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px;">${timeFortune.afternoon.time}</p>
-        </div>
-        <div class="card">
-          <div class="card-title">🌙 저녁</div>
-          <div class="card-value">${timeFortune.evening.score}점</div>
-          <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px;">${timeFortune.evening.time}</p>
-        </div>
-        <div class="card">
-          <div class="card-title">⏰ 행운의 시간</div>
-          <div class="card-value" style="color: #4ade80;">${fortune.luckyTime}</div>
-          <p style="font-size: 0.85rem; color: #f87171; margin-top: 4px;">피할 시간: ${fortune.unluckyTime}</p>
-        </div>
-      </div>
-    `, '⏰');
-
-    const doHtml = createSectionHtml('내일 하면 좋은 일', createListHtml(fortune.doList, 'check'), '✅');
-    const dontHtml = createSectionHtml('내일 피해야 할 일', createListHtml(fortune.dontList, 'cross'), '⚠️');
-
-    const luckyHtml = createSectionHtml('행운 아이템', createGridHtml([
-      createCardHtml('행운의 색', elementColors[yongsinElement]?.name || '-', '🎨'),
-      createCardHtml('행운의 숫자', elementNumbers[yongsinElement]?.join(', ') || '-', '🔢'),
-      createCardHtml('행운의 방향', elementDirections[yongsinElement] || '-', '🧭'),
-      createCardHtml('행운의 음식', elementFoods[yongsinElement]?.join(', ') || '-', '🍽️'),
-    ]), '✨');
-
-    // 띠 궁합 정보
-    const zodiacHtml = createSectionHtml('띠 궁합', `
-      <div class="grid">
-        <div class="card">
-          <div class="card-title">💚 내일 잘 맞는 띠</div>
-          <div class="card-value" style="color: #4ade80;">${zodiacCompat.good.join(', ')}띠</div>
-        </div>
-        <div class="card">
-          <div class="card-title">⚠️ 내일 조심할 띠</div>
-          <div class="card-value" style="color: #f87171;">${zodiacCompat.bad.join(', ')}띠</div>
-        </div>
-      </div>
-    `, '🐾');
-
-    // 오행 정보
-    const elementHtml = createSectionHtml('오행 분석', `
-      <div class="grid">
-        <div class="card">
-          <div class="card-title">나의 오행</div>
-          <div class="card-value">${userElement} (${userDayStem.ko})</div>
-        </div>
-        <div class="card">
-          <div class="card-title">내일의 오행</div>
-          <div class="card-value">${tomorrowElement} (${tomorrowStem.ko})</div>
-        </div>
-        <div class="card">
-          <div class="card-title">오행 관계</div>
-          <div class="card-value">${elementRelation.type}</div>
-        </div>
-        <div class="card">
-          <div class="card-title">용신 오행</div>
-          <div class="card-value" style="color: #a78bfa;">${yongsinElement}</div>
-        </div>
-      </div>
-    `, '☯️');
-
-    const messageHtml = createSectionHtml('내일의 특별 메시지',
-      createMessageBoxHtml(getPrediction(tenGod, formData.year, formData.month, formData.day)),
-    '💫');
-
-    const fullHtml = headerHtml + scoreHtml + categoryDetailHtml + timeFortuneHtml + doHtml + dontHtml + luckyHtml + zodiacHtml + elementHtml + messageHtml;
-    downloadAsHtml(fullHtml, `내일의운세_${tomorrowStr.replace(/\s/g, '_')}_${userDayStem.ko}일간`);
+    downloadElementAsHtml('tomorrow-fortune-result', `내일의운세_${tomorrowStr.replace(/\s/g, '_')}_${userDayStem.ko}일간`);
   };
 
   // 이메일 전송 함수
@@ -333,6 +213,7 @@ ForceTeller - AI 운세 서비스
 
   return (
     <motion.div
+      id="tomorrow-fortune-result"
       className="min-h-screen py-8 px-4"
       variants={containerVariants}
       initial="hidden"

@@ -3,7 +3,7 @@
 import { SajuResult } from '@/lib/saju-calculator';
 import { motion } from 'framer-motion';
 import { RotateCcw, Download, Mail, Share2, ArrowLeft } from 'lucide-react';
-import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
 import EmailModal from './ui/EmailModal';
 import { useState } from 'react';
@@ -100,57 +100,9 @@ export default function ChildrenResult({
   const keywords = getKeywords();
   const birth = new Date(birthDate.year, birthDate.month - 1, birthDate.day);
 
-  // HTML 다운로드
+  // HTML 다운로드 (화면 그대로 저장)
   const handleDownloadHtml = () => {
-    const htmlContent = `
-      <div class="header">
-        <h1>👶 자녀운 종합 분석</h1>
-        <p>${name}님의 자녀운</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">일간: ${dayElement}(${result.day.stem.ko}) | 자녀운 점수: ${childrenScore}점</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">👶 자녀운 총괄</h2>
-        <div class="score ${childrenScore >= 70 ? 'high' : childrenScore >= 60 ? 'medium' : 'low'}">${childrenScore}점 - ${childrenGrade}</div>
-        <p style="text-align: center; margin-top: 16px; color: #fbbf24; font-weight: bold;">
-          ${childrenGrade === '최고' ? '자녀 복이 매우 큰 사주입니다!' :
-            childrenGrade === '좋음' ? '자녀로 인한 기쁨이 클 것입니다.' :
-            childrenGrade === '보통' ? '평범하지만 행복한 자녀운입니다.' :
-            '사랑과 노력으로 좋은 관계를 만들 수 있습니다.'}
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🎯 핵심 키워드</h2>
-        <div class="grid">
-          ${keywords.map(k => `<div class="card"><div class="card-value">${k}</div></div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💎 사주 분석</h2>
-        <p>식상(자녀궁): ${식상}개</p>
-        <p>자녀 수 예측: ${식상 >= 3 ? '3명 이상' : 식상 >= 2 ? '2-3명' : 식상 >= 1 ? '1-2명' : '1명'}</p>
-        <p>일간 오행: ${dayElement}</p>
-        <p style="margin-top: 12px;">
-          ${식상 >= 3 ? '자녀궁이 매우 강해 자녀와의 인연이 깊습니다.' :
-            식상 >= 2 ? '자녀운이 좋은 편이며 자녀 복이 있습니다.' :
-            식상 >= 1 ? '평범한 자녀운입니다. 노력으로 좋은 관계를 만들 수 있습니다.' :
-            '자녀와의 관계에 더 많은 관심과 노력이 필요합니다.'}
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">⚠️ 주의사항</h2>
-        <ul style="margin-left: 20px;">
-          <li>자녀를 다른 아이와 비교하지 마세요</li>
-          <li>무조건적인 사랑을 주세요</li>
-          <li>자녀의 개성을 존중하세요</li>
-          <li>충분한 시간을 함께 보내세요</li>
-        </ul>
-      </div>
-    `;
-    downloadAsHtml(htmlContent, `자녀운_${name}`);
+    downloadElementAsHtml('children-result', `자녀운_${name}`);
   };
 
   // 카카오 공유
@@ -162,7 +114,7 @@ export default function ChildrenResult({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
+    <div id="children-result" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
       {/* 상단 네비게이션 */}
       <div className="flex justify-between items-center">
         <motion.button

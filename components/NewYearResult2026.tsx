@@ -14,7 +14,7 @@ import MonthlyForecast2026 from './premium/MonthlyForecast2026';
 import YearlyGuidance2026 from './premium/YearlyGuidance2026';
 import LuckyCalendar2026 from './premium/LuckyCalendar2026';
 import EmailModal from './ui/EmailModal';
-import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
 
 interface NewYearResult2026Props {
@@ -142,7 +142,7 @@ export default function NewYearResult2026({
         </div>
       </div>
     `;
-    downloadAsHtml(htmlContent, `2026신년운세_${name}`);
+    downloadElementAsHtml('newyear2026-result', `2026신년운세_${name}`);
   };
 
   // 일간과 병오년(화화)의 관계 분석
@@ -893,7 +893,7 @@ export default function NewYearResult2026({
   };
 
   return (
-    <div className="min-h-screen px-4 py-8 md:py-12">
+    <div id="newyear2026-result" className="min-h-screen px-4 py-8 md:py-12">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* 헤더 */}
         <motion.div

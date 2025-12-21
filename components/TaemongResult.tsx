@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw, Download, Share2, ArrowLeft } from 'lucide-react';
 import { TaemongFormData } from './TaemongForm';
-import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
 
 // Premium sub-components
@@ -163,51 +163,9 @@ export default function TaemongResult({
   const coreMessage = getCoreMessage();
   const keywords = getKeywords();
 
-  // HTML 다운로드
+  // HTML 다운로드 (화면 그대로 저장)
   const handleDownloadHtml = () => {
-    const htmlContent = `
-      <div class="header">
-        <h1>🌟 태몽해설</h1>
-        <p>${formData.name}님의 태몽 • ${grade}</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">
-          ${formData.dreamCategory === 'animal' && '동물 태몽'}
-          ${formData.dreamCategory === 'plant' && '식물 태몽'}
-          ${formData.dreamCategory === 'nature' && '자연현상 태몽'}
-          ${formData.dreamCategory === 'object' && '물건 태몽'}
-          ${formData.dreamCategory === 'person' && '사람 태몽'}
-          ${formData.dreamCategory === 'other' && '태몽'}
-          | 점수: ${score}점
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💭 태몽 내용</h2>
-        <p>${formData.dreamContent}</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">⭐ 핵심 메시지</h2>
-        <p>${coreMessage}</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🎯 아기의 특성</h2>
-        <div class="grid">
-          ${keywords.map(k => `<div class="card"><div class="card-value">${k}</div></div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💡 태교 조언</h2>
-        <p>매일 아기에게 사랑을 담아 이야기해주세요. 긍정적인 생각과 편안한 마음으로 아기를 기다리는 것이 가장 좋은 태교입니다.</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🙏 축복의 말</h2>
-        <p>${formData.name}이가 건강하게 태어나 행복한 인생을 살기를 기원합니다. 부모님의 사랑 속에서 훌륭한 사람으로 성장하기를 바랍니다.</p>
-      </div>
-    `;
-    downloadAsHtml(htmlContent, `태몽해설_${formData.name}`);
+    downloadElementAsHtml('taemong-result', `태몽해설_${formData.name}`);
   };
 
   // 카카오 공유
@@ -219,7 +177,7 @@ export default function TaemongResult({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
+    <div id="taemong-result" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
       {/* 상단 네비게이션 */}
       <div className="flex justify-between items-center">
         <motion.button

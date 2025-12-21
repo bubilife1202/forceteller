@@ -3,7 +3,7 @@
 import { SajuResult } from '@/lib/saju-calculator';
 import { motion } from 'framer-motion';
 import { RotateCcw, Download, Mail, Share2, ArrowLeft } from 'lucide-react';
-import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
 import EmailModal from './ui/EmailModal';
 import { useState } from 'react';
@@ -96,55 +96,9 @@ export default function MovingResult({
   const movingGrade = getMovingGrade();
   const keywords = getKeywords();
 
+  // HTML 다운로드 (화면 그대로 저장)
   const handleDownloadHtml = () => {
-    const htmlContent = `
-      <div class="header">
-        <h1>🏠 이사/방위운 종합 분석</h1>
-        <p>${name}님의 이사운 • 일간: ${dayElement}(${result.day.stem.ko})</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">이사운 점수: ${movingScore}점 - ${movingGrade}</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🎯 핵심 키워드</h2>
-        <div class="grid">
-          ${keywords.map(k => `<div class="card"><div class="card-value">${k}</div></div>`).join('')}
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🧭 사주 이사운 분석</h2>
-        <p>일간 오행: ${dayElement}(${result.day.stem.ko})</p>
-        <p>재성 (부동산운): ${result.tenGodsCount.재성}개</p>
-        <p>관성 (안정운): ${result.tenGodsCount.관성}개</p>
-        <p>용신: ${result.yongsin}</p>
-        <p style="margin-top: 12px;">
-          ${dayElement === '토' ? '토(土) 일간은 부동산과 가장 밀접합니다. 이사와 주거 변화가 재물운 상승으로 이어질 수 있습니다.' :
-            dayElement === '목' ? '목(木) 일간은 성장과 확장을 상징합니다. 더 넓고 좋은 환경으로의 이사가 길합니다.' :
-            dayElement === '화' ? '화(火) 일간은 활동적입니다. 이사를 통해 새로운 기회와 인연을 만날 수 있습니다.' :
-            dayElement === '금' ? '금(金) 일간은 안정을 추구합니다. 충분히 검토하고 계획적으로 이사하세요.' :
-            '수(水) 일간은 유동적입니다. 빠른 이사 결정과 실행이 가능하나, 신중함도 필요합니다.'}
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🧭 추천 이사 방위</h2>
-        <p>${dayElement === '목' ? '동쪽, 남동쪽' : dayElement === '화' ? '남쪽, 남동쪽' : dayElement === '토' ? '남서쪽, 북동쪽' : dayElement === '금' ? '서쪽, 북서쪽' : '북쪽, 북서쪽'}</p>
-        <p style="margin-top: 8px; color: #94a3b8;">현재 거주지를 기준으로 위 방향으로의 이사가 길합니다</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🏡 추천 주거 형태</h2>
-        <p>${dayElement === '토' || dayElement === '목' ? '단독주택, 아파트 (중대형)' : dayElement === '금' ? '아파트, 빌라' : '아파트, 빌라, 원룸'}</p>
-        <p style="margin-top: 8px;">평수: ${dayElement === '토' || dayElement === '목' ? '30평 이상' : dayElement === '화' ? '20-30평' : '15-25평'}</p>
-      </div>
-
-      <div class="footer">
-        <p>더 자세한 분석은 팔자왕닷컴에서 확인하세요</p>
-        <p>palzawang.co.kr</p>
-      </div>
-    `;
-
-    downloadAsHtml(htmlContent, `${name}_이사운_${new Date().getTime()}.html`);
+    downloadElementAsHtml('moving-result', `이사운_${name}`);
   };
 
   const handleKakaoShare = () => {
@@ -156,7 +110,7 @@ export default function MovingResult({
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div id="moving-result" className="max-w-5xl mx-auto px-4 py-8">
       {/* 헤더 */}
       <motion.div
         className="text-center mb-12"

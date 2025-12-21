@@ -3,7 +3,7 @@
 import { SajuResult } from '@/lib/saju-calculator';
 import { motion } from 'framer-motion';
 import { RotateCcw, Download, Mail, Share2, ArrowLeft } from 'lucide-react';
-import { downloadAsHtml } from '@/lib/utils/export-utils';
+import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
 import EmailModal from './ui/EmailModal';
 import { useState } from 'react';
@@ -103,88 +103,9 @@ export default function CharmResult({
   const charmType = getCharmType();
   const charmOneLiner = getCharmOneLiner();
 
-  // HTML 다운로드
+  // HTML 다운로드 (화면 그대로 저장)
   const handleDownloadHtml = () => {
-    const htmlContent = `
-      <div class="header">
-        <h1>💖 ${name}님의 매력 분석</h1>
-        <p>내 안의 매력 찾기 • ${birthDate.year}.${birthDate.month}.${birthDate.day}</p>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 8px;">일간: ${dayElement}(${result.day.stem.ko}) | 매력 지수: ${charmScore}점</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">✨ 매력 총점</h2>
-        <div class="score ${charmScore >= 80 ? 'high' : charmScore >= 60 ? 'medium' : 'low'}">${charmScore}점</div>
-        <p style="text-align: center; margin-top: 16px; color: #ec4899; font-weight: bold; font-size: 1.1rem;">
-          ${charmType}
-        </p>
-        <p style="text-align: center; margin-top: 8px; color: #cbd5e1; font-style: italic;">
-          "${charmOneLiner}"
-        </p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💎 매력 타입</h2>
-        <p>${charmType}은 ${
-          charmType === '카리스마형' ? '당당한 리더십과 강한 존재감으로 사람들을 이끄는 매력을 가지고 있습니다.' :
-          charmType === '지적매력형' ? '깊이 있는 사고와 통찰력으로 사람들에게 감동을 주는 매력을 가지고 있습니다.' :
-          charmType === '감성매력형' ? '풍부한 감성과 진솔한 표현으로 마음을 움직이는 매력을 가지고 있습니다.' :
-          charmType === '친화력형' ? '따뜻하고 친근한 분위기로 사람들을 편안하게 만드는 매력을 가지고 있습니다.' :
-          charmType === '독창성형' ? '남들과 다른 독특한 시각으로 새로운 가치를 만드는 매력을 가지고 있습니다.' :
-          charmType === '안정감형' ? '든든하고 신뢰할 수 있는 모습으로 안정감을 주는 매력을 가지고 있습니다.' :
-          charmType === '열정매력형' ? '뜨거운 열정과 에너지로 주변을 활기차게 만드는 매력을 가지고 있습니다.' :
-          '세련되고 우아한 품격으로 어디서나 돋보이는 매력을 가지고 있습니다.'
-        }</p>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">🌟 핵심 매력 포인트</h2>
-        <div class="grid">
-          <div class="card">
-            <div class="card-title">외적 매력</div>
-            <div class="card-value">${
-              dayElement === '목' ? '생기발랄함' : dayElement === '화' ? '화려한 존재감' :
-              dayElement === '토' ? '안정적 분위기' : dayElement === '금' ? '세련된 품격' : '신비로운 아우라'
-            }</div>
-          </div>
-          <div class="card">
-            <div class="card-title">내적 매력</div>
-            <div class="card-value">${
-              dayElement === '목' ? '성장 의지' : dayElement === '화' ? '진솔한 열정' :
-              dayElement === '토' ? '깊은 신뢰감' : dayElement === '금' ? '명확한 원칙' : '깊은 통찰력'
-            }</div>
-          </div>
-          <div class="card">
-            <div class="card-title">사교 매력</div>
-            <div class="card-value">${
-              dayElement === '목' ? '따뜻한 공감' : dayElement === '화' ? '열정적 표현' :
-              dayElement === '토' ? '안정적 중재' : dayElement === '금' ? '명확한 논리' : '깊이 있는 대화'
-            }</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">💝 매력 발휘 방법</h2>
-        <ul style="margin-left: 20px;">
-          <li>자신의 강점을 인식하고 자연스럽게 표현하세요</li>
-          <li>있는 그대로의 모습에 자신감을 가지세요</li>
-          <li>다른 사람의 장점도 발견하고 인정해주세요</li>
-          <li>지속적인 자기 개발로 내면을 가꾸세요</li>
-          <li>진심을 담아 소통하고 관계를 맺으세요</li>
-        </ul>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">✨ 한 마디</h2>
-        <p style="text-align: center; font-size: 1.1rem; line-height: 1.8; color: #f1f5f9;">
-          ${name}님은 이미 충분히 매력적인 사람입니다.<br>
-          자신을 사랑하고 있는 그대로를 인정할 때,<br>
-          당신의 진정한 매력이 가장 빛을 발합니다. 💖
-        </p>
-      </div>
-    `;
-    downloadAsHtml(htmlContent, `내안의매력찾기_${name}`);
+    downloadElementAsHtml('charm-result', `내안의매력찾기_${name}`);
   };
 
   // 카카오 공유
@@ -196,7 +117,7 @@ export default function CharmResult({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
+    <div id="charm-result" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
       {/* 상단 네비게이션 */}
       <div className="flex justify-between items-center">
         <motion.button
