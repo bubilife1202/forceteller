@@ -23,6 +23,15 @@ import Wealth2026Debt from './premium/wealth2026/Wealth2026Debt';
 import Wealth2026Partner from './premium/wealth2026/Wealth2026Partner';
 import Wealth2026RealEstate from './premium/wealth2026/Wealth2026RealEstate';
 import Wealth2026Saving from './premium/wealth2026/Wealth2026Saving';
+// 신규 추가 섹션
+import Wealth2026ActionPlan from './premium/wealth2026/Wealth2026ActionPlan';
+import Wealth2026Career from './premium/wealth2026/Wealth2026Career';
+import Wealth2026SideHustle from './premium/wealth2026/Wealth2026SideHustle';
+import Wealth2026Stock from './premium/wealth2026/Wealth2026Stock';
+import Wealth2026Tax from './premium/wealth2026/Wealth2026Tax';
+import Wealth2026Lottery from './premium/wealth2026/Wealth2026Lottery';
+import Wealth2026Quarter from './premium/wealth2026/Wealth2026Quarter';
+import Wealth2026Weakness from './premium/wealth2026/Wealth2026Weakness';
 
 interface Wealth2026ResultProps {
   result: SajuResult;
@@ -142,6 +151,46 @@ export default function Wealth2026Result({
         keywords={keywords}
       />
 
+      {/* Action Buttons */}
+      <div className="flex justify-center gap-3 flex-wrap">
+        <motion.button
+          onClick={handleDownloadHtml}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl font-semibold transition text-white"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Download className="w-4 h-4" />
+          저장
+        </motion.button>
+        <motion.button
+          onClick={() => setIsEmailModalOpen(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-xl font-semibold transition text-white"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Mail className="w-4 h-4" />
+          메일
+        </motion.button>
+        <motion.button
+          onClick={handleKakaoShare}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 rounded-xl font-semibold transition text-white"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Share2 className="w-4 h-4" />
+          카톡
+        </motion.button>
+        <motion.button
+          onClick={onReset}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition text-white"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <RotateCcw className="w-4 h-4" />
+          다시하기
+        </motion.button>
+      </div>
+
       {/* 사주 재성 분석 */}
       <Wealth2026Analysis result={result} name={name} />
 
@@ -180,6 +229,30 @@ export default function Wealth2026Result({
 
       {/* 저축/절약운 */}
       <Wealth2026Saving result={result} name={name} baseScore={wealthScore} />
+
+      {/* 분기별 재물 전략 */}
+      <Wealth2026Quarter result={result} name={name} baseScore={wealthScore} />
+
+      {/* 월별 실행 계획 */}
+      <Wealth2026ActionPlan result={result} name={name} baseScore={wealthScore} />
+
+      {/* 직장/승진운 */}
+      <Wealth2026Career result={result} name={name} baseScore={wealthScore} />
+
+      {/* 부업/투잡 가이드 */}
+      <Wealth2026SideHustle result={result} name={name} baseScore={wealthScore} />
+
+      {/* 주식/펀드 투자 */}
+      <Wealth2026Stock result={result} name={name} baseScore={wealthScore} />
+
+      {/* 절세/세금 가이드 */}
+      <Wealth2026Tax result={result} name={name} baseScore={wealthScore} />
+
+      {/* 복권/행운 운세 */}
+      <Wealth2026Lottery result={result} name={name} baseScore={wealthScore} />
+
+      {/* 재물 약점 분석 */}
+      <Wealth2026Weakness result={result} name={name} baseScore={wealthScore} />
 
       {/* 하단 액션 버튼 */}
       <div className="flex justify-center gap-3 flex-wrap pt-8">
