@@ -115,7 +115,7 @@ export default function Wealth2026Result({
 
       {/* Chapter 6: 행운 & 마무리 */}
       <Lucky dayStem={dayStem} />
-      <Closing name={name} dayStem={dayStem} />
+      <Closing userName={name} dayStem={dayStem} />
 
       {/* ===== 100페이지 컨텐츠 끝 ===== */}
 
