@@ -550,7 +550,7 @@ ForceTeller - AI 운세 서비스
 
         {/* 내보내기 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <button
               onClick={handleDownloadHtml}
               className="flex items-center justify-center gap-2 py-3 px-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
@@ -572,23 +572,14 @@ ForceTeller - AI 운세 서비스
               <Share2 className="w-5 h-5" />
               <span>카톡</span>
             </button>
+            <button
+              onClick={onReset}
+              className="flex items-center justify-center gap-2 py-3 px-3 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl text-white font-medium hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg"
+            >
+              <RefreshCw className="w-5 h-5" />
+              <span>다시하기</span>
+            </button>
           </div>
-
-          <button
-            onClick={onReset}
-            className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl text-white font-bold text-lg hover:from-amber-600 hover:to-orange-700 transition-all flex items-center justify-center gap-2 shadow-lg"
-          >
-            <RefreshCw className="w-5 h-5" />
-            다시 보기
-          </button>
-
-          <button
-            onClick={handleGoHome}
-            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-          >
-            <Home className="w-5 h-5" />
-            홈으로
-          </button>
         </motion.div>
       </div>
     </motion.div>

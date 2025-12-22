@@ -8,30 +8,25 @@ import { shareToKakao } from '@/lib/utils/kakao-share';
 import EmailModal from './ui/EmailModal';
 import { useState } from 'react';
 
-// Premium sub-components
-import Wealth2026Hero from './premium/wealth2026/Wealth2026Hero';
-import Wealth2026Analysis from './premium/wealth2026/Wealth2026Analysis';
-import Wealth2026Income from './premium/wealth2026/Wealth2026Income';
-import Wealth2026Expense from './premium/wealth2026/Wealth2026Expense';
-import Wealth2026Investment from './premium/wealth2026/Wealth2026Investment';
-import Wealth2026Windfall from './premium/wealth2026/Wealth2026Windfall';
-import Wealth2026Monthly from './premium/wealth2026/Wealth2026Monthly';
-import Wealth2026Lucky from './premium/wealth2026/Wealth2026Lucky';
-import Wealth2026Advice from './premium/wealth2026/Wealth2026Advice';
-import Wealth2026Business from './premium/wealth2026/Wealth2026Business';
-import Wealth2026Debt from './premium/wealth2026/Wealth2026Debt';
-import Wealth2026Partner from './premium/wealth2026/Wealth2026Partner';
-import Wealth2026RealEstate from './premium/wealth2026/Wealth2026RealEstate';
-import Wealth2026Saving from './premium/wealth2026/Wealth2026Saving';
-// 신규 추가 섹션
-import Wealth2026ActionPlan from './premium/wealth2026/Wealth2026ActionPlan';
-import Wealth2026Career from './premium/wealth2026/Wealth2026Career';
-import Wealth2026SideHustle from './premium/wealth2026/Wealth2026SideHustle';
-import Wealth2026Stock from './premium/wealth2026/Wealth2026Stock';
-import Wealth2026Tax from './premium/wealth2026/Wealth2026Tax';
-import Wealth2026Lottery from './premium/wealth2026/Wealth2026Lottery';
-import Wealth2026Quarter from './premium/wealth2026/Wealth2026Quarter';
-import Wealth2026Weakness from './premium/wealth2026/Wealth2026Weakness';
+// 100p 버전 컴포넌트들
+import Cover from './premium/wealth2026-100p/Cover';
+import TOC from './premium/wealth2026-100p/TOC';
+import Overview1Year from './premium/wealth2026-100p/Overview1_Year';
+import Overview2Score from './premium/wealth2026-100p/Overview2_Score';
+import DNA1Type from './premium/wealth2026-100p/DNA1_Type';
+import DNA2Mindset from './premium/wealth2026-100p/DNA2_Mindset';
+import DNA3SWOT from './premium/wealth2026-100p/DNA3_SWOT';
+import Income1Main from './premium/wealth2026-100p/Income1_Main';
+import Income2Side from './premium/wealth2026-100p/Income2_Side';
+import Invest1Profile from './premium/wealth2026-100p/Invest1_Profile';
+import Invest2Assets from './premium/wealth2026-100p/Invest2_Assets';
+import Monthly1Q1 from './premium/wealth2026-100p/Monthly1_Q1';
+import Monthly2Q2 from './premium/wealth2026-100p/Monthly2_Q2';
+import Monthly3Q3 from './premium/wealth2026-100p/Monthly3_Q3';
+import Monthly4Q4 from './premium/wealth2026-100p/Monthly4_Q4';
+import Lucky from './premium/wealth2026-100p/Lucky';
+import Closing from './premium/wealth2026-100p/Closing';
+import { WEALTH_2026_BY_STEM } from './premium/wealth2026-100p/data';
 
 interface Wealth2026ResultProps {
   result: SajuResult;
@@ -51,69 +46,14 @@ export default function Wealth2026Result({
   onBack,
 }: Wealth2026ResultProps) {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const dayStem = result.day.stem.ko;
   const dayElement = result.day.stem.element;
+  const yearData = WEALTH_2026_BY_STEM[dayStem] || WEALTH_2026_BY_STEM['갑'];
 
-  // 재물운 총점 계산
-  const calculateWealthScore = () => {
-    let score = 50;
-    const { 재성, 식상, 관성: _관성, 비겁 } = result.tenGodsCount;
-
-    // 재성 가점
-    if (재성 >= 2) score += 15;
-    else if (재성 >= 1) score += 8;
-
-    // 식상 가점 (재성을 생함)
-    if (식상 >= 2) score += 10;
-    else if (식상 >= 1) score += 5;
-
-    // 일간과 병오년 관계
-    if (dayElement === '토') score += 20; // 화생토 - 최고
-    if (dayElement === '화') score += 10; // 비겁운
-    if (dayElement === '목') score += 5; // 목생화
-    if (dayElement === '금') score -= 15; // 화극금
-    if (dayElement === '수') score += 8; // 수극화 (통제)
-
-    // 용신이 화이면 가점
-    if (result.yongsin === '화') score += 15;
-
-    // 비겁 과다 감점
-    if (비겁 >= 3) score -= 10;
-
-    // 범위 제한
-    return Math.min(Math.max(score, 30), 100);
-  };
-
-  const wealthScore = calculateWealthScore();
-
-  // 등급 판정
-  const getWealthGrade = () => {
-    if (wealthScore >= 80) return '대박';
-    if (wealthScore >= 65) return '상승';
-    if (wealthScore >= 50) return '안정';
-    return '주의';
-  };
-
-  // 키워드 생성
-  const getKeywords = () => {
-    const keywords = [];
-    const { 재성, 식상 } = result.tenGodsCount;
-
-    if (wealthScore >= 70) keywords.push('재물복 상승');
-    if (dayElement === '토') keywords.push('부동산 유리');
-    if (재성 >= 2) keywords.push('투자 적기');
-    if (식상 >= 2) keywords.push('부수입 기회');
-    if (dayElement === '금') keywords.push('저축 권장');
-    if (dayElement === '화') keywords.push('사업 확장');
-
-    if (keywords.length < 3) {
-      keywords.push('꾸준한 노력', '계획적 재테크');
-    }
-
-    return keywords.slice(0, 4);
-  };
-
-  const wealthGrade = getWealthGrade();
-  const keywords = getKeywords();
+  // 재물운 총점
+  const wealthScore = yearData.yearScore;
+  const wealthGrade = yearData.grade;
+  const keywords = yearData.keywords;
 
   // HTML 다운로드 (화면 그대로 저장)
   const handleDownloadHtml = () => {
@@ -129,7 +69,7 @@ export default function Wealth2026Result({
   };
 
   return (
-    <div id="wealth2026-result" className="w-full max-w-6xl mx-auto space-y-12 py-12 px-4">
+    <div id="wealth2026-result" className="w-full max-w-4xl mx-auto space-y-12 py-12 px-4">
       {/* 상단 네비게이션 */}
       <div className="flex justify-between items-center">
         <motion.button
@@ -142,117 +82,42 @@ export default function Wealth2026Result({
         </motion.button>
       </div>
 
-      {/* Hero Section */}
-      <Wealth2026Hero
-        result={result}
-        name={name}
-        wealthScore={wealthScore}
-        wealthGrade={wealthGrade}
-        keywords={keywords}
-      />
+      {/* ===== 100페이지 컨텐츠 시작 ===== */}
 
-      {/* Action Buttons */}
-      <div className="flex justify-center gap-3 flex-wrap">
-        <motion.button
-          onClick={handleDownloadHtml}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Download className="w-4 h-4" />
-          저장
-        </motion.button>
-        <motion.button
-          onClick={() => setIsEmailModalOpen(true)}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Mail className="w-4 h-4" />
-          메일
-        </motion.button>
-        <motion.button
-          onClick={handleKakaoShare}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Share2 className="w-4 h-4" />
-          카톡
-        </motion.button>
-        <motion.button
-          onClick={onReset}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <RotateCcw className="w-4 h-4" />
-          다시하기
-        </motion.button>
-      </div>
+      {/* 표지 */}
+      <Cover name={name} dayStem={dayStem} />
 
-      {/* 사주 재성 분석 */}
-      <Wealth2026Analysis result={result} name={name} />
+      {/* 목차 */}
+      <TOC />
 
-      {/* 수입운 상세 */}
-      <Wealth2026Income result={result} name={name} baseScore={wealthScore} />
+      {/* Chapter 1: 개요 */}
+      <Overview1Year dayStem={dayStem} />
+      <Overview2Score result={result} name={name} />
 
-      {/* 지출운 분석 */}
-      <Wealth2026Expense result={result} name={name} baseScore={wealthScore} />
+      {/* Chapter 2: DNA 분석 */}
+      <DNA1Type dayStem={dayStem} name={name} />
+      <DNA2Mindset dayStem={dayStem} />
+      <DNA3SWOT dayStem={dayStem} />
 
-      {/* 투자운 상세 */}
-      <Wealth2026Investment result={result} name={name} baseScore={wealthScore} />
+      {/* Chapter 3: 수입운 */}
+      <Income1Main result={result} name={name} />
+      <Income2Side dayStem={dayStem} />
 
-      {/* 횡재운 */}
-      <Wealth2026Windfall result={result} name={name} baseScore={wealthScore} />
+      {/* Chapter 4: 투자운 */}
+      <Invest1Profile dayStem={dayStem} />
+      <Invest2Assets dayStem={dayStem} />
 
-      {/* 월별 재물 캘린더 */}
-      <Wealth2026Monthly result={result} name={name} baseScore={wealthScore} />
+      {/* Chapter 5: 월별 운세 */}
+      <Monthly1Q1 dayStem={dayStem} />
+      <Monthly2Q2 dayStem={dayStem} />
+      <Monthly3Q3 dayStem={dayStem} />
+      <Monthly4Q4 dayStem={dayStem} />
 
-      {/* 재물 행운 아이템 */}
-      <Wealth2026Lucky result={result} name={name} />
+      {/* Chapter 6: 행운 & 마무리 */}
+      <Lucky dayStem={dayStem} />
+      <Closing name={name} dayStem={dayStem} />
 
-      {/* 주의사항 & 조언 */}
-      <Wealth2026Advice result={result} name={name} wealthScore={wealthScore} />
-
-      {/* 사업운 분석 */}
-      <Wealth2026Business result={result} name={name} baseScore={wealthScore} />
-
-      {/* 부채/빚 관리운 */}
-      <Wealth2026Debt result={result} name={name} baseScore={wealthScore} />
-
-      {/* 동업/파트너십운 */}
-      <Wealth2026Partner result={result} name={name} baseScore={wealthScore} />
-
-      {/* 부동산운 */}
-      <Wealth2026RealEstate result={result} name={name} baseScore={wealthScore} />
-
-      {/* 저축/절약운 */}
-      <Wealth2026Saving result={result} name={name} baseScore={wealthScore} />
-
-      {/* 분기별 재물 전략 */}
-      <Wealth2026Quarter result={result} name={name} baseScore={wealthScore} />
-
-      {/* 월별 실행 계획 */}
-      <Wealth2026ActionPlan result={result} name={name} baseScore={wealthScore} />
-
-      {/* 직장/승진운 */}
-      <Wealth2026Career result={result} name={name} baseScore={wealthScore} />
-
-      {/* 부업/투잡 가이드 */}
-      <Wealth2026SideHustle result={result} name={name} baseScore={wealthScore} />
-
-      {/* 주식/펀드 투자 */}
-      <Wealth2026Stock result={result} name={name} baseScore={wealthScore} />
-
-      {/* 절세/세금 가이드 */}
-      <Wealth2026Tax result={result} name={name} baseScore={wealthScore} />
-
-      {/* 복권/행운 운세 */}
-      <Wealth2026Lottery result={result} name={name} baseScore={wealthScore} />
-
-      {/* 재물 약점 분석 */}
-      <Wealth2026Weakness result={result} name={name} baseScore={wealthScore} />
+      {/* ===== 100페이지 컨텐츠 끝 ===== */}
 
       {/* 하단 액션 버튼 */}
       <div className="flex justify-center gap-3 flex-wrap pt-8">
@@ -298,7 +163,7 @@ export default function Wealth2026Result({
       <EmailModal
         isOpen={isEmailModalOpen}
         onClose={() => setIsEmailModalOpen(false)}
-        htmlContent={`${name}님의 2026년 대박 재물운 결과입니다.\n\n재물운 점수: ${wealthScore}점 (${wealthGrade})\n일간: ${result.day.stem.ko}(${dayElement})\n\n핵심 키워드: ${keywords.join(', ')}`}
+        htmlContent={`${name}님의 2026년 대박 재물운 결과입니다.\n\n재물운 점수: ${wealthScore}점 (${wealthGrade})\n일간: ${dayStem}(${dayElement})\n\n핵심 키워드: ${keywords.join(', ')}`}
         fortuneType="wealth2026"
         title={`${name}님의 2026 대박 재물운`}
       />

@@ -1097,51 +1097,35 @@ ForceTeller - AI 운세 서비스
           </p>
         </motion.div>
 
-        {/* 내보내기 버튼 */}
-        <motion.div variants={itemVariants} className="glass-strong rounded-3xl p-6 mb-6">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Download className="w-5 h-5 text-pink-400" />
-            결과 내보내기
-          </h2>
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={handleDownloadHtml}
-              className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-xl text-pink-300 font-medium hover:from-pink-500/30 hover:to-rose-500/30 transition-all"
-            >
-              <Download className="w-4 h-4" />
-              저장
-            </button>
-            <button
-              onClick={handleSendEmail}
-              className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-violet-500/20 to-purple-500/20 border border-violet-500/30 rounded-xl text-violet-300 font-medium hover:from-violet-500/30 hover:to-purple-500/30 transition-all"
-            >
-              <Mail className="w-4 h-4" />
-              메일
-            </button>
-            <button
-              onClick={handleKakaoShare}
-              className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-xl text-yellow-300 font-medium hover:from-yellow-500/30 hover:to-amber-500/30 transition-all"
-            >
-              <Share2 className="w-4 h-4" />
-              카톡
-            </button>
-          </div>
-        </motion.div>
-
         {/* 버튼 */}
-        <motion.div variants={itemVariants} className="space-y-3">
+        <motion.div variants={itemVariants} className="grid grid-cols-4 gap-3">
           <button
-            onClick={onReset}
-            className="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl text-white font-bold text-lg hover:from-pink-600 hover:to-rose-700 transition-all flex items-center justify-center gap-2 shadow-lg"
+            onClick={handleDownloadHtml}
+            className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-xl text-pink-300 font-medium hover:from-pink-500/30 hover:to-rose-500/30 transition-all"
           >
-            <RefreshCw className="w-5 h-5" />
-            다시 보기
+            <Download className="w-4 h-4" />
+            저장
           </button>
           <button
-            onClick={onBack}
-            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"
+            onClick={handleSendEmail}
+            className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-violet-500/20 to-purple-500/20 border border-violet-500/30 rounded-xl text-violet-300 font-medium hover:from-violet-500/30 hover:to-purple-500/30 transition-all"
           >
-            메뉴로
+            <Mail className="w-4 h-4" />
+            메일
+          </button>
+          <button
+            onClick={handleKakaoShare}
+            className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 rounded-xl text-yellow-300 font-medium hover:from-yellow-500/30 hover:to-amber-500/30 transition-all"
+          >
+            <Share2 className="w-4 h-4" />
+            카톡
+          </button>
+          <button
+            onClick={onReset}
+            className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-xl text-pink-300 font-medium hover:from-pink-500/30 hover:to-rose-500/30 transition-all"
+          >
+            <RefreshCw className="w-4 h-4" />
+            다시하기
           </button>
         </motion.div>
       </div>

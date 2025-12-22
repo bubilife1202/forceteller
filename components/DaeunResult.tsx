@@ -739,16 +739,6 @@ ForceTeller - AI 운세 서비스
       animate="visible"
     >
       <div id="daeun-result" className="max-w-lg mx-auto">
-        {/* 뒤로가기 */}
-        <motion.button
-          variants={itemVariants}
-          onClick={onBack}
-          className="mb-6 flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>메뉴로</span>
-        </motion.button>
-
         {/* 헤더 */}
         <motion.div variants={itemVariants} className="text-center mb-6">
           <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center shadow-lg mb-4">
@@ -1776,33 +1766,6 @@ ForceTeller - AI 운세 서비스
           </div>
         </motion.div>
 
-        {/* 내보내기 버튼 */}
-        <motion.div variants={itemVariants} className="mb-6">
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={handleDownloadHtml}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
-            >
-              <Download className="w-5 h-5" />
-              <span>저장</span>
-            </button>
-            <button
-              onClick={handleSendEmail}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
-            >
-              <Mail className="w-5 h-5" />
-              <span>메일</span>
-            </button>
-            <button
-              onClick={handleKakaoShare}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl text-white font-medium hover:from-yellow-600 hover:to-amber-700 transition-all shadow-lg"
-            >
-              <Share2 className="w-5 h-5" />
-              <span>카톡</span>
-            </button>
-          </div>
-        </motion.div>
-
         {/* 면책 조항 */}
         <motion.div variants={itemVariants} className="glass rounded-2xl p-4 mb-6">
           <p className="text-slate-400 text-xs text-center">
@@ -1842,7 +1805,7 @@ ForceTeller - AI 운세 서비스
             className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-bold text-lg hover:from-blue-600 hover:to-cyan-600 transition-all flex items-center justify-center gap-2 shadow-lg"
           >
             <RefreshCw className="w-5 h-5" />
-            다시 분석하기
+            다시하기
           </button>
           <button
             onClick={onBack}

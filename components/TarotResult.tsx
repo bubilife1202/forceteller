@@ -306,37 +306,6 @@ ForceTeller - AI 운세 서비스
             animate={{ opacity: 1 }}
             className="w-full max-w-2xl"
           >
-            {/* 헤더 */}
-            <div className="flex justify-between items-center mb-6">
-              <motion.button
-                onClick={onBack}
-                className="p-2 rounded-full bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </motion.button>
-
-              <div className="flex gap-2">
-                <motion.button
-                  onClick={handleKakaoShare}
-                  className="p-2 rounded-full bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <Share2 className="w-5 h-5" />
-                </motion.button>
-                <motion.button
-                  onClick={onReset}
-                  className="p-2 rounded-full bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <RotateCcw className="w-5 h-5" />
-                </motion.button>
-              </div>
-            </div>
-
             {/* 오늘의 타로 헤더 */}
             <motion.div
               className="text-center mb-6"
@@ -533,14 +502,14 @@ ForceTeller - AI 운세 서비스
                   className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
                 >
                   <Download className="w-5 h-5" />
-                  <span>결과 저장하기</span>
+                  <span>저장</span>
                 </button>
                 <button
                   onClick={handleSendEmail}
                   className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
                 >
                   <Mail className="w-5 h-5" />
-                  <span>메일 보내기</span>
+                  <span>메일</span>
                 </button>
               </div>
 
@@ -550,14 +519,14 @@ ForceTeller - AI 운세 서비스
                   className="flex items-center justify-center gap-2 py-3 px-4 bg-yellow-500 rounded-xl text-black font-medium hover:bg-yellow-400 transition-colors shadow-lg"
                 >
                   <Share2 className="w-5 h-5" />
-                  <span>카톡 공유</span>
+                  <span>카톡</span>
                 </button>
                 <button
                   onClick={onReset}
                   className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl text-white font-medium hover:opacity-90 transition-opacity shadow-lg"
                 >
                   <RotateCcw className="w-5 h-5" />
-                  <span>다시 뽑기</span>
+                  <span>다시하기</span>
                 </button>
               </div>
 

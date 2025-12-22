@@ -691,7 +691,7 @@ ForceTeller - AI 운세 서비스
             className="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl text-white font-bold text-lg hover:from-indigo-600 hover:to-purple-700 transition-all flex items-center justify-center gap-2 shadow-lg"
           >
             <RefreshCw className="w-5 h-5" />
-            다른 달 보기
+            다시하기
           </button>
 
           <button

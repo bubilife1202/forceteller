@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, RefreshCw, Coins, TrendingUp, Calendar, Star, Sparkles, Target, Clock, Gift, Gem, Crown, DollarSign, PiggyBank, Wallet, Download, Share2 } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Coins, TrendingUp, Calendar, Star, Sparkles, Target, Clock, Gift, Gem, Crown, DollarSign, PiggyBank, Wallet, Download, Share2, Mail } from 'lucide-react';
 import { WealthFortuneFormData } from './WealthFortuneForm';
 import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { getDayPillar, getTenGod } from '@/lib/saju-calculator';
@@ -230,6 +230,19 @@ export default function WealthFortuneResult({ formData, onReset, onBack }: Wealt
   const handleDownloadHtml = () => {
     const today = new Date().toISOString().split('T')[0];
     downloadElementAsHtml('wealth-result', `${formData.name}_재물운_${today}`);
+  };
+
+  // 메일 공유 함수
+  const handleEmailShare = () => {
+    const subject = encodeURIComponent(`💰 ${name}님의 재물운`);
+    const body = encodeURIComponent(
+      `${name}님의 재물운 분석 결과\n\n` +
+      `일간: ${dayStem.ko}(${dayStem.cn})\n` +
+      `재물 점수: ${wealthScore}점\n` +
+      `등급: ${gradeInfo.grade}\n\n` +
+      `자세한 내용은 아래 링크에서 확인하세요:\n${window.location.href}`
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
   // 카카오톡 공유 함수
@@ -778,35 +791,36 @@ export default function WealthFortuneResult({ formData, onReset, onBack }: Wealt
 
         {/* 버튼 */}
         <motion.div variants={itemVariants} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-4 gap-2">
             <button
               onClick={handleDownloadHtml}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
+              className="flex flex-col items-center justify-center gap-1 py-3 px-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg"
             >
               <Download className="w-5 h-5" />
-              <span>저장</span>
+              <span className="text-sm">저장</span>
+            </button>
+            <button
+              onClick={handleEmailShare}
+              className="flex flex-col items-center justify-center gap-1 py-3 px-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-white font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg"
+            >
+              <Mail className="w-5 h-5" />
+              <span className="text-sm">메일</span>
             </button>
             <button
               onClick={handleKakaoShare}
-              className="flex items-center justify-center gap-2 py-3 px-4 bg-yellow-500 rounded-xl text-black font-medium hover:bg-yellow-400 transition-colors shadow-lg"
+              className="flex flex-col items-center justify-center gap-1 py-3 px-2 bg-yellow-500 rounded-xl text-black font-medium hover:bg-yellow-400 transition-colors shadow-lg"
             >
               <Share2 className="w-5 h-5" />
-              <span>카톡 공유</span>
+              <span className="text-sm">카톡</span>
+            </button>
+            <button
+              onClick={onReset}
+              className="flex flex-col items-center justify-center gap-1 py-3 px-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl text-white font-medium hover:from-purple-600 hover:to-pink-700 transition-all shadow-lg"
+            >
+              <RefreshCw className="w-5 h-5" />
+              <span className="text-sm">다시하기</span>
             </button>
           </div>
-          <button
-            onClick={onReset}
-            className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-2xl text-black font-bold text-lg hover:from-yellow-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg"
-          >
-            <RefreshCw className="w-5 h-5" />
-            다시 보기
-          </button>
-          <button
-            onClick={onBack}
-            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all"
-          >
-            메뉴로
-          </button>
         </motion.div>
       </div>
     </motion.div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { RotateCcw, Download, Share2, ArrowLeft } from 'lucide-react';
+import { RotateCcw, Download, Share2, ArrowLeft, Mail } from 'lucide-react';
 import { TaemongFormData } from './TaemongForm';
 import { downloadElementAsHtml } from '@/lib/utils/export-utils';
 import { shareToKakao } from '@/lib/utils/kakao-share';
@@ -199,37 +199,6 @@ export default function TaemongResult({
         keywords={keywords}
       />
 
-      {/* Action Buttons */}
-      <div className="flex justify-center gap-3 flex-wrap">
-        <motion.button
-          onClick={handleDownloadHtml}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Download className="w-4 h-4" />
-          저장
-        </motion.button>
-        <motion.button
-          onClick={handleKakaoShare}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Share2 className="w-4 h-4" />
-          카톡
-        </motion.button>
-        <motion.button
-          onClick={onReset}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <RotateCcw className="w-4 h-4" />
-          다시하기
-        </motion.button>
-      </div>
-
       {/* 상징 분석 */}
       <TaemongSymbols formData={formData} />
 
@@ -278,7 +247,25 @@ export default function TaemongResult({
           whileTap={{ scale: 0.95 }}
         >
           <Download className="w-4 h-4" />
-          결과 저장
+          저장
+        </motion.button>
+        <motion.button
+          onClick={() => {}}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-xl font-semibold transition text-white"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Mail className="w-4 h-4" />
+          메일
+        </motion.button>
+        <motion.button
+          onClick={handleKakaoShare}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 rounded-xl font-semibold transition text-white"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Share2 className="w-4 h-4" />
+          카톡
         </motion.button>
         <motion.button
           onClick={onReset}
@@ -287,7 +274,7 @@ export default function TaemongResult({
           whileTap={{ scale: 0.95 }}
         >
           <RotateCcw className="w-4 h-4" />
-          다시 보기
+          다시하기
         </motion.button>
       </div>
 

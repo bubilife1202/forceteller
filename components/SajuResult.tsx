@@ -60,22 +60,6 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
                 </span>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={handleDownloadHtml}
-                className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-medium transition"
-                title="HTML로 저장"
-              >
-                <Download className="w-4 h-4" />
-                결과 저장하기
-              </button>
-              <button
-                onClick={onReset}
-                className="px-6 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:bg-opacity-90 transition"
-              >
-                {t('buttons.reset')}
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -240,6 +224,33 @@ export default function SajuResultSimplified({ result, name, gender, onReset }: 
         <div className="pt-4 border-t border-gray-200 dark:border-gray-700 mt-6">
           <p className="font-semibold text-indigo-600 dark:text-indigo-400">{tCommon('version')}</p>
         </div>
+      </div>
+
+      {/* 하단 버튼 그룹 */}
+      <div className="flex flex-wrap justify-center gap-3 pb-8">
+        <button
+          onClick={handleDownloadHtml}
+          className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition shadow-lg"
+        >
+          <Download className="w-4 h-4" />
+          저장
+        </button>
+        <button
+          className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition shadow-lg"
+        >
+          메일
+        </button>
+        <button
+          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-semibold transition shadow-lg"
+        >
+          카톡
+        </button>
+        <button
+          onClick={onReset}
+          className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition shadow-lg"
+        >
+          다시하기
+        </button>
       </div>
     </div>
   );

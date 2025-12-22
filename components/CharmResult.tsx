@@ -140,46 +140,6 @@ export default function CharmResult({
         charmOneLiner={charmOneLiner}
       />
 
-      {/* Action Buttons */}
-      <div className="flex justify-center gap-3 flex-wrap">
-        <motion.button
-          onClick={handleDownloadHtml}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Download className="w-4 h-4" />
-          저장
-        </motion.button>
-        <motion.button
-          onClick={() => setIsEmailModalOpen(true)}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Mail className="w-4 h-4" />
-          메일
-        </motion.button>
-        <motion.button
-          onClick={handleKakaoShare}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Share2 className="w-4 h-4" />
-          카톡
-        </motion.button>
-        <motion.button
-          onClick={onReset}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl font-semibold transition text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <RotateCcw className="w-4 h-4" />
-          다시하기
-        </motion.button>
-      </div>
-
       {/* 5가지 핵심 매력 */}
       <CharmCoreTraits result={result} name={name} />
 
@@ -228,7 +188,25 @@ export default function CharmResult({
           whileTap={{ scale: 0.95 }}
         >
           <Download className="w-4 h-4" />
-          결과 저장
+          저장
+        </motion.button>
+        <motion.button
+          onClick={() => setIsEmailModalOpen(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-xl font-semibold transition text-white"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Mail className="w-4 h-4" />
+          메일
+        </motion.button>
+        <motion.button
+          onClick={handleKakaoShare}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 rounded-xl font-semibold transition text-white"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Share2 className="w-4 h-4" />
+          카톡
         </motion.button>
         <motion.button
           onClick={onReset}
@@ -237,7 +215,7 @@ export default function CharmResult({
           whileTap={{ scale: 0.95 }}
         >
           <RotateCcw className="w-4 h-4" />
-          다시 보기
+          다시하기
         </motion.button>
       </div>
 

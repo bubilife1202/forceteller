@@ -1637,15 +1637,7 @@ ForceTeller - AI 운세 서비스
             className="w-full py-4 bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl text-white font-bold hover:from-violet-600 hover:to-purple-700 transition-all flex items-center justify-center gap-2 shadow-lg"
           >
             <RefreshCw className="w-5 h-5" />
-            다른 꿈 풀이
-          </button>
-
-          <button
-            onClick={handleGoHome}
-            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-          >
-            <Home className="w-5 h-5" />
-            홈으로
+            다시하기
           </button>
         </motion.div>
       </div>

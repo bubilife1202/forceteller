@@ -831,33 +831,6 @@ ForceTeller - AI 운세 서비스
             <ArrowLeft className="w-5 h-5" />
             <span>메뉴로</span>
           </button>
-          <div className="flex gap-2">
-            <button
-              onClick={handleDownloadHtml}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              <span className="text-sm">저장</span>
-            </button>
-            <button
-              onClick={handleSendEmail}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors"
-            >
-              <Mail className="w-4 h-4" />
-              <span className="text-sm">메일</span>
-            </button>
-            <button
-              onClick={handleKakaoShare}
-              className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 rounded-lg transition-colors"
-            >
-              <Share2 className="w-4 h-4" />
-              <span className="text-sm">카톡</span>
-            </button>
-            <button onClick={onReset} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-              <RefreshCw className="w-5 h-5" />
-              <span>다시하기</span>
-            </button>
-          </div>
         </motion.div>
 
         {/* 타이틀 */}
@@ -1839,16 +1812,32 @@ ForceTeller - AI 운세 서비스
         {/* 하단 버튼 */}
         <motion.div variants={itemVariants} className="flex gap-3">
           <button
-            onClick={onBack}
-            className="flex-1 py-4 bg-slate-700 hover:bg-slate-600 rounded-2xl text-white font-medium transition-colors"
+            onClick={handleDownloadHtml}
+            className="flex-1 py-4 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-2xl font-medium transition-colors flex items-center justify-center gap-2"
           >
-            다른 메뉴 보기
+            <Download className="w-5 h-5" />
+            저장
+          </button>
+          <button
+            onClick={handleSendEmail}
+            className="flex-1 py-4 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-2xl font-medium transition-colors flex items-center justify-center gap-2"
+          >
+            <Mail className="w-5 h-5" />
+            메일
+          </button>
+          <button
+            onClick={handleKakaoShare}
+            className="flex-1 py-4 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 rounded-2xl font-medium transition-colors flex items-center justify-center gap-2"
+          >
+            <Share2 className="w-5 h-5" />
+            카톡
           </button>
           <button
             onClick={onReset}
-            className="flex-1 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl text-white font-medium hover:from-emerald-600 hover:to-teal-600 transition-all"
+            className="flex-1 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl text-white font-medium hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2"
           >
-            다시 분석하기
+            <RefreshCw className="w-5 h-5" />
+            다시하기
           </button>
         </motion.div>
       </div>

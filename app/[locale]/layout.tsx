@@ -5,7 +5,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales } from '@/i18n';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import ThemeToggle from '@/components/ThemeToggle';
+// import ThemeToggle from '@/components/ThemeToggle'; // 라이트 모드 임시 비활성화
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -145,7 +145,7 @@ export default async function LocaleLayout({
       <body className="antialiased">
         <ThemeProvider>
           <NextIntlClientProvider messages={messages}>
-            <ThemeToggle />
+            {/* <ThemeToggle /> 라이트 모드 임시 비활성화 */}
             {children}
           </NextIntlClientProvider>
         </ThemeProvider>

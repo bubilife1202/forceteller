@@ -133,49 +133,6 @@ export default function MovingResult({
         </p>
       </motion.div>
 
-      {/* 버튼 그룹 */}
-      <motion.div
-        className="flex flex-wrap justify-center gap-4 mb-12"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <button
-          onClick={onBack}
-          className="px-6 py-3 glass rounded-xl hover:glass-strong transition-all flex items-center gap-2 group"
-        >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span>홈으로</span>
-        </button>
-        <button
-          onClick={onReset}
-          className="px-6 py-3 glass rounded-xl hover:glass-strong transition-all flex items-center gap-2 group"
-        >
-          <RotateCcw className="w-5 h-5 group-hover:rotate-180 transition-transform" />
-          <span>다시 보기</span>
-        </button>
-        <button
-          onClick={handleDownloadHtml}
-          className="px-6 py-3 glass rounded-xl hover:glass-strong transition-all flex items-center gap-2 group"
-        >
-          <Download className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
-          <span>HTML 저장</span>
-        </button>
-        <button
-          onClick={() => setIsEmailModalOpen(true)}
-          className="px-6 py-3 glass rounded-xl hover:glass-strong transition-all flex items-center gap-2 group"
-        >
-          <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <span>이메일 전송</span>
-        </button>
-        <button
-          onClick={handleKakaoShare}
-          className="px-6 py-3 bg-yellow-400 text-gray-900 rounded-xl hover:bg-yellow-300 transition-all flex items-center gap-2 group font-bold"
-        >
-          <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <span>카카오 공유</span>
-        </button>
-      </motion.div>
 
       {/* 모든 섹션 */}
       <div className="space-y-8">
@@ -203,18 +160,32 @@ export default function MovingResult({
         viewport={{ once: true }}
       >
         <button
+          onClick={handleDownloadHtml}
+          className="px-8 py-4 glass rounded-xl hover:glass-strong transition-all flex items-center gap-2 group"
+        >
+          <Download className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+          <span>저장</span>
+        </button>
+        <button
+          onClick={() => setIsEmailModalOpen(true)}
+          className="px-8 py-4 glass rounded-xl hover:glass-strong transition-all flex items-center gap-2 group"
+        >
+          <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          <span>메일</span>
+        </button>
+        <button
+          onClick={handleKakaoShare}
+          className="px-8 py-4 bg-yellow-400 text-gray-900 rounded-xl hover:bg-yellow-300 transition-all flex items-center gap-2 group font-bold"
+        >
+          <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          <span>카톡</span>
+        </button>
+        <button
           onClick={onReset}
           className="px-8 py-4 glass rounded-xl hover:glass-strong transition-all flex items-center gap-2 group"
         >
           <RotateCcw className="w-5 h-5 group-hover:rotate-180 transition-transform" />
-          <span>다시 보기</span>
-        </button>
-        <button
-          onClick={onBack}
-          className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2 group font-bold"
-        >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span>홈으로 돌아가기</span>
+          <span>다시하기</span>
         </button>
       </motion.div>
 

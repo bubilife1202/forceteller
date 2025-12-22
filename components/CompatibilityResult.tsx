@@ -1801,17 +1801,7 @@ ForceTeller - AI 운세 서비스
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            다시 입력하기
-          </motion.button>
-
-          <motion.button
-            onClick={handleGoHome}
-            className="w-full py-3 bg-slate-700/50 rounded-2xl text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Home className="w-5 h-5" />
-            홈으로
+            다시하기
           </motion.button>
         </div>
       </div>
