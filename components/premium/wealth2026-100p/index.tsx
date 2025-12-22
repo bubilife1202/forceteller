@@ -62,7 +62,7 @@ export default function Wealth2026_100p({ result, name, gender, birthDate }: Wea
 
       {/* 행운 & 마무리 */}
       <Lucky dayStem={dayStem} />
-      <Closing name={name} dayStem={dayStem} />
+      <Closing userName={name} dayStem={dayStem} />
     </div>
   );
 }
