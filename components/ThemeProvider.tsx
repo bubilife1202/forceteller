@@ -17,15 +17,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    // 로컬 스토리지에서 테마 불러오기
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else {
-      // 시스템 설정 확인
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(prefersDark ? 'dark' : 'light');
-    }
+    // 항상 다크 모드 사용 (라이트 모드 비활성화)
+    setTheme('dark');
+    localStorage.setItem('theme', 'dark');
   }, []);
 
   useEffect(() => {

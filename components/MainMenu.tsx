@@ -194,7 +194,7 @@ export default function MainMenu() {
           hoverGlow="0 0 40px rgba(251, 146, 60, 0.2)"
         />
 
-        {/* 2-2. 내일의 운세 */}
+        {/* 3. 내일의 운세 */}
         <MenuCard
           option="tomorrow"
           href="/tomorrow"
@@ -212,7 +212,65 @@ export default function MainMenu() {
           hoverGlow="0 0 40px rgba(139, 92, 246, 0.2)"
         />
 
-        {/* 2. 대박 재물운 (매출 1등) */}
+        {/* Row 2: 프리미엄 운세 (만세력, 재물운, 신년운세) */}
+
+        {/* 4. 만세력 (250페이지 프리미엄) */}
+        <MenuCard
+          option="saju"
+          href="/saju"
+          icon={<Sparkles className="w-7 h-7 text-white" />}
+          title="만세력"
+          subtitle="250페이지 상세 사주풀이"
+          description="생년월일시로 보는 완벽한 사주팔자 분석. 오행, 용신, 대운, 평생 운세까지 상세 풀이!"
+          tags={['사주팔자', '오행 분석', '대운/세운']}
+          buttonText="만세력 보기"
+          gradient="bg-gradient-to-br from-amber-400 to-orange-500"
+          textColor="text-amber-400"
+          tagBg="bg-amber-500/20 text-amber-300"
+          badge={{ text: '⭐ 추천', color: 'bg-amber-500 text-black' }}
+          delay={0.25}
+          hoverGlow="0 0 40px rgba(251, 191, 36, 0.3)"
+        />
+
+        {/* 5. 2026 대박 재물운 */}
+        <MenuCard
+          option="wealth2026"
+          href="/wealth2026"
+          icon={<span className="text-2xl">💎</span>}
+          title="2026 대박 재물운"
+          subtitle="100페이지 재물 분석"
+          description="2026년 나의 재물운은? 월별 재물 흐름, 투자 적기, 횡재운까지 상세 분석!"
+          tags={['월별 재물운', '투자 타이밍', '횡재운']}
+          buttonText="재물운 분석하기"
+          gradient="bg-gradient-to-br from-amber-400 to-yellow-600"
+          textColor="text-amber-400"
+          tagBg="bg-amber-500/20 text-amber-300"
+          badge={{ text: '💰 인기', color: 'bg-amber-500 text-black' }}
+          delay={0.28}
+          hoverGlow="0 0 40px rgba(245, 158, 11, 0.3)"
+        />
+
+        {/* 6. 2026 신년운세 */}
+        <MenuCard
+          option="newyear2026"
+          href="/newyear2026"
+          icon={<span className="text-2xl">🐴</span>}
+          title="2026 신년운세"
+          subtitle="100페이지 신년운세"
+          description="2026년 붉은 말의 해, 나에게 어떤 한 해가 될까요? 월별 상세 운세와 맞춤 전략."
+          tags={['병오년', '월별 운세', '전통 비결']}
+          buttonText="2026년 운세 보기"
+          gradient="bg-gradient-to-br from-red-400 to-red-600"
+          textColor="text-red-400"
+          tagBg="bg-red-500/20 text-red-300"
+          badge={{ text: '🐴 2026', color: 'bg-red-500' }}
+          delay={0.3}
+          hoverGlow="0 0 40px rgba(239, 68, 68, 0.2)"
+        />
+
+        {/* Row 3: 재물/연애 */}
+
+        {/* 7. 대박 재물운 (평생) */}
         <MenuCard
           option="wealth"
           href="/wealth"
@@ -226,29 +284,11 @@ export default function MainMenu() {
           textColor="text-yellow-400"
           tagBg="bg-yellow-500/20 text-yellow-300"
           badge={{ text: '💰 추천', color: 'bg-yellow-500 text-black' }}
-          delay={0.2}
+          delay={0.32}
           hoverGlow="0 0 40px rgba(234, 179, 8, 0.3)"
         />
 
-        {/* 3. 2026 신년운세 (시의성) */}
-        <MenuCard
-          option="newyear2026"
-          href="/newyear2026"
-          icon={<span className="text-2xl">🐴</span>}
-          title="2026 신년운세"
-          subtitle="토정 이지함의 전통 풀이"
-          description="2026년 붉은 말의 해, 나에게 어떤 한 해가 될까요? 월별 상세 운세와 맞춤 전략."
-          tags={['병오년', '월별 운세', '전통 비결']}
-          buttonText="2026년 운세 보기"
-          gradient="bg-gradient-to-br from-red-400 to-red-600"
-          textColor="text-red-400"
-          tagBg="bg-red-500/20 text-red-300"
-          badge={{ text: '🐴 2026', color: 'bg-red-500' }}
-          delay={0.25}
-          hoverGlow="0 0 40px rgba(239, 68, 68, 0.2)"
-        />
-
-        {/* Row 2: 핵심 */}
+        {/* Row 4: 핵심 */}
 
         {/* 4. 궁합 보기 (HOT) */}
         <MenuCard
